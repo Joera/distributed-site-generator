@@ -1,9 +1,0 @@
-[workspace]
-members = [
-  "src/services/tuDsgContent/modules/tuDsgContent",
-  "src/modules/tu_ipfs",
-  "src/services/tuDsgRenderer/modules/tuDsgRenderer",
-  "src/modules/tu_volumes",
-  "src/modules/tu_car",
-  "src/services/tuDsgWebHost/modules/tuDsgWebHost"
-]
