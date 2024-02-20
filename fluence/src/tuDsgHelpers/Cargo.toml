@@ -1,0 +1,13 @@
+[package]
+name = "tu_dsg_helpers"
+version = "0.1.0"
+edition = "2018"
+
+[lib]
+name = "tu_dsg_helpers"
+path = "lib.rs"
+
+[dependencies]
+marine-rs-sdk = "0.10.0"
+serde = "1.0.171"
+regex = "1.10.2"

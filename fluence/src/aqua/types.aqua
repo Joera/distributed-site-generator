@@ -1,0 +1,81 @@
+data AquaMarineResult:
+  -- output: [][]u8
+  results: []string
+  errors: []string
+
+data TuDsgContentData:
+  id: string
+  slug: string
+  content_hash: string
+  post_type: string
+  author: string
+  tags: []string
+  date: string
+
+data TuDsgAuthorData:
+  name: string
+  repository: string
+  content_mappings: string
+
+data TuDsgCollection:
+  source: string
+  key: string
+  value: string
+  query: string
+
+data TuDsgRipple:
+  query: string
+  value: string
+  post_type: string
+
+data TuDsgTemplate:
+  reference: string
+  file: string
+  path: string
+  collections: []TuDsgCollection
+  ripples: []TuDsgRipple
+
+data TuDsgDns:
+  custodian: string
+  item_id: string
+  auth_key: string
+
+data TuDsgDomain:
+  url: string
+  dns: TuDsgDns
+
+data TuDsgPublication:
+  assets: string
+  domains: []TuDsgDomain
+  governor: string
+  mapping: []TuDsgTemplate
+  name: string
+  templates: string
+  
+data TuDsgRenderObject: 
+  name: string
+  template: string
+  publication_name: string
+  domain: TuDsgDomain
+  path: string
+  body: string
+
+data TuDsgPublishTaskTemp:
+  slug: string
+  author: string 
+  payload: string
+  post_type: string
+  publication: string 
+
+data TuDsgPublishTask:
+  slug: string
+  author: TuDsgAuthorData 
+  payload: string
+  post_type: string
+  publication: TuDsgPublication 
+
+
+
+data Kubos:
+  externals: []string
+  internals: []string

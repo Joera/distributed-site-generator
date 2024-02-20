@@ -1,0 +1,44 @@
+import "./types"
+
+service TuDsgPublicationFromJson("json"):
+  parse(s: string) -> TuDsgPublication
+
+service TuDsgAuthorFromJson("json"):
+  parse(s: string) -> TuDsgAuthorData
+
+-- service TuDsgAuthor("tuDsgAuthor"):
+--   fetch() -> TuDsgAuthorData
+
+service TuDsgPublish("tuDsgPublish"):
+  fetch(cid: string, networked_ipfs: string) -> TuDsgPublication
+  import_templates(publication: TuDsgPublication, kubo_multiaddr: string) -> AquaMarineResult
+
+service TuDsgContent("tuDsgContent"):
+  bulk(publication: TuDsgPublication, post_type: string, subnet_kubo: string) -> []TuDsgRenderObject
+  persist_single(task: TuDsgPublishTask, subnet_kubo: string) -> string
+  create_render_objects(task: TuDsgPublishTask, body_cid: string, subnet_kubo: string) ->  []TuDsgRenderObject
+  test() -> TuDsgContentData
+
+service TuDsgDb("tuDsgDb"):
+  store(content: TuDsgContentData) -> AquaMarineResult
+
+service TuDsgRenderer("tuDsgRenderer"):
+  test() -> AquaMarineResult
+  collect(publication_name: string, kubo_multiaddr: string) -> AquaMarineResult
+  imports(archive_cid: string, publication: TuDsgPublication, kubo_multiaddr: string) -> AquaMarineResult
+  single(ro: TuDsgRenderObject, kubo_multiaddr: string) -> AquaMarineResult
+
+service TuDsgHost("tuDsgHost"):
+  update(html_cid: string, publication: TuDsgPublication, kubo: string) -> AquaMarineResult
+  restart() -> bool
+  certify(publication: TuDsgPublication) -> AquaMarineResult
+  a_record(publication: TuDsgPublication, ip: string) -> AquaMarineResult
+
+service TuDsgRenderUndressed("tuDsgRenderUndressed"):
+  test() -> AquaMarineResult
+  collect(publication_name: string, kubo_multiaddr: string) -> AquaMarineResult
+  imports(archive_cid: string, publication: TuDsgPublication, kubo_multiaddr: string) -> AquaMarineResult
+  single(ro: TuDsgRenderObject, kubo_multiaddr: string) -> AquaMarineResult
+
+service MyService("myService"):
+  greeting(name: string) -> string

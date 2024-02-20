@@ -1,0 +1,33 @@
+{
+  "name": "node",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/app.js",
+  "scripts": {
+    "start": "npx nodemon src/app.ts",
+    "debug": "DEBUG=fluence:* npx nodemon src/app.ts",
+    "build": "npx tsc",
+    "deploy": "cd dist && git add . && git commit -am 'automated' && git push img master && cd ..",
+    "aqua:compile": "fluence aqua -i ../dsg-fluence/src/aqua/ -o ./src/_aqua",
+    "aqua:watch": "fluence aqua -w -i ../dsg-fluence/src/aqua/ -o ./src/_aqua"
+  },
+  "type": "module",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^18.14.1",
+    "@types/pg": "^8.6.6",
+    "nodemon": "^2.0.20",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.5"
+  },
+  "dependencies": {
+    "@fluencelabs/js-client": "^0.5.4",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.17.1",
+    "slugify": "^1.6.6"
+  }
+}
