@@ -1,10 +1,9 @@
-authors/
-!authors/example
+authors/unamore
 fluence/.fluence
 fluence-companion/node_modules
 obsidian-dsg-plugin/node_modules
-publications/***/**/*
-!publications/example/**/*
+publications/autonomous-times
+publications/unamore
 tableland-sidecar/node_modules
 webhost-sidecar/node_modules
 

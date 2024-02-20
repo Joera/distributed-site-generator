@@ -1,0 +1,24 @@
+{       
+    "home": {
+        "title":["title"]
+    },
+    "post": {
+        "title":["title"],
+        "content":["content"],
+        "thumbnail":["thumbnail"],
+        "creation_date": ["creation_date"]
+    },
+    "archief": {
+        "title":["title"],
+        "content":["content"]
+    },
+    "page": {
+        "title":["title"],
+        "content":["content"]
+    },
+    "serie": {
+        "title":["title"],
+        "content":["content"],
+        "args":["args"]
+    }
+}

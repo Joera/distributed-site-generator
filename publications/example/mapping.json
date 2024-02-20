@@ -1,0 +1,64 @@
+[
+    {
+        "reference": "home",
+        "file": "home.handlebars",
+        "path": "/",
+        "collections": [],
+        "ripples": []
+    },
+    {
+        "reference": "post",
+        "file": "post.handlebars",
+        "path": "/nieuwsbrieven/{slug}/",
+        "collections": [
+            {
+                "source": "tableland",
+                "key": "posts",
+                "value": "post",
+                "query": "SELECT * from {table} WHERE post_type = {value} LIMIT 2"
+            }
+        ],
+        "ripples": [
+            {
+                "post_type": "archief",
+                "value": "",
+                "query": "SELECT * from {table} WHERE post_type = {post_type}"
+            }
+       ]
+    },
+    {
+        "reference": "archief",
+        "file": "archief.handlebars",
+        "path": "/nieuwsbrieven/",
+        "collections": [
+            {
+                "source": "tableland",
+                "key": "posts",
+                "value": "post",
+                "query": "SELECT * from {table} WHERE post_type = {value} ORDER BY creation_date DESC"
+            }
+        ],
+        "ripples": []
+    },
+    {
+        "reference": "page",
+        "file": "page.handlebars",
+        "path": "/{slug}/",
+        "collections": [],
+        "ripples": []
+    },
+    {
+        "reference": "serie",
+        "file": "serie.handlebars",
+        "path": "/schilderijen/{slug}/",
+        "collections": [
+            {
+                "source": "rest",
+                "key": "images",
+                "value": "",
+                "query": "http://unamore.publikaan.nl/api/?tags=cd.{<args>}"
+            }
+        ],
+        "ripples": []
+    }
+]
