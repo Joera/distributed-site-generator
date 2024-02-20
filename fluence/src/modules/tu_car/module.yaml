@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../../../.fluence/schemas/module.json
+
+# Defines [Marine Module](https://fluence.dev/docs/build/concepts/#modules). You can use `fluence module new` command to generate a template for new module
+
+# Documentation: https://github.com/fluencelabs/cli/tree/main/docs/configs/module.md
+
+version: 0
+
+type: rust
+
+name: tu_car
+
+mountedBinaries:
+  car_utils: /usr/bin/car-utils
+  curl: /usr/bin/curl
+
+volumes:
+  templates: "./publication/templates/"
+  html: "./publication/html/"
