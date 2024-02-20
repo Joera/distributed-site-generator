@@ -1,10 +1,10 @@
-authors/*
-!authors/example/*
+authors
+!authors/example
 fluence/.fluence
 fluence-companion/node_modules
 obsidian-dsg-plugin/node_modules
-publications/*
-!publications/example/*
+publications
+!publications/example
 tableland-sidecar/node_modules
 webhost-sidecar/node_modules
 
