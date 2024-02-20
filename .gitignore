@@ -1,5 +1,5 @@
-authors/**/*
-!authors/example/*
+authors/
+!authors/example
 fluence/.fluence
 fluence-companion/node_modules
 obsidian-dsg-plugin/node_modules
