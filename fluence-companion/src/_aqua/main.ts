@@ -1011,9 +1011,9 @@ export const renderOnDSG_script = `
                           (seq
                            (seq
                             (ap ("hostId" "12D3KooWSMH42NaRdq8uN3pTsBgnJYSZjYrmC1DhBmBXy1hCatrj") %SpellLocation_obj-1_map)
-                            (ap ("spellId" "995db9bd-8be8-4e35-a996-b68b6ff0a990") %SpellLocation_obj-1_map)
+                            (ap ("spellId" "8e1a8c53-2d63-4384-a753-2616cdcc6341") %SpellLocation_obj-1_map)
                            )
-                           (ap ("workerId" "12D3KooWG4oNzJnN3bgBYUTRgUjGFEud4joQfQZC8Y7qyGN5GbLn") %SpellLocation_obj-1_map)
+                           (ap ("workerId" "12D3KooWFmcvCVW821BixzuScWAxwNWZBUWss5XBVdSS6Kokier2") %SpellLocation_obj-1_map)
                           )
                           (canon %init_peer_id% %SpellLocation_obj-1_map  SpellLocation_obj-1)
                          )
@@ -1029,14 +1029,14 @@ export const renderOnDSG_script = `
                         (seq
                          (seq
                           (seq
-                           (ap ("definition" "bafkreigye7o5e7q2p47rlnbagmxxndrozkdfk3mfvjvip3iohy6zer7hla") %Host_obj-1_map)
-                           (ap ("dummyDealId" "devWorkerV0_12D3KooWMLZgCmxYXXhWzqgYUf9TzT8QaPCKfHieywC86Q2LdiSA_510960010868106") %Host_obj-1_map)
+                           (ap ("definition" "bafkreihbekeaf5j5vdp7a2vpsmkgu4ruhdqujrh4apl4ffrsptlpncfaxu") %Host_obj-1_map)
+                           (ap ("dummyDealId" "devWorkerV0_12D3KooWMLZgCmxYXXhWzqgYUf9TzT8QaPCKfHieywC86Q2LdiSA_2452321894223013") %Host_obj-1_map)
                           )
                           (ap ("installationSpells" #array-inline-4-0) %Host_obj-1_map)
                          )
                          (ap ("relayId" "12D3KooWSMH42NaRdq8uN3pTsBgnJYSZjYrmC1DhBmBXy1hCatrj") %Host_obj-1_map)
                         )
-                        (ap ("timestamp" "2024-02-29T17:42:08.010Z") %Host_obj-1_map)
+                        (ap ("timestamp" "2024-02-29T18:31:45.984Z") %Host_obj-1_map)
                        )
                        (canon %init_peer_id% %Host_obj-1_map  Host_obj-1)
                       )
@@ -1484,9 +1484,9 @@ export const bulkRender_script = `
                    (seq
                     (seq
                      (ap ("hostId" "12D3KooWSMH42NaRdq8uN3pTsBgnJYSZjYrmC1DhBmBXy1hCatrj") %SpellLocation_obj-0_map)
-                     (ap ("spellId" "995db9bd-8be8-4e35-a996-b68b6ff0a990") %SpellLocation_obj-0_map)
+                     (ap ("spellId" "8e1a8c53-2d63-4384-a753-2616cdcc6341") %SpellLocation_obj-0_map)
                     )
-                    (ap ("workerId" "12D3KooWG4oNzJnN3bgBYUTRgUjGFEud4joQfQZC8Y7qyGN5GbLn") %SpellLocation_obj-0_map)
+                    (ap ("workerId" "12D3KooWFmcvCVW821BixzuScWAxwNWZBUWss5XBVdSS6Kokier2") %SpellLocation_obj-0_map)
                    )
                    (canon %init_peer_id% %SpellLocation_obj-0_map  SpellLocation_obj-0)
                   )
@@ -1502,14 +1502,14 @@ export const bulkRender_script = `
                  (seq
                   (seq
                    (seq
-                    (ap ("definition" "bafkreigye7o5e7q2p47rlnbagmxxndrozkdfk3mfvjvip3iohy6zer7hla") %Host_obj-0_map)
-                    (ap ("dummyDealId" "devWorkerV0_12D3KooWMLZgCmxYXXhWzqgYUf9TzT8QaPCKfHieywC86Q2LdiSA_510960010868106") %Host_obj-0_map)
+                    (ap ("definition" "bafkreihbekeaf5j5vdp7a2vpsmkgu4ruhdqujrh4apl4ffrsptlpncfaxu") %Host_obj-0_map)
+                    (ap ("dummyDealId" "devWorkerV0_12D3KooWMLZgCmxYXXhWzqgYUf9TzT8QaPCKfHieywC86Q2LdiSA_2452321894223013") %Host_obj-0_map)
                    )
                    (ap ("installationSpells" #array-inline-2-0) %Host_obj-0_map)
                   )
                   (ap ("relayId" "12D3KooWSMH42NaRdq8uN3pTsBgnJYSZjYrmC1DhBmBXy1hCatrj") %Host_obj-0_map)
                  )
-                 (ap ("timestamp" "2024-02-29T17:42:08.010Z") %Host_obj-0_map)
+                 (ap ("timestamp" "2024-02-29T18:31:45.984Z") %Host_obj-0_map)
                 )
                 (canon %init_peer_id% %Host_obj-0_map  Host_obj-0)
                )

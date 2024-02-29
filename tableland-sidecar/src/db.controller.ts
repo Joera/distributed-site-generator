@@ -92,14 +92,18 @@ export class DbController {
 
     async insert(db: Database, body: any) : Promise<string> {
 
+        console.log('insert 2');
+
         const c = body.content;
+
+        console.log(c);
 
         const { meta: insert } = await db
         .prepare(body.sql_query)
         .bind(c.id, c.slug,c._owner,c.publication,c.author, c.post_type, c.tags,c.categories,c.parent,c.creation_date,c.modified_date,c.content)
         .run();
 
-        console.log('insert');
+        console.log('insert 2');
         let res = await insert.txn?.wait();
         console.log(res);
 

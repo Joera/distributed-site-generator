@@ -31,7 +31,7 @@ pub fn insert(contentAsBinary: Vec<u8>) -> crate::AquaMarineResult {
 
     let url = "http://tl-sidecar:3088/record".to_string();
 
-    let sql_query: String = format!("INSERT INTO {} (id, slug, _owner, publication, author, post_type, tags, categories, parent, creation_date, modified_date, content_cid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", table::ID);
+    let sql_query: String = format!("INSERT INTO {} (id, slug, _owner, publication, author, post_type, tags, categories, parent, creation_date, modified_date, content) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", table::ID);
 
     let tl_request = types::TLReq {
         table: table::ID.to_string(),
@@ -69,7 +69,7 @@ pub fn batch_insert(content: crate::TuContentItem) -> crate::AquaMarineResult {
 
     let mut am_result = crate::AquaMarineResult::new();
 
-    let _sql_query: String = format!("INSERT INTO {} (id, slug, _owner, publication, author, post_type, tags, categories, parent, creation_date, modified_date, content_cid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", table::ID);
+    let _sql_query: String = format!("INSERT INTO {} (id, slug, _owner, publication, author, post_type, tags, categories, parent, creation_date, modified_date, content) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", table::ID);
 
     am_result
 }
