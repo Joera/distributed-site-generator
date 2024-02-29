@@ -13,7 +13,7 @@ export class DbController {
 
         if (process.env.KEY != undefined && process.env.GATEWAY != undefined) {
 
-            console.log(process.env)
+            // console.log(process.env)
         
             const wallet = new Wallet(process.env.KEY);
             const provider = getDefaultProvider(process.env.GATEWAY);
@@ -100,7 +100,7 @@ export class DbController {
 
         const { meta: insert } = await db
         .prepare(body.sql_query)
-        .bind(c.id, c.slug,c._owner,c.publication,c.author, c.post_type, c.tags,c.categories,c.parent,c.creation_date,c.modified_date,c.content)
+        .bind(c.id, c.slug,c._owner,c.publication,c.author, c.post_type, c.tags,c.categories,c.parent,c.creation_date,c.modified_date, "hi")
         .run();
 
         console.log('insert 2');
