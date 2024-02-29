@@ -22,6 +22,12 @@ app.post('/count', async (req, res) => {
   );
 });
 
+app.post('/all', async (req, res) => {
+  res.send(
+    await dbCtrl.query({query : "select * from tusg_content_421614_464"})
+  );
+});
+
 
 app.post('/create_table', async (req, res) => {
   res.send(
