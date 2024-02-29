@@ -92,9 +92,11 @@ export class DbController {
 
     async insert(db: Database, body: any) : Promise<string> {
 
+        const c = body.content;
+
         const { meta: insert } = await db
         .prepare(body.sql_query)
-        .bind(body.content.id, body.content.slug,body.content._owner,body.content.publication,body.content.author, body.content.post_type, body.content.tags,body.content.categories,body.content.parent,body.content.creation_date,body.content.modified_date,body.content.content_cid)
+        .bind(c.id, c.slug,c._owner,c.publication,c.author, c.post_type, c.tags,c.categories,c.parent,c.creation_date,c.modified_date,c.content)
         .run();
 
         console.log('insert');
@@ -113,14 +115,16 @@ export class DbController {
 
         let statement = db.prepare(body.sql_query);
 
+        const c = body.content;
+
         await db.batch([
-            statement.bind(body.content[0]),
+            statement.bind(c[0]),
             // etc.. 
         ]);
 
         const { meta: insert } = await db
         .prepare(body.sql_query)
-        .bind(body.content.id, body.content.slug,body.content._owner,body.content.publication,body.content.author, body.content.post_type, body.content.tags,body.content.categories,body.content.parent,body.content.creation_date,body.content.modified_date,body.content.content)
+        .bind(c.id, c.slug,c._owner,c.publication,c.author, c.post_type, c.tags,c.categories,c.parent,c.creation_date,c.modified_date,c.content)
         .run();
 
         console.log('insert');
@@ -131,9 +135,11 @@ export class DbController {
 
     async update(db: Database, body: any) : Promise<string> {
 
+        const c = body.content;
+
         const { meta: insert } = await db
         .prepare(`UPDATE ${body.table} SET slug = ?, publication = ?, author = ?, post_type = ?, tags = ?, categories = ?, parent = ?, creation_date = ?, modified_date = ?, content = ? WHERE id = ?`)
-        .bind(body.content.slug, body.content.publication,body.content.author, body.content.post_type, body.content.tags,body.content.categories,body.content.parent,body.content.creation_date, body.content.modified_date,body.content.content, body.content.id)
+        .bind(c.slug, c.publication,c.author, c.post_type, c.tags, c.categories, c.parent, c.creation_date, c.modified_date, c.content, c.id)
         .run();
 
         console.log('update');
