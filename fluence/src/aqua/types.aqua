@@ -1,5 +1,7 @@
+aqua Types declares * 
+
 data AquaMarineResult:
-  -- output: [][]u8
+  output: [][]u8
   results: []string
   errors: []string
 
@@ -54,11 +56,11 @@ data TuDsgPublication:
   
 data TuDsgRenderObject: 
   name: string
-  template: string
+  template: TuDsgTemplate
   publication_name: string
   domain: TuDsgDomain
   path: string
-  body: string
+  body: []u8
 
 data TuDsgPublishTaskTemp:
   slug: string
@@ -73,8 +75,6 @@ data TuDsgPublishTask:
   payload: string
   post_type: string
   publication: TuDsgPublication 
-
-
 
 data Kubos:
   externals: []string

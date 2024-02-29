@@ -15,6 +15,8 @@ export default class IpfsFluencePublishPlugin extends Plugin {
 
 	async onload() {
 
+		console.log('hi');
+
         this.addSettingTab(new FilePublisherTab(this.app, this));
 		await this.loadSettings();
 

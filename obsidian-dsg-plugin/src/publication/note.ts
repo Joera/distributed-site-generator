@@ -25,7 +25,7 @@ type TuDsgDomain = {
 	dns: TuDsgDns
 }
 
-export type TuDsgPublication = {
+export type DSGPublicationInput = {
 	assets : string,
 	domains: TuDsgDomain[],
 	governor: string,
@@ -86,6 +86,8 @@ export const _parsePublication =  async (file: SGFile, vault: Vault) : Promise<D
 }
 
 export const insertPubCid = async (workspace: Workspace, cid: string, fileManager: FileManager) : Promise<string> => {
+
+	// console.log(cid);
 
 	let file = workspace.getActiveFile();
 

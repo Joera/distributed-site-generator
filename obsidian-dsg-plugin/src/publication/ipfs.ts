@@ -35,6 +35,7 @@ export const filePut = async (path: string, kubo: string) : Promise<string> => {
 
 		childProcess.stdout.on('data', function (data: any) {
 			const json = JSON.parse(data.toString());
+			console.log(json);
 			resolve(json['Hash']);
 		});
 	});

@@ -1,26 +1,15 @@
 aqua Main
 
-import "@fluencelabs/aqua-lib/builtin.aqua"
-import "@fluencelabs/aqua-lib/subnet.aqua"
-import "@fluencelabs/aqua-ipfs/ipfs.aqua"
+import "../../.fluence/aqua-dependencies/node_modules/@fluencelabs/aqua-lib/builtin.aqua"
+import "../../.fluence/aqua-dependencies/node_modules/@fluencelabs/aqua-lib/subnet.aqua"
+import "../../.fluence/aqua-dependencies/node_modules/@fluencelabs/aqua-ipfs/ipfs.aqua"
 
 import "./types.aqua"
 import "./helpers.aqua"
 import "./services.aqua"
+import "./functions.aqua"
 
-export renderOnDSG, bulkUpload, bulkRender, gatherKubos, helloWorldRemote   --  restart, certify, dns, ,  main -- ,updatePublication
-
--- local
-func helloWorld(name: string) -> string:
-    <- Op.concat_strings("Hello, ", name)
-
--- remote
-func helloWorldRemote(name: string) -> string:
-    on HOST_PEER_ID:
-        hello_msg <- helloWorld(name)
-        from_msg <- Op.concat_strings(hello_msg, "! From ")
-        from_peer_msg <- Op.concat_strings(from_msg, HOST_PEER_ID)
-    <- from_peer_msg
+export renderOnDSG, bulkUpload, bulkRender, gatherKubos, test
 
 -- func dns() -> AquaMarineResult:
 
@@ -67,6 +56,15 @@ func helloWorldRemote(name: string) -> string:
 
 func streamToArray(stream: *string) -> []string:
   <- stream
+
+
+func test() -> string :
+
+    workers <- getWorkers()
+    Console.print(workers)
+
+    <- "hi"
+
     
 func gatherKubos() -> Kubos :
 
@@ -78,11 +76,9 @@ func gatherKubos() -> Kubos :
     -- if localKubo.success == true:
     --     externals <<- localKubo.multiaddr
 
-    workers <- getWorkerInfo()
+    -- Console.print(workers)
 
-    Console.print(workers)
-
-    for w <- workers:
+    for w <- getWorkers():
         on w.workerId via w.hostId:
             res: *IpfsMultiaddrResult
             res <- Ipfs.get_local_api_multiaddr()
@@ -95,34 +91,52 @@ func gatherKubos() -> Kubos :
 
     kubos = Kubos(internals = internals, externals= externals)
 
+    Console.print(kubos)
+
     <- kubos
 
 func renderOnDSG(tempTask: TuDsgPublishTaskTemp, archive_cid: string) -> *AquaMarineResult:
 
     results: *AquaMarineResult
     debug: *AquaMarineResult
+    queue: *TuDsgRenderObject
 
     -- get encrypted publicationData from chain .... 
 
     task = fromTempTask(tempTask)
 
-    -- Console.print(task)
+    Console.print(task)
 
-    w = randomWorker()
+    w = randomDevWorker()
+    Console.print(w)
     on w.workerId via w.hostId:
-        queue: *[]TuDsgRenderObject
-        kubo = Ipfs.get_local_api_multiaddr()
-        if kubo.success == true:
-            cid = TuDsgContent.persist_single(task, kubo.multiaddr)
-            queue <- TuDsgContent.create_render_objects(task, cid, kubo.multiaddr)
-            -- results <- TuDsgRenderUndressed.test()
-            debug <- TuDsgRenderer.imports(archive_cid, task.publication, kubo.multiaddr)
-            for ros <- queue:
-                for ro <- ros:
-                    results <- TuDsgRenderer.single(ro, kubo.multiaddr)
-                    
-            results <- TuDsgRenderer.collect(task.publication.name, kubo.multiaddr)
 
+        mappings = dagGetToString(task.author.content_mappings)
+        content = TuDsgContent.map(task, mappings)
+        TuContentTable.insert(content)
+        main = TuDsgContent.pebble(task, content)
+        queue <<- main
+        for ripple <- main.template.ripples:
+            c = TuContentTable.queryRipple(ripple) 
+        --     queue <- TuDsgContent.ripple(task, ripple, c)
+
+
+
+        -- extractToPath(archive_cid, "/publication")
+        -- extractToPath(task.publication.templates, "/templates")
+        -- extractToPath(task.publication.assets, "/publication/assets")
+     
+
+        --   debug <- TuDsgRenderImport.imports(archive_cid, task.publication, kubo.multiaddr)
+
+            -- for ros <- queue:
+            --     for ro <- ros:
+            --         collections = TuDsgRenderData.single(archive_cid, task.publication, kubo.multiaddr)
+            --         results <- TuDsgRenderer.single(ro, kubo.multiaddr)
+                    
+            -- results <- TuDsgRenderCollect.collect(task.publication.name, kubo.multiaddr)
+
+    Console.print(queue)
     Console.print(debug)
 
     <- results
@@ -131,16 +145,14 @@ func bulkUpload(tasks: []TuDsgPublishTaskTemp) -> bool:
 
     results: *string
 
-    w = randomWorker()
-    on w.workerId via w.hostId:
-        kubo = Ipfs.get_local_api_multiaddr()
-        if kubo.success == true:
-            for tempTask <- tasks:
-                task = fromTempTask(tempTask)
-                results <- TuDsgContent.persist_single(task, kubo.multiaddr)
-
-
-    Console.print(results)
+    -- w = randomWorker(0)
+    -- on w.workerId via w.hostId:
+    --     kubo = Ipfs.get_local_api_multiaddr()
+    --     if kubo.success == true:
+    --         for tempTask <- tasks:
+    --             task = fromTempTask(tempTask)
+    --             results <- TuDsgContent.map(task, kubo.multiaddr)
+    -- Console.print(results)
 
     <- true
 
@@ -152,7 +164,7 @@ func bulkRender(publication_cid: string, post_type: string, archive_cid: string)
 
     Console.print(publication)
 
-    w = randomWorker()
+    w = randomDevWorker()
     on w.workerId via w.hostId:
         queue: *[]TuDsgRenderObject
         kubo = Ipfs.get_local_api_multiaddr()

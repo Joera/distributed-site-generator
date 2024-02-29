@@ -8,10 +8,10 @@ name = "tu_car"
 path = "src/main.rs"
 
 [dependencies]
-marine-rs-sdk = "0.10.0"
+marine-rs-sdk = "0.10.3"
 serde_json = "*"
-tu_types = { path = "../../../../tu_rust_types" }
+tu_types = { path = "../../tuTypes" }
 tu_dsg_helpers = { path = "../../tuDsgHelpers" }
 
 [dev-dependencies]
-marine-rs-sdk-test = "0.11.0"
+marine-rs-sdk-test = "0.16.0"

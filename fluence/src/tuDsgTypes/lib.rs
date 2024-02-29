@@ -1,4 +1,6 @@
 use serde::{Deserialize, Serialize};
+use serde_json::{Value};
+use std::collections::BTreeMap;
 use marine_rs_sdk::marine;
 
 #[marine] 
@@ -70,7 +72,7 @@ pub struct TuDsgRenderObject {
     pub template: TuDsgTemplate,
     pub publication_name: String,
     pub domain: TuDsgDomain,
-    pub body: String // Vec<u8>
+    pub body: Vec<u8>
 }
 
 #[marine]
@@ -96,5 +98,31 @@ pub struct TuContentItem {
     pub parent: String,
     pub creation_date: String,
     pub modified_date: String,
-    pub content_cid: String
+    pub content: String
+}
+
+// impl rmp::Encode for TuContentItem {
+//     fn encode(&self, encoder: &mut rmp::encode::Encoder) -> Result<(), rmp::encode::EncodeError> {
+//         encoder.encode_str(&self.id)?;
+//         encoder.encode_str(&self.slug)?;
+//         encoder.encode_str(&self.publication)?;
+//         encoder.encode_str(&self.author)?;
+//         encoder.encode_str(&self.post_type)?;
+//         encoder.encode_str(&self.tags)?;
+//         encoder.encode_str(&self.categories)?;
+//         encoder.encode_str(&self.parent)?;
+//         encoder.encode_str(&self.creation_date)?;
+//         encoder.encode_str(&self.modified_date)?;
+//         encoder.encode_str(&self.content)?;
+//         Ok(())
+//     }
+// }
+
+#[derive(Debug,Serialize, Deserialize)]
+pub struct TemplateData  {
+    pub body: BTreeMap<String, Value>,
+    pub collections: BTreeMap<String, Vec<BTreeMap<String, Value>>>,
+    pub base_url: String,
+    pub assets_url: String,
+    pub render_env: String
 }

@@ -3,70 +3,100 @@
 /**
  *
  * This file is generated using:
- * @fluencelabs/aqua-api version: 0.12.0
- * @fluencelabs/aqua-to-js version: 0.1.0
+ * @fluencelabs/aqua-api version: 0.13.0
+ * @fluencelabs/aqua-to-js version: 0.3.5
  * If you find any bugs in generated AIR, please write an issue on GitHub: https://github.com/fluencelabs/aqua/issues
  * If you find any bugs in generated JS/TS, please write an issue on GitHub: https://github.com/fluencelabs/js-client/issues
  *
  */
-import type { IFluenceClient as IFluenceClient$$, CallParams as CallParams$$ } from '@fluencelabs/js-client';
+import type { IFluenceClient as IFluenceClient$$, ParticleContext as ParticleContext$$ } from '@fluencelabs/js-client';
 
+// Making aliases to reduce chance of accidental name collision
 import {
     v5_callFunction as callFunction$$,
-    v5_registerService as registerService$$,
+    v5_registerService as registerService$$
 } from '@fluencelabs/js-client';
 
 
 // Functions
-export const helloWorldRemote_script = `
+export const test_script = `
 (xor
  (seq
   (seq
    (seq
-    (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
-    (call %init_peer_id% ("getDataSrv" "name") [] -name-arg-)
-   )
-   (xor
     (seq
-     (seq
-      (call -relay- ("op" "concat_strings") ["Hello, " -name-arg-] ret)
-      (call -relay- ("op" "concat_strings") [ret "! From "] ret-0)
+     (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
+     (new $array-inline
+      (seq
+       (seq
+        (seq
+         (new $array-inline-0
+          (seq
+           (seq
+            (new %SpellLocation_obj_map
+             (seq
+              (seq
+               (seq
+                (ap ("hostId" "12D3KooWSMH42NaRdq8uN3pTsBgnJYSZjYrmC1DhBmBXy1hCatrj") %SpellLocation_obj_map)
+                (ap ("spellId" "743113bb-44d3-4544-b7c9-46768eb44b6a") %SpellLocation_obj_map)
+               )
+               (ap ("workerId" "12D3KooWK7VMoFkhgNkC6BEGi21hVfVcxUKvkTkfWArSrhJRizvk") %SpellLocation_obj_map)
+              )
+              (canon %init_peer_id% %SpellLocation_obj_map  SpellLocation_obj)
+             )
+            )
+            (ap SpellLocation_obj $array-inline-0)
+           )
+           (canon %init_peer_id% $array-inline-0  #array-inline-0-0)
+          )
+         )
+         (new %Host_obj_map
+          (seq
+           (seq
+            (seq
+             (seq
+              (seq
+               (ap ("definition" "bafkreighfmwh6ij3vblgud2bvbpk6hh43joqcyb3oymqv2bfqinhhr56a4") %Host_obj_map)
+               (ap ("dummyDealId" "dsgWorkerV3_12D3KooWAD4ShUWoUeoe77EMnosDaicYbjbeHraC6GXsFMQFKhZW_06698790659765042") %Host_obj_map)
+              )
+              (ap ("installationSpells" #array-inline-0-0) %Host_obj_map)
+             )
+             (ap ("relayId" "12D3KooWSMH42NaRdq8uN3pTsBgnJYSZjYrmC1DhBmBXy1hCatrj") %Host_obj_map)
+            )
+            (ap ("timestamp" "2024-02-29T10:46:19.080Z") %Host_obj_map)
+           )
+           (canon %init_peer_id% %Host_obj_map  Host_obj)
+          )
+         )
+        )
+        (ap Host_obj $array-inline)
+       )
+       (canon %init_peer_id% $array-inline  #array-inline-1)
+      )
      )
-     (call -relay- ("op" "concat_strings") [ret-0 -relay-] ret-1)
     )
-    (fail :error:)
+    (ap #array-inline-1.$.[0].installationSpells array-inline-1_flat)
    )
+   (call %init_peer_id% ("run-console" "print") [array-inline-1_flat])
   )
-  (call %init_peer_id% ("callbackSrv" "response") [ret-1])
+  (call %init_peer_id% ("callbackSrv" "response") ["hi"])
  )
  (call %init_peer_id% ("errorHandlingSrv" "error") [:error: 0])
 )
 `;
 
-export function helloWorldRemote(
-    name: string,
-    config?: {ttl?: number}
-): Promise<string>;
+export type TestParams = [config?: {ttl?: number}] | [peer: IFluenceClient$$, config?: {ttl?: number}];
 
-export function helloWorldRemote(
-    peer: IFluenceClient$$,
-    name: string,
-    config?: {ttl?: number}
-): Promise<string>;
+export type TestResult = Promise<string>;
 
-export function helloWorldRemote(...args: any[]) {
+export function test(...args: TestParams): TestResult {
     return callFunction$$(
         args,
         {
-    "functionName": "helloWorldRemote",
+    "functionName": "test",
     "arrow": {
         "domain": {
-            "fields": {
-                "name": {
-                    "name": "string",
-                    "tag": "scalar"
-                }
-            },
+            "fields": {},
             "tag": "labeledProduct"
         },
         "codomain": {
@@ -90,7 +120,7 @@ export function helloWorldRemote(...args: any[]) {
         "errorFnName": "error"
     }
 },
-        helloWorldRemote_script
+        test_script
     );
 }
 
@@ -103,592 +133,7 @@ export const bulkUpload_script = `
     (call %init_peer_id% ("getDataSrv" "tasks") [] -tasks-arg-)
    )
    (new $results
-    (seq
-     (seq
-      (seq
-       (seq
-        (seq
-         (seq
-          (new $option-inline
-           (seq
-            (seq
-             (seq
-              (new $array-inline
-               (seq
-                (seq
-                 (new %SpellLocation_obj_map
-                  (seq
-                   (seq
-                    (seq
-                     (ap ("hostId" "12D3KooWSMH42NaRdq8uN3pTsBgnJYSZjYrmC1DhBmBXy1hCatrj") %SpellLocation_obj_map)
-                     (ap ("spellId" "4ed24aa7-f796-4db0-a5cf-4863de6faefa") %SpellLocation_obj_map)
-                    )
-                    (ap ("workerId" "12D3KooWNFVvhwo1vYi17wed7gqwuu1SrVys8dit4Syv4Xr8kQPt") %SpellLocation_obj_map)
-                   )
-                   (canon %init_peer_id% %SpellLocation_obj_map  SpellLocation_obj)
-                  )
-                 )
-                 (ap SpellLocation_obj $array-inline)
-                )
-                (canon %init_peer_id% $array-inline  #array-inline-0)
-               )
-              )
-              (new %Host_obj_map
-               (seq
-                (seq
-                 (seq
-                  (seq
-                   (seq
-                    (ap ("definition" "bafkreibkicou34jhrfycsrx3sc42jnzbtdzbyug4sip547nakawd6umaja") %Host_obj_map)
-                    (ap ("dummyDealId" "dsgWorkerV1_12D3KooWGLCQNpvW6tyjZQD4JcGYRZg6vw7zneRgCi4D8aEdatKe_21233612088348064") %Host_obj_map)
-                   )
-                   (ap ("installationSpells" #array-inline-0) %Host_obj_map)
-                  )
-                  (ap ("relayId" "12D3KooWSMH42NaRdq8uN3pTsBgnJYSZjYrmC1DhBmBXy1hCatrj") %Host_obj_map)
-                 )
-                 (ap ("timestamp" "2024-02-19T18:43:56.059Z") %Host_obj_map)
-                )
-                (canon %init_peer_id% %Host_obj_map  Host_obj)
-               )
-              )
-             )
-             (xor
-              (ap Host_obj $option-inline)
-              (null)
-             )
-            )
-            (canon %init_peer_id% $option-inline  #option-inline-0)
-           )
-          )
-          (new %Hosts_obj_map
-           (seq
-            (ap ("dsgWorkerV1" #option-inline-0) %Hosts_obj_map)
-            (canon %init_peer_id% %Hosts_obj_map  Hosts_obj)
-           )
-          )
-         )
-         (ap Hosts_obj.$.dsgWorkerV1 Hosts_obj_flat)
-        )
-        (ap Hosts_obj_flat.$.[0].installationSpells Hosts_obj_flat_flat)
-       )
-       (xor
-        (seq
-         (seq
-          (seq
-           (new $-ephemeral-stream-
-            (new #-ephemeral-canon-
-             (canon -relay- $-ephemeral-stream-  #-ephemeral-canon-)
-            )
-           )
-           (new $-ephemeral-stream-
-            (new #-ephemeral-canon-
-             (canon Hosts_obj_flat_flat.$.[0].hostId $-ephemeral-stream-  #-ephemeral-canon-)
-            )
-           )
-          )
-          (call Hosts_obj_flat_flat.$.[0].workerId ("aqua-ipfs" "get_local_api_multiaddr") [] ret)
-         )
-         (new -if-error-
-          (xor
-           (seq
-            (seq
-             (match ret.$.success true
-              (fold -tasks-arg- tempTask-0
-               (seq
-                (seq
-                 (seq
-                  (seq
-                   (seq
-                    (new $ipfs_results
-                     (new $s
-                      (seq
-                       (seq
-                        (seq
-                         (seq
-                          (seq
-                           (seq
-                            (new $option-inline-1
-                             (seq
-                              (seq
-                               (seq
-                                (new $array-inline-1
-                                 (seq
-                                  (seq
-                                   (new %SpellLocation_obj-0_map
-                                    (seq
-                                     (seq
-                                      (seq
-                                       (ap ("hostId" "12D3KooWSMH42NaRdq8uN3pTsBgnJYSZjYrmC1DhBmBXy1hCatrj") %SpellLocation_obj-0_map)
-                                       (ap ("spellId" "4ed24aa7-f796-4db0-a5cf-4863de6faefa") %SpellLocation_obj-0_map)
-                                      )
-                                      (ap ("workerId" "12D3KooWNFVvhwo1vYi17wed7gqwuu1SrVys8dit4Syv4Xr8kQPt") %SpellLocation_obj-0_map)
-                                     )
-                                     (canon Hosts_obj_flat_flat.$.[0].workerId %SpellLocation_obj-0_map  SpellLocation_obj-0)
-                                    )
-                                   )
-                                   (ap SpellLocation_obj-0 $array-inline-1)
-                                  )
-                                  (canon Hosts_obj_flat_flat.$.[0].workerId $array-inline-1  #array-inline-1-0)
-                                 )
-                                )
-                                (new %Host_obj-0_map
-                                 (seq
-                                  (seq
-                                   (seq
-                                    (seq
-                                     (seq
-                                      (ap ("definition" "bafkreibkicou34jhrfycsrx3sc42jnzbtdzbyug4sip547nakawd6umaja") %Host_obj-0_map)
-                                      (ap ("dummyDealId" "dsgWorkerV1_12D3KooWGLCQNpvW6tyjZQD4JcGYRZg6vw7zneRgCi4D8aEdatKe_21233612088348064") %Host_obj-0_map)
-                                     )
-                                     (ap ("installationSpells" #array-inline-1-0) %Host_obj-0_map)
-                                    )
-                                    (ap ("relayId" "12D3KooWSMH42NaRdq8uN3pTsBgnJYSZjYrmC1DhBmBXy1hCatrj") %Host_obj-0_map)
-                                   )
-                                   (ap ("timestamp" "2024-02-19T18:43:56.059Z") %Host_obj-0_map)
-                                  )
-                                  (canon Hosts_obj_flat_flat.$.[0].workerId %Host_obj-0_map  Host_obj-0)
-                                 )
-                                )
-                               )
-                               (xor
-                                (ap Host_obj-0 $option-inline-1)
-                                (null)
-                               )
-                              )
-                              (canon Hosts_obj_flat_flat.$.[0].workerId $option-inline-1  #option-inline-1-0)
-                             )
-                            )
-                            (new %Hosts_obj-0_map
-                             (seq
-                              (ap ("dsgWorkerV1" #option-inline-1-0) %Hosts_obj-0_map)
-                              (canon Hosts_obj_flat_flat.$.[0].workerId %Hosts_obj-0_map  Hosts_obj-0)
-                             )
-                            )
-                           )
-                           (ap Hosts_obj-0.$.dsgWorkerV1 Hosts_obj-0_flat)
-                          )
-                          (ap Hosts_obj-0_flat.$.[0].installationSpells Hosts_obj-0_flat_flat)
-                         )
-                         (fold Hosts_obj-0_flat_flat w-0-0
-                          (seq
-                           (xor
-                            (seq
-                             (seq
-                              (seq
-                               (seq
-                                (seq
-                                 (seq
-                                  (seq
-                                   (seq
-                                    (new $-ephemeral-stream-
-                                     (new #-ephemeral-canon-
-                                      (canon Hosts_obj_flat_flat.$.[0].hostId $-ephemeral-stream-  #-ephemeral-canon-)
-                                     )
-                                    )
-                                    (new $-ephemeral-stream-
-                                     (new #-ephemeral-canon-
-                                      (canon w-0-0.$.hostId $-ephemeral-stream-  #-ephemeral-canon-)
-                                     )
-                                    )
-                                   )
-                                   (call w-0-0.$.workerId ("aqua-ipfs" "dag_get") [tempTask-0.$.author] ret-0)
-                                  )
-                                  (ap ret-0 $ipfs_results)
-                                 )
-                                 (new $ipfs_results_test
-                                  (seq
-                                   (seq
-                                    (fold $ipfs_results ipfs_results_fold_var
-                                     (seq
-                                      (seq
-                                       (ap ipfs_results_fold_var $ipfs_results_test)
-                                       (canon w-0-0.$.workerId $ipfs_results_test  #ipfs_results_iter_canon)
-                                      )
-                                      (xor
-                                       (match #ipfs_results_iter_canon.length 1
-                                        (null)
-                                       )
-                                       (next ipfs_results_fold_var)
-                                      )
-                                     )
-                                     (never)
-                                    )
-                                    (canon w-0-0.$.workerId $ipfs_results_test  #ipfs_results_result_canon)
-                                   )
-                                   (ap #ipfs_results_result_canon ipfs_results_gate)
-                                  )
-                                 )
-                                )
-                                (call w-0-0.$.workerId ("vault" "cat") [ipfs_results_gate.$.[0].path] ret-1)
-                               )
-                               (ap ret-1 $s)
-                              )
-                              (new $-ephemeral-stream-
-                               (new #-ephemeral-canon-
-                                (canon w-0-0.$.hostId $-ephemeral-stream-  #-ephemeral-canon-)
-                               )
-                              )
-                             )
-                             (new $-ephemeral-stream-
-                              (new #-ephemeral-canon-
-                               (canon Hosts_obj_flat_flat.$.[0].hostId $-ephemeral-stream-  #-ephemeral-canon-)
-                              )
-                             )
-                            )
-                            (seq
-                             (seq
-                              (seq
-                               (new $-ephemeral-stream-
-                                (new #-ephemeral-canon-
-                                 (canon w-0-0.$.hostId $-ephemeral-stream-  #-ephemeral-canon-)
-                                )
-                               )
-                               (new $-ephemeral-stream-
-                                (new #-ephemeral-canon-
-                                 (canon Hosts_obj_flat_flat.$.[0].hostId $-ephemeral-stream-  #-ephemeral-canon-)
-                                )
-                               )
-                              )
-                              (new $-ephemeral-stream-
-                               (new #-ephemeral-canon-
-                                (canon Hosts_obj_flat_flat.$.[0].workerId $-ephemeral-stream-  #-ephemeral-canon-)
-                               )
-                              )
-                             )
-                             (fail :error:)
-                            )
-                           )
-                           (next w-0-0)
-                          )
-                         )
-                        )
-                        (new $s_test
-                         (seq
-                          (seq
-                           (fold $s s_fold_var
-                            (seq
-                             (seq
-                              (ap s_fold_var $s_test)
-                              (canon Hosts_obj_flat_flat.$.[0].workerId $s_test  #s_iter_canon)
-                             )
-                             (xor
-                              (match #s_iter_canon.length 1
-                               (null)
-                              )
-                              (next s_fold_var)
-                             )
-                            )
-                            (never)
-                           )
-                           (canon Hosts_obj_flat_flat.$.[0].workerId $s_test  #s_result_canon)
-                          )
-                          (ap #s_result_canon s_gate)
-                         )
-                        )
-                       )
-                       (call Hosts_obj_flat_flat.$.[0].workerId ("json" "parse") [s_gate.$.[0]] ret-2)
-                      )
-                     )
-                    )
-                    (new $ipfs_results-0
-                     (new $s-1
-                      (seq
-                       (seq
-                        (seq
-                         (seq
-                          (seq
-                           (seq
-                            (new $option-inline-2
-                             (seq
-                              (seq
-                               (seq
-                                (new $array-inline-2
-                                 (seq
-                                  (seq
-                                   (new %SpellLocation_obj-1_map
-                                    (seq
-                                     (seq
-                                      (seq
-                                       (ap ("hostId" "12D3KooWSMH42NaRdq8uN3pTsBgnJYSZjYrmC1DhBmBXy1hCatrj") %SpellLocation_obj-1_map)
-                                       (ap ("spellId" "4ed24aa7-f796-4db0-a5cf-4863de6faefa") %SpellLocation_obj-1_map)
-                                      )
-                                      (ap ("workerId" "12D3KooWNFVvhwo1vYi17wed7gqwuu1SrVys8dit4Syv4Xr8kQPt") %SpellLocation_obj-1_map)
-                                     )
-                                     (canon Hosts_obj_flat_flat.$.[0].workerId %SpellLocation_obj-1_map  SpellLocation_obj-1)
-                                    )
-                                   )
-                                   (ap SpellLocation_obj-1 $array-inline-2)
-                                  )
-                                  (canon Hosts_obj_flat_flat.$.[0].workerId $array-inline-2  #array-inline-2-0)
-                                 )
-                                )
-                                (new %Host_obj-1_map
-                                 (seq
-                                  (seq
-                                   (seq
-                                    (seq
-                                     (seq
-                                      (ap ("definition" "bafkreibkicou34jhrfycsrx3sc42jnzbtdzbyug4sip547nakawd6umaja") %Host_obj-1_map)
-                                      (ap ("dummyDealId" "dsgWorkerV1_12D3KooWGLCQNpvW6tyjZQD4JcGYRZg6vw7zneRgCi4D8aEdatKe_21233612088348064") %Host_obj-1_map)
-                                     )
-                                     (ap ("installationSpells" #array-inline-2-0) %Host_obj-1_map)
-                                    )
-                                    (ap ("relayId" "12D3KooWSMH42NaRdq8uN3pTsBgnJYSZjYrmC1DhBmBXy1hCatrj") %Host_obj-1_map)
-                                   )
-                                   (ap ("timestamp" "2024-02-19T18:43:56.059Z") %Host_obj-1_map)
-                                  )
-                                  (canon Hosts_obj_flat_flat.$.[0].workerId %Host_obj-1_map  Host_obj-1)
-                                 )
-                                )
-                               )
-                               (xor
-                                (ap Host_obj-1 $option-inline-2)
-                                (null)
-                               )
-                              )
-                              (canon Hosts_obj_flat_flat.$.[0].workerId $option-inline-2  #option-inline-2-0)
-                             )
-                            )
-                            (new %Hosts_obj-1_map
-                             (seq
-                              (ap ("dsgWorkerV1" #option-inline-2-0) %Hosts_obj-1_map)
-                              (canon Hosts_obj_flat_flat.$.[0].workerId %Hosts_obj-1_map  Hosts_obj-1)
-                             )
-                            )
-                           )
-                           (ap Hosts_obj-1.$.dsgWorkerV1 Hosts_obj-1_flat)
-                          )
-                          (ap Hosts_obj-1_flat.$.[0].installationSpells Hosts_obj-1_flat_flat)
-                         )
-                         (fold Hosts_obj-1_flat_flat w-1-0
-                          (seq
-                           (xor
-                            (seq
-                             (seq
-                              (seq
-                               (seq
-                                (seq
-                                 (seq
-                                  (seq
-                                   (seq
-                                    (new $-ephemeral-stream-
-                                     (new #-ephemeral-canon-
-                                      (canon Hosts_obj_flat_flat.$.[0].hostId $-ephemeral-stream-  #-ephemeral-canon-)
-                                     )
-                                    )
-                                    (new $-ephemeral-stream-
-                                     (new #-ephemeral-canon-
-                                      (canon w-1-0.$.hostId $-ephemeral-stream-  #-ephemeral-canon-)
-                                     )
-                                    )
-                                   )
-                                   (call w-1-0.$.workerId ("aqua-ipfs" "dag_get") [tempTask-0.$.publication] ret-3)
-                                  )
-                                  (ap ret-3 $ipfs_results-0)
-                                 )
-                                 (new $ipfs_results-0_test
-                                  (seq
-                                   (seq
-                                    (fold $ipfs_results-0 ipfs_results-0_fold_var
-                                     (seq
-                                      (seq
-                                       (ap ipfs_results-0_fold_var $ipfs_results-0_test)
-                                       (canon w-1-0.$.workerId $ipfs_results-0_test  #ipfs_results-0_iter_canon)
-                                      )
-                                      (xor
-                                       (match #ipfs_results-0_iter_canon.length 1
-                                        (null)
-                                       )
-                                       (next ipfs_results-0_fold_var)
-                                      )
-                                     )
-                                     (never)
-                                    )
-                                    (canon w-1-0.$.workerId $ipfs_results-0_test  #ipfs_results-0_result_canon)
-                                   )
-                                   (ap #ipfs_results-0_result_canon ipfs_results-0_gate)
-                                  )
-                                 )
-                                )
-                                (call w-1-0.$.workerId ("vault" "cat") [ipfs_results-0_gate.$.[0].path] ret-4)
-                               )
-                               (ap ret-4 $s-1)
-                              )
-                              (new $-ephemeral-stream-
-                               (new #-ephemeral-canon-
-                                (canon w-1-0.$.hostId $-ephemeral-stream-  #-ephemeral-canon-)
-                               )
-                              )
-                             )
-                             (new $-ephemeral-stream-
-                              (new #-ephemeral-canon-
-                               (canon Hosts_obj_flat_flat.$.[0].hostId $-ephemeral-stream-  #-ephemeral-canon-)
-                              )
-                             )
-                            )
-                            (seq
-                             (seq
-                              (seq
-                               (new $-ephemeral-stream-
-                                (new #-ephemeral-canon-
-                                 (canon w-1-0.$.hostId $-ephemeral-stream-  #-ephemeral-canon-)
-                                )
-                               )
-                               (new $-ephemeral-stream-
-                                (new #-ephemeral-canon-
-                                 (canon Hosts_obj_flat_flat.$.[0].hostId $-ephemeral-stream-  #-ephemeral-canon-)
-                                )
-                               )
-                              )
-                              (new $-ephemeral-stream-
-                               (new #-ephemeral-canon-
-                                (canon Hosts_obj_flat_flat.$.[0].workerId $-ephemeral-stream-  #-ephemeral-canon-)
-                               )
-                              )
-                             )
-                             (fail :error:)
-                            )
-                           )
-                           (next w-1-0)
-                          )
-                         )
-                        )
-                        (new $s-1_test
-                         (seq
-                          (seq
-                           (fold $s-1 s-1_fold_var
-                            (seq
-                             (seq
-                              (ap s-1_fold_var $s-1_test)
-                              (canon Hosts_obj_flat_flat.$.[0].workerId $s-1_test  #s-1_iter_canon)
-                             )
-                             (xor
-                              (match #s-1_iter_canon.length 1
-                               (null)
-                              )
-                              (next s-1_fold_var)
-                             )
-                            )
-                            (never)
-                           )
-                           (canon Hosts_obj_flat_flat.$.[0].workerId $s-1_test  #s-1_result_canon)
-                          )
-                          (ap #s-1_result_canon s-1_gate)
-                         )
-                        )
-                       )
-                       (call Hosts_obj_flat_flat.$.[0].workerId ("json" "parse") [s-1_gate.$.[0]] ret-5)
-                      )
-                     )
-                    )
-                   )
-                   (new %TuDsgPublishTask_obj_map
-                    (seq
-                     (seq
-                      (seq
-                       (seq
-                        (seq
-                         (ap ("author" ret-2) %TuDsgPublishTask_obj_map)
-                         (ap ("payload" tempTask-0.$.payload) %TuDsgPublishTask_obj_map)
-                        )
-                        (ap ("post_type" tempTask-0.$.post_type) %TuDsgPublishTask_obj_map)
-                       )
-                       (ap ("publication" ret-5) %TuDsgPublishTask_obj_map)
-                      )
-                      (ap ("slug" tempTask-0.$.slug) %TuDsgPublishTask_obj_map)
-                     )
-                     (canon Hosts_obj_flat_flat.$.[0].workerId %TuDsgPublishTask_obj_map  TuDsgPublishTask_obj)
-                    )
-                   )
-                  )
-                  (call Hosts_obj_flat_flat.$.[0].workerId ("tuDsgContent" "persist_single") [TuDsgPublishTask_obj ret.$.multiaddr] ret-6)
-                 )
-                 (ap ret-6 $results)
-                )
-                (next tempTask-0)
-               )
-              )
-             )
-             (new $-ephemeral-stream-
-              (new #-ephemeral-canon-
-               (canon Hosts_obj_flat_flat.$.[0].hostId $-ephemeral-stream-  #-ephemeral-canon-)
-              )
-             )
-            )
-            (new $-ephemeral-stream-
-             (new #-ephemeral-canon-
-              (canon -relay- $-ephemeral-stream-  #-ephemeral-canon-)
-             )
-            )
-           )
-           (seq
-            (seq
-             (seq
-              (ap :error: -if-error-)
-              (xor
-               (seq
-                (seq
-                 (match :error:.$.error_code 10001
-                  (null)
-                 )
-                 (new $-ephemeral-stream-
-                  (new #-ephemeral-canon-
-                   (canon Hosts_obj_flat_flat.$.[0].hostId $-ephemeral-stream-  #-ephemeral-canon-)
-                  )
-                 )
-                )
-                (new $-ephemeral-stream-
-                 (new #-ephemeral-canon-
-                  (canon -relay- $-ephemeral-stream-  #-ephemeral-canon-)
-                 )
-                )
-               )
-               (fail -if-error-)
-              )
-             )
-             (new $-ephemeral-stream-
-              (new #-ephemeral-canon-
-               (canon Hosts_obj_flat_flat.$.[0].hostId $-ephemeral-stream-  #-ephemeral-canon-)
-              )
-             )
-            )
-            (new $-ephemeral-stream-
-             (new #-ephemeral-canon-
-              (canon -relay- $-ephemeral-stream-  #-ephemeral-canon-)
-             )
-            )
-           )
-          )
-         )
-        )
-        (seq
-         (seq
-          (seq
-           (new $-ephemeral-stream-
-            (new #-ephemeral-canon-
-             (canon Hosts_obj_flat_flat.$.[0].hostId $-ephemeral-stream-  #-ephemeral-canon-)
-            )
-           )
-           (new $-ephemeral-stream-
-            (new #-ephemeral-canon-
-             (canon -relay- $-ephemeral-stream-  #-ephemeral-canon-)
-            )
-           )
-          )
-          (new $-ephemeral-stream-
-           (new #-ephemeral-canon-
-            (canon %init_peer_id% $-ephemeral-stream-  #-ephemeral-canon-)
-           )
-          )
-         )
-         (fail :error:)
-        )
-       )
-      )
-      (canon %init_peer_id% $results  #results_canon)
-     )
-     (call %init_peer_id% ("run-console" "print") [#results_canon])
-    )
+    (null)
    )
   )
   (call %init_peer_id% ("callbackSrv" "response") [true])
@@ -697,18 +142,11 @@ export const bulkUpload_script = `
 )
 `;
 
-export function bulkUpload(
-    tasks: { author: string; payload: string; post_type: string; slug: string; publication: string; }[],
-    config?: {ttl?: number}
-): Promise<boolean>;
+export type BulkUploadParams = [tasks: { author: string; payload: string; post_type: string; slug: string; publication: string; }[], config?: {ttl?: number}] | [peer: IFluenceClient$$, tasks: { author: string; payload: string; post_type: string; slug: string; publication: string; }[], config?: {ttl?: number}];
 
-export function bulkUpload(
-    peer: IFluenceClient$$,
-    tasks: { author: string; payload: string; post_type: string; slug: string; publication: string; }[],
-    config?: {ttl?: number}
-): Promise<boolean>;
+export type BulkUploadResult = Promise<boolean>;
 
-export function bulkUpload(...args: any[]) {
+export function bulkUpload(...args: BulkUploadParams): BulkUploadResult {
     return callFunction$$(
         args,
         {
@@ -784,78 +222,61 @@ export const gatherKubos_script = `
       (seq
        (seq
         (seq
-         (seq
+         (new $array-inline
           (seq
-           (new $option-inline
+           (seq
             (seq
-             (seq
+             (new $array-inline-0
               (seq
-               (new $array-inline
-                (seq
-                 (seq
-                  (new %SpellLocation_obj_map
-                   (seq
-                    (seq
-                     (seq
-                      (ap ("hostId" "12D3KooWSMH42NaRdq8uN3pTsBgnJYSZjYrmC1DhBmBXy1hCatrj") %SpellLocation_obj_map)
-                      (ap ("spellId" "4ed24aa7-f796-4db0-a5cf-4863de6faefa") %SpellLocation_obj_map)
-                     )
-                     (ap ("workerId" "12D3KooWNFVvhwo1vYi17wed7gqwuu1SrVys8dit4Syv4Xr8kQPt") %SpellLocation_obj_map)
-                    )
-                    (canon %init_peer_id% %SpellLocation_obj_map  SpellLocation_obj)
-                   )
-                  )
-                  (ap SpellLocation_obj $array-inline)
-                 )
-                 (canon %init_peer_id% $array-inline  #array-inline-0)
-                )
-               )
-               (new %Host_obj_map
-                (seq
+               (seq
+                (new %SpellLocation_obj_map
                  (seq
                   (seq
                    (seq
-                    (seq
-                     (ap ("definition" "bafkreibkicou34jhrfycsrx3sc42jnzbtdzbyug4sip547nakawd6umaja") %Host_obj_map)
-                     (ap ("dummyDealId" "dsgWorkerV1_12D3KooWGLCQNpvW6tyjZQD4JcGYRZg6vw7zneRgCi4D8aEdatKe_21233612088348064") %Host_obj_map)
-                    )
-                    (ap ("installationSpells" #array-inline-0) %Host_obj_map)
+                    (ap ("hostId" "12D3KooWSMH42NaRdq8uN3pTsBgnJYSZjYrmC1DhBmBXy1hCatrj") %SpellLocation_obj_map)
+                    (ap ("spellId" "743113bb-44d3-4544-b7c9-46768eb44b6a") %SpellLocation_obj_map)
                    )
-                   (ap ("relayId" "12D3KooWSMH42NaRdq8uN3pTsBgnJYSZjYrmC1DhBmBXy1hCatrj") %Host_obj_map)
+                   (ap ("workerId" "12D3KooWK7VMoFkhgNkC6BEGi21hVfVcxUKvkTkfWArSrhJRizvk") %SpellLocation_obj_map)
                   )
-                  (ap ("timestamp" "2024-02-19T18:43:56.059Z") %Host_obj_map)
+                  (canon %init_peer_id% %SpellLocation_obj_map  SpellLocation_obj)
                  )
-                 (canon %init_peer_id% %Host_obj_map  Host_obj)
                 )
+                (ap SpellLocation_obj $array-inline-0)
                )
-              )
-              (xor
-               (ap Host_obj $option-inline)
-               (null)
+               (canon %init_peer_id% $array-inline-0  #array-inline-0-0)
               )
              )
-             (canon %init_peer_id% $option-inline  #option-inline-0)
+             (new %Host_obj_map
+              (seq
+               (seq
+                (seq
+                 (seq
+                  (seq
+                   (ap ("definition" "bafkreighfmwh6ij3vblgud2bvbpk6hh43joqcyb3oymqv2bfqinhhr56a4") %Host_obj_map)
+                   (ap ("dummyDealId" "dsgWorkerV3_12D3KooWAD4ShUWoUeoe77EMnosDaicYbjbeHraC6GXsFMQFKhZW_06698790659765042") %Host_obj_map)
+                  )
+                  (ap ("installationSpells" #array-inline-0-0) %Host_obj_map)
+                 )
+                 (ap ("relayId" "12D3KooWSMH42NaRdq8uN3pTsBgnJYSZjYrmC1DhBmBXy1hCatrj") %Host_obj_map)
+                )
+                (ap ("timestamp" "2024-02-29T10:46:19.080Z") %Host_obj_map)
+               )
+               (canon %init_peer_id% %Host_obj_map  Host_obj)
+              )
+             )
             )
+            (ap Host_obj $array-inline)
            )
-           (new %Hosts_obj_map
-            (seq
-             (ap ("dsgWorkerV1" #option-inline-0) %Hosts_obj_map)
-             (canon %init_peer_id% %Hosts_obj_map  Hosts_obj)
-            )
-           )
+           (canon %init_peer_id% $array-inline  #array-inline-1)
           )
-          (ap Hosts_obj.$.dsgWorkerV1 Hosts_obj_flat)
          )
-         (ap Hosts_obj_flat.$.[0].installationSpells Hosts_obj_flat_flat)
+         (ap #array-inline-1.$.[0].installationSpells array-inline-1_flat)
         )
-        (call %init_peer_id% ("run-console" "print") [Hosts_obj_flat_flat])
-       )
-       (fold Hosts_obj_flat_flat w-0
-        (seq
-         (new $res_
-          (new $res
-           (xor
-            (seq
+        (fold array-inline-1_flat w-0
+         (seq
+          (new $res_
+           (new $res
+            (xor
              (seq
               (seq
                (seq
@@ -864,243 +285,247 @@ export const gatherKubos_script = `
                   (seq
                    (seq
                     (seq
+                     (seq
+                      (new $-ephemeral-stream-
+                       (new #-ephemeral-canon-
+                        (canon -relay- $-ephemeral-stream-  #-ephemeral-canon-)
+                       )
+                      )
+                      (new $-ephemeral-stream-
+                       (new #-ephemeral-canon-
+                        (canon w-0.$.hostId $-ephemeral-stream-  #-ephemeral-canon-)
+                       )
+                      )
+                     )
+                     (call w-0.$.workerId ("aqua-ipfs" "get_local_api_multiaddr") [] ret)
+                    )
+                    (ap ret $res)
+                   )
+                   (new $res_test
+                    (seq
+                     (seq
+                      (fold $res res_fold_var
+                       (seq
+                        (seq
+                         (ap res_fold_var $res_test)
+                         (canon w-0.$.workerId $res_test  #res_iter_canon)
+                        )
+                        (xor
+                         (match #res_iter_canon.length 1
+                          (null)
+                         )
+                         (next res_fold_var)
+                        )
+                       )
+                       (never)
+                      )
+                      (canon w-0.$.workerId $res_test  #res_result_canon)
+                     )
+                     (ap #res_result_canon res_gate)
+                    )
+                   )
+                  )
+                  (new -if-error-
+                   (xor
+                    (match res_gate.$.[0].success true
+                     (seq
+                      (new $res_test-0
+                       (seq
+                        (seq
+                         (fold $res res_fold_var-0
+                          (seq
+                           (seq
+                            (ap res_fold_var-0 $res_test-0)
+                            (canon w-0.$.workerId $res_test-0  #res_iter_canon-0)
+                           )
+                           (xor
+                            (match #res_iter_canon-0.length 1
+                             (null)
+                            )
+                            (next res_fold_var-0)
+                           )
+                          )
+                          (never)
+                         )
+                         (canon w-0.$.workerId $res_test-0  #res_result_canon-0)
+                        )
+                        (ap #res_result_canon-0 res_gate-0)
+                       )
+                      )
+                      (ap res_gate-0.$.[0].multiaddr $internals)
+                     )
+                    )
+                    (seq
+                     (ap :error: -if-error-)
+                     (xor
+                      (match :error:.$.error_code 10001
+                       (null)
+                      )
+                      (fail -if-error-)
+                     )
+                    )
+                   )
+                  )
+                 )
+                 (call w-0.$.workerId ("aqua-ipfs" "get_external_api_multiaddr") [] ret-0)
+                )
+                (ap ret-0 $res_)
+               )
+               (new $res__test
+                (seq
+                 (seq
+                  (fold $res_ res__fold_var
+                   (seq
+                    (seq
+                     (ap res__fold_var $res__test)
+                     (canon w-0.$.workerId $res__test  #res__iter_canon)
+                    )
+                    (xor
+                     (match #res__iter_canon.length 1
+                      (null)
+                     )
+                     (next res__fold_var)
+                    )
+                   )
+                   (never)
+                  )
+                  (canon w-0.$.workerId $res__test  #res__result_canon)
+                 )
+                 (ap #res__result_canon res__gate)
+                )
+               )
+              )
+              (new -if-error-
+               (xor
+                (seq
+                 (seq
+                  (match res__gate.$.[0].success true
+                   (seq
+                    (new $res__test-0
+                     (seq
+                      (seq
+                       (fold $res_ res__fold_var-0
+                        (seq
+                         (seq
+                          (ap res__fold_var-0 $res__test-0)
+                          (canon w-0.$.workerId $res__test-0  #res__iter_canon-0)
+                         )
+                         (xor
+                          (match #res__iter_canon-0.length 1
+                           (null)
+                          )
+                          (next res__fold_var-0)
+                         )
+                        )
+                        (never)
+                       )
+                       (canon w-0.$.workerId $res__test-0  #res__result_canon-0)
+                      )
+                      (ap #res__result_canon-0 res__gate-0)
+                     )
+                    )
+                    (ap res__gate-0.$.[0].multiaddr $externals)
+                   )
+                  )
+                  (new $-ephemeral-stream-
+                   (new #-ephemeral-canon-
+                    (canon w-0.$.hostId $-ephemeral-stream-  #-ephemeral-canon-)
+                   )
+                  )
+                 )
+                 (new $-ephemeral-stream-
+                  (new #-ephemeral-canon-
+                   (canon -relay- $-ephemeral-stream-  #-ephemeral-canon-)
+                  )
+                 )
+                )
+                (seq
+                 (seq
+                  (seq
+                   (ap :error: -if-error-)
+                   (xor
+                    (seq
+                     (seq
+                      (match :error:.$.error_code 10001
+                       (null)
+                      )
+                      (new $-ephemeral-stream-
+                       (new #-ephemeral-canon-
+                        (canon w-0.$.hostId $-ephemeral-stream-  #-ephemeral-canon-)
+                       )
+                      )
+                     )
                      (new $-ephemeral-stream-
                       (new #-ephemeral-canon-
                        (canon -relay- $-ephemeral-stream-  #-ephemeral-canon-)
                       )
                      )
-                     (new $-ephemeral-stream-
-                      (new #-ephemeral-canon-
-                       (canon w-0.$.hostId $-ephemeral-stream-  #-ephemeral-canon-)
-                      )
-                     )
                     )
-                    (call w-0.$.workerId ("aqua-ipfs" "get_local_api_multiaddr") [] ret)
-                   )
-                   (ap ret $res)
-                  )
-                  (new $res_test
-                   (seq
-                    (seq
-                     (fold $res res_fold_var
-                      (seq
-                       (seq
-                        (ap res_fold_var $res_test)
-                        (canon w-0.$.workerId $res_test  #res_iter_canon)
-                       )
-                       (xor
-                        (match #res_iter_canon.length 1
-                         (null)
-                        )
-                        (next res_fold_var)
-                       )
-                      )
-                      (never)
-                     )
-                     (canon w-0.$.workerId $res_test  #res_result_canon)
-                    )
-                    (ap #res_result_canon res_gate)
+                    (fail -if-error-)
                    )
                   )
-                 )
-                 (new -if-error-
-                  (xor
-                   (match res_gate.$.[0].success true
-                    (seq
-                     (new $res_test-0
-                      (seq
-                       (seq
-                        (fold $res res_fold_var-0
-                         (seq
-                          (seq
-                           (ap res_fold_var-0 $res_test-0)
-                           (canon w-0.$.workerId $res_test-0  #res_iter_canon-0)
-                          )
-                          (xor
-                           (match #res_iter_canon-0.length 1
-                            (null)
-                           )
-                           (next res_fold_var-0)
-                          )
-                         )
-                         (never)
-                        )
-                        (canon w-0.$.workerId $res_test-0  #res_result_canon-0)
-                       )
-                       (ap #res_result_canon-0 res_gate-0)
-                      )
-                     )
-                     (ap res_gate-0.$.[0].multiaddr $internals)
-                    )
+                  (new $-ephemeral-stream-
+                   (new #-ephemeral-canon-
+                    (canon w-0.$.hostId $-ephemeral-stream-  #-ephemeral-canon-)
                    )
-                   (seq
-                    (ap :error: -if-error-)
-                    (xor
-                     (match :error:.$.error_code 10001
-                      (null)
-                     )
-                     (fail -if-error-)
-                    )
-                   )
-                  )
-                 )
-                )
-                (call w-0.$.workerId ("aqua-ipfs" "get_external_api_multiaddr") [] ret-0)
-               )
-               (ap ret-0 $res_)
-              )
-              (new $res__test
-               (seq
-                (seq
-                 (fold $res_ res__fold_var
-                  (seq
-                   (seq
-                    (ap res__fold_var $res__test)
-                    (canon w-0.$.workerId $res__test  #res__iter_canon)
-                   )
-                   (xor
-                    (match #res__iter_canon.length 1
-                     (null)
-                    )
-                    (next res__fold_var)
-                   )
-                  )
-                  (never)
-                 )
-                 (canon w-0.$.workerId $res__test  #res__result_canon)
-                )
-                (ap #res__result_canon res__gate)
-               )
-              )
-             )
-             (new -if-error-
-              (xor
-               (seq
-                (seq
-                 (match res__gate.$.[0].success true
-                  (seq
-                   (new $res__test-0
-                    (seq
-                     (seq
-                      (fold $res_ res__fold_var-0
-                       (seq
-                        (seq
-                         (ap res__fold_var-0 $res__test-0)
-                         (canon w-0.$.workerId $res__test-0  #res__iter_canon-0)
-                        )
-                        (xor
-                         (match #res__iter_canon-0.length 1
-                          (null)
-                         )
-                         (next res__fold_var-0)
-                        )
-                       )
-                       (never)
-                      )
-                      (canon w-0.$.workerId $res__test-0  #res__result_canon-0)
-                     )
-                     (ap #res__result_canon-0 res__gate-0)
-                    )
-                   )
-                   (ap res__gate-0.$.[0].multiaddr $externals)
                   )
                  )
                  (new $-ephemeral-stream-
                   (new #-ephemeral-canon-
-                   (canon w-0.$.hostId $-ephemeral-stream-  #-ephemeral-canon-)
+                   (canon -relay- $-ephemeral-stream-  #-ephemeral-canon-)
                   )
-                 )
-                )
-                (new $-ephemeral-stream-
-                 (new #-ephemeral-canon-
-                  (canon -relay- $-ephemeral-stream-  #-ephemeral-canon-)
-                 )
-                )
-               )
-               (seq
-                (seq
-                 (seq
-                  (ap :error: -if-error-)
-                  (xor
-                   (seq
-                    (seq
-                     (match :error:.$.error_code 10001
-                      (null)
-                     )
-                     (new $-ephemeral-stream-
-                      (new #-ephemeral-canon-
-                       (canon w-0.$.hostId $-ephemeral-stream-  #-ephemeral-canon-)
-                      )
-                     )
-                    )
-                    (new $-ephemeral-stream-
-                     (new #-ephemeral-canon-
-                      (canon -relay- $-ephemeral-stream-  #-ephemeral-canon-)
-                     )
-                    )
-                   )
-                   (fail -if-error-)
-                  )
-                 )
-                 (new $-ephemeral-stream-
-                  (new #-ephemeral-canon-
-                   (canon w-0.$.hostId $-ephemeral-stream-  #-ephemeral-canon-)
-                  )
-                 )
-                )
-                (new $-ephemeral-stream-
-                 (new #-ephemeral-canon-
-                  (canon -relay- $-ephemeral-stream-  #-ephemeral-canon-)
                  )
                 )
                )
               )
              )
-            )
-            (seq
              (seq
               (seq
-               (new $-ephemeral-stream-
-                (new #-ephemeral-canon-
-                 (canon w-0.$.hostId $-ephemeral-stream-  #-ephemeral-canon-)
+               (seq
+                (new $-ephemeral-stream-
+                 (new #-ephemeral-canon-
+                  (canon w-0.$.hostId $-ephemeral-stream-  #-ephemeral-canon-)
+                 )
+                )
+                (new $-ephemeral-stream-
+                 (new #-ephemeral-canon-
+                  (canon -relay- $-ephemeral-stream-  #-ephemeral-canon-)
+                 )
                 )
                )
                (new $-ephemeral-stream-
                 (new #-ephemeral-canon-
-                 (canon -relay- $-ephemeral-stream-  #-ephemeral-canon-)
+                 (canon %init_peer_id% $-ephemeral-stream-  #-ephemeral-canon-)
                 )
                )
               )
-              (new $-ephemeral-stream-
-               (new #-ephemeral-canon-
-                (canon %init_peer_id% $-ephemeral-stream-  #-ephemeral-canon-)
-               )
-              )
+              (fail :error:)
              )
-             (fail :error:)
             )
            )
           )
+          (next w-0)
          )
-         (next w-0)
+         (null)
         )
        )
-      )
-      (new %Kubos_obj_map
-       (seq
+       (new %Kubos_obj_map
         (seq
          (seq
           (seq
-           (canon %init_peer_id% $externals  #externals_canon)
-           (canon %init_peer_id% $internals  #internals_canon)
+           (seq
+            (canon %init_peer_id% $externals  #externals_canon)
+            (canon %init_peer_id% $internals  #internals_canon)
+           )
+           (ap ("externals" #externals_canon) %Kubos_obj_map)
           )
-          (ap ("externals" #externals_canon) %Kubos_obj_map)
+          (ap ("internals" #internals_canon) %Kubos_obj_map)
          )
-         (ap ("internals" #internals_canon) %Kubos_obj_map)
+         (canon %init_peer_id% %Kubos_obj_map  Kubos_obj)
         )
-        (canon %init_peer_id% %Kubos_obj_map  Kubos_obj)
        )
       )
+      (call %init_peer_id% ("run-console" "print") [Kubos_obj])
      )
     )
    )
@@ -1111,18 +536,13 @@ export const gatherKubos_script = `
 )
 `;
 
-export type GatherKubosResult = { externals: string[]; internals: string[]; }
+export type GatherKubosResultType = { externals: string[]; internals: string[]; }
 
-export function gatherKubos(
-    config?: {ttl?: number}
-): Promise<GatherKubosResult>;
+export type GatherKubosParams = [config?: {ttl?: number}] | [peer: IFluenceClient$$, config?: {ttl?: number}];
 
-export function gatherKubos(
-    peer: IFluenceClient$$,
-    config?: {ttl?: number}
-): Promise<GatherKubosResult>;
+export type GatherKubosResult = Promise<GatherKubosResultType>;
 
-export function gatherKubos(...args: any[]) {
+export function gatherKubos(...args: GatherKubosParams): GatherKubosResult {
     return callFunction$$(
         args,
         {
@@ -1196,590 +616,499 @@ export const renderOnDSG_script = `
             (seq
              (seq
               (seq
-               (new $ipfs_results
-                (new $s
+               (seq
+                (seq
                  (seq
                   (seq
-                   (seq
-                    (seq
+                   (new $ipfs_results
+                    (new $s
                      (seq
                       (seq
-                       (new $option-inline
+                       (seq
                         (seq
-                         (seq
+                         (new $array-inline
                           (seq
-                           (new $array-inline
+                           (seq
                             (seq
-                             (seq
-                              (new %SpellLocation_obj_map
+                             (new $array-inline-0
+                              (seq
                                (seq
-                                (seq
+                                (new %SpellLocation_obj_map
                                  (seq
-                                  (ap ("hostId" "12D3KooWSMH42NaRdq8uN3pTsBgnJYSZjYrmC1DhBmBXy1hCatrj") %SpellLocation_obj_map)
-                                  (ap ("spellId" "4ed24aa7-f796-4db0-a5cf-4863de6faefa") %SpellLocation_obj_map)
+                                  (seq
+                                   (seq
+                                    (ap ("hostId" "12D3KooWSMH42NaRdq8uN3pTsBgnJYSZjYrmC1DhBmBXy1hCatrj") %SpellLocation_obj_map)
+                                    (ap ("spellId" "743113bb-44d3-4544-b7c9-46768eb44b6a") %SpellLocation_obj_map)
+                                   )
+                                   (ap ("workerId" "12D3KooWK7VMoFkhgNkC6BEGi21hVfVcxUKvkTkfWArSrhJRizvk") %SpellLocation_obj_map)
+                                  )
+                                  (canon %init_peer_id% %SpellLocation_obj_map  SpellLocation_obj)
                                  )
-                                 (ap ("workerId" "12D3KooWNFVvhwo1vYi17wed7gqwuu1SrVys8dit4Syv4Xr8kQPt") %SpellLocation_obj_map)
                                 )
-                                (canon %init_peer_id% %SpellLocation_obj_map  SpellLocation_obj)
+                                (ap SpellLocation_obj $array-inline-0)
                                )
+                               (canon %init_peer_id% $array-inline-0  #array-inline-0-0)
                               )
-                              (ap SpellLocation_obj $array-inline)
                              )
-                             (canon %init_peer_id% $array-inline  #array-inline-0)
-                            )
-                           )
-                           (new %Host_obj_map
-                            (seq
-                             (seq
+                             (new %Host_obj_map
                               (seq
                                (seq
                                 (seq
-                                 (ap ("definition" "bafkreibkicou34jhrfycsrx3sc42jnzbtdzbyug4sip547nakawd6umaja") %Host_obj_map)
-                                 (ap ("dummyDealId" "dsgWorkerV1_12D3KooWGLCQNpvW6tyjZQD4JcGYRZg6vw7zneRgCi4D8aEdatKe_21233612088348064") %Host_obj_map)
+                                 (seq
+                                  (seq
+                                   (ap ("definition" "bafkreighfmwh6ij3vblgud2bvbpk6hh43joqcyb3oymqv2bfqinhhr56a4") %Host_obj_map)
+                                   (ap ("dummyDealId" "dsgWorkerV3_12D3KooWAD4ShUWoUeoe77EMnosDaicYbjbeHraC6GXsFMQFKhZW_06698790659765042") %Host_obj_map)
+                                  )
+                                  (ap ("installationSpells" #array-inline-0-0) %Host_obj_map)
+                                 )
+                                 (ap ("relayId" "12D3KooWSMH42NaRdq8uN3pTsBgnJYSZjYrmC1DhBmBXy1hCatrj") %Host_obj_map)
                                 )
-                                (ap ("installationSpells" #array-inline-0) %Host_obj_map)
+                                (ap ("timestamp" "2024-02-29T10:46:19.080Z") %Host_obj_map)
                                )
-                               (ap ("relayId" "12D3KooWSMH42NaRdq8uN3pTsBgnJYSZjYrmC1DhBmBXy1hCatrj") %Host_obj_map)
+                               (canon %init_peer_id% %Host_obj_map  Host_obj)
                               )
-                              (ap ("timestamp" "2024-02-19T18:43:56.059Z") %Host_obj_map)
                              )
-                             (canon %init_peer_id% %Host_obj_map  Host_obj)
                             )
+                            (ap Host_obj $array-inline)
                            )
-                          )
-                          (xor
-                           (ap Host_obj $option-inline)
-                           (null)
+                           (canon %init_peer_id% $array-inline  #array-inline-1)
                           )
                          )
-                         (canon %init_peer_id% $option-inline  #option-inline-0)
+                         (ap #array-inline-1.$.[0].installationSpells array-inline-1_flat)
                         )
-                       )
-                       (new %Hosts_obj_map
-                        (seq
-                         (ap ("dsgWorkerV1" #option-inline-0) %Hosts_obj_map)
-                         (canon %init_peer_id% %Hosts_obj_map  Hosts_obj)
-                        )
-                       )
-                      )
-                      (ap Hosts_obj.$.dsgWorkerV1 Hosts_obj_flat)
-                     )
-                     (ap Hosts_obj_flat.$.[0].installationSpells Hosts_obj_flat_flat)
-                    )
-                    (fold Hosts_obj_flat_flat w-0-0
-                     (seq
-                      (xor
-                       (seq
-                        (seq
+                        (fold array-inline-1_flat w-0-0
                          (seq
-                          (seq
+                          (xor
                            (seq
                             (seq
                              (seq
                               (seq
-                               (new $-ephemeral-stream-
-                                (new #-ephemeral-canon-
-                                 (canon -relay- $-ephemeral-stream-  #-ephemeral-canon-)
-                                )
-                               )
-                               (new $-ephemeral-stream-
-                                (new #-ephemeral-canon-
-                                 (canon w-0-0.$.hostId $-ephemeral-stream-  #-ephemeral-canon-)
-                                )
-                               )
-                              )
-                              (call w-0-0.$.workerId ("aqua-ipfs" "dag_get") [-tempTask-arg-.$.author] ret)
-                             )
-                             (ap ret $ipfs_results)
-                            )
-                            (new $ipfs_results_test
-                             (seq
-                              (seq
-                               (fold $ipfs_results ipfs_results_fold_var
+                               (seq
                                 (seq
                                  (seq
-                                  (ap ipfs_results_fold_var $ipfs_results_test)
-                                  (canon w-0-0.$.workerId $ipfs_results_test  #ipfs_results_iter_canon)
-                                 )
-                                 (xor
-                                  (match #ipfs_results_iter_canon.length 1
-                                   (null)
+                                  (seq
+                                   (new $-ephemeral-stream-
+                                    (new #-ephemeral-canon-
+                                     (canon -relay- $-ephemeral-stream-  #-ephemeral-canon-)
+                                    )
+                                   )
+                                   (new $-ephemeral-stream-
+                                    (new #-ephemeral-canon-
+                                     (canon w-0-0.$.hostId $-ephemeral-stream-  #-ephemeral-canon-)
+                                    )
+                                   )
                                   )
-                                  (next ipfs_results_fold_var)
+                                  (call w-0-0.$.workerId ("aqua-ipfs" "dag_get") [-tempTask-arg-.$.author] ret)
+                                 )
+                                 (ap ret $ipfs_results)
+                                )
+                                (new $ipfs_results_test
+                                 (seq
+                                  (seq
+                                   (fold $ipfs_results ipfs_results_fold_var
+                                    (seq
+                                     (seq
+                                      (ap ipfs_results_fold_var $ipfs_results_test)
+                                      (canon w-0-0.$.workerId $ipfs_results_test  #ipfs_results_iter_canon)
+                                     )
+                                     (xor
+                                      (match #ipfs_results_iter_canon.length 1
+                                       (null)
+                                      )
+                                      (next ipfs_results_fold_var)
+                                     )
+                                    )
+                                    (never)
+                                   )
+                                   (canon w-0-0.$.workerId $ipfs_results_test  #ipfs_results_result_canon)
+                                  )
+                                  (ap #ipfs_results_result_canon ipfs_results_gate)
                                  )
                                 )
-                                (never)
                                )
-                               (canon w-0-0.$.workerId $ipfs_results_test  #ipfs_results_result_canon)
+                               (call w-0-0.$.workerId ("vault" "cat") [ipfs_results_gate.$.[0].path] ret-0)
                               )
-                              (ap #ipfs_results_result_canon ipfs_results_gate)
+                              (ap ret-0 $s)
+                             )
+                             (new $-ephemeral-stream-
+                              (new #-ephemeral-canon-
+                               (canon w-0-0.$.hostId $-ephemeral-stream-  #-ephemeral-canon-)
+                              )
+                             )
+                            )
+                            (new $-ephemeral-stream-
+                             (new #-ephemeral-canon-
+                              (canon -relay- $-ephemeral-stream-  #-ephemeral-canon-)
                              )
                             )
                            )
-                           (call w-0-0.$.workerId ("vault" "cat") [ipfs_results_gate.$.[0].path] ret-0)
+                           (seq
+                            (seq
+                             (seq
+                              (new $-ephemeral-stream-
+                               (new #-ephemeral-canon-
+                                (canon w-0-0.$.hostId $-ephemeral-stream-  #-ephemeral-canon-)
+                               )
+                              )
+                              (new $-ephemeral-stream-
+                               (new #-ephemeral-canon-
+                                (canon -relay- $-ephemeral-stream-  #-ephemeral-canon-)
+                               )
+                              )
+                             )
+                             (new $-ephemeral-stream-
+                              (new #-ephemeral-canon-
+                               (canon %init_peer_id% $-ephemeral-stream-  #-ephemeral-canon-)
+                              )
+                             )
+                            )
+                            (fail :error:)
+                           )
                           )
-                          (ap ret-0 $s)
+                          (next w-0-0)
                          )
-                         (new $-ephemeral-stream-
-                          (new #-ephemeral-canon-
-                           (canon w-0-0.$.hostId $-ephemeral-stream-  #-ephemeral-canon-)
-                          )
-                         )
-                        )
-                        (new $-ephemeral-stream-
-                         (new #-ephemeral-canon-
-                          (canon -relay- $-ephemeral-stream-  #-ephemeral-canon-)
-                         )
+                         (null)
                         )
                        )
-                       (seq
+                       (new $s_test
                         (seq
                          (seq
-                          (new $-ephemeral-stream-
-                           (new #-ephemeral-canon-
-                            (canon w-0-0.$.hostId $-ephemeral-stream-  #-ephemeral-canon-)
+                          (fold $s s_fold_var
+                           (seq
+                            (seq
+                             (ap s_fold_var $s_test)
+                             (canon %init_peer_id% $s_test  #s_iter_canon)
+                            )
+                            (xor
+                             (match #s_iter_canon.length 1
+                              (null)
+                             )
+                             (next s_fold_var)
+                            )
                            )
+                           (never)
                           )
-                          (new $-ephemeral-stream-
-                           (new #-ephemeral-canon-
-                            (canon -relay- $-ephemeral-stream-  #-ephemeral-canon-)
-                           )
-                          )
+                          (canon %init_peer_id% $s_test  #s_result_canon)
                          )
-                         (new $-ephemeral-stream-
-                          (new #-ephemeral-canon-
-                           (canon %init_peer_id% $-ephemeral-stream-  #-ephemeral-canon-)
-                          )
-                         )
+                         (ap #s_result_canon s_gate)
                         )
-                        (fail :error:)
                        )
                       )
-                      (next w-0-0)
+                      (call %init_peer_id% ("json" "parse") [s_gate.$.[0]] ret-1)
                      )
                     )
                    )
-                   (new $s_test
-                    (seq
-                     (seq
-                      (fold $s s_fold_var
-                       (seq
-                        (seq
-                         (ap s_fold_var $s_test)
-                         (canon %init_peer_id% $s_test  #s_iter_canon)
-                        )
-                        (xor
-                         (match #s_iter_canon.length 1
-                          (null)
-                         )
-                         (next s_fold_var)
-                        )
-                       )
-                       (never)
-                      )
-                      (canon %init_peer_id% $s_test  #s_result_canon)
-                     )
-                     (ap #s_result_canon s_gate)
-                    )
-                   )
-                  )
-                  (call %init_peer_id% ("json" "parse") [s_gate.$.[0]] ret-1)
-                 )
-                )
-               )
-               (new $ipfs_results-0
-                (new $s-1
-                 (seq
-                  (seq
-                   (seq
-                    (seq
+                   (new $ipfs_results-0
+                    (new $s-1
                      (seq
                       (seq
-                       (new $option-inline-1
+                       (seq
                         (seq
-                         (seq
+                         (new $array-inline-2
                           (seq
-                           (new $array-inline-1
+                           (seq
                             (seq
-                             (seq
-                              (new %SpellLocation_obj-0_map
+                             (new $array-inline-3
+                              (seq
                                (seq
-                                (seq
+                                (new %SpellLocation_obj-0_map
                                  (seq
-                                  (ap ("hostId" "12D3KooWSMH42NaRdq8uN3pTsBgnJYSZjYrmC1DhBmBXy1hCatrj") %SpellLocation_obj-0_map)
-                                  (ap ("spellId" "4ed24aa7-f796-4db0-a5cf-4863de6faefa") %SpellLocation_obj-0_map)
+                                  (seq
+                                   (seq
+                                    (ap ("hostId" "12D3KooWSMH42NaRdq8uN3pTsBgnJYSZjYrmC1DhBmBXy1hCatrj") %SpellLocation_obj-0_map)
+                                    (ap ("spellId" "743113bb-44d3-4544-b7c9-46768eb44b6a") %SpellLocation_obj-0_map)
+                                   )
+                                   (ap ("workerId" "12D3KooWK7VMoFkhgNkC6BEGi21hVfVcxUKvkTkfWArSrhJRizvk") %SpellLocation_obj-0_map)
+                                  )
+                                  (canon %init_peer_id% %SpellLocation_obj-0_map  SpellLocation_obj-0)
                                  )
-                                 (ap ("workerId" "12D3KooWNFVvhwo1vYi17wed7gqwuu1SrVys8dit4Syv4Xr8kQPt") %SpellLocation_obj-0_map)
                                 )
-                                (canon %init_peer_id% %SpellLocation_obj-0_map  SpellLocation_obj-0)
+                                (ap SpellLocation_obj-0 $array-inline-3)
                                )
+                               (canon %init_peer_id% $array-inline-3  #array-inline-3-0)
                               )
-                              (ap SpellLocation_obj-0 $array-inline-1)
                              )
-                             (canon %init_peer_id% $array-inline-1  #array-inline-1-0)
-                            )
-                           )
-                           (new %Host_obj-0_map
-                            (seq
-                             (seq
+                             (new %Host_obj-0_map
                               (seq
                                (seq
                                 (seq
-                                 (ap ("definition" "bafkreibkicou34jhrfycsrx3sc42jnzbtdzbyug4sip547nakawd6umaja") %Host_obj-0_map)
-                                 (ap ("dummyDealId" "dsgWorkerV1_12D3KooWGLCQNpvW6tyjZQD4JcGYRZg6vw7zneRgCi4D8aEdatKe_21233612088348064") %Host_obj-0_map)
+                                 (seq
+                                  (seq
+                                   (ap ("definition" "bafkreighfmwh6ij3vblgud2bvbpk6hh43joqcyb3oymqv2bfqinhhr56a4") %Host_obj-0_map)
+                                   (ap ("dummyDealId" "dsgWorkerV3_12D3KooWAD4ShUWoUeoe77EMnosDaicYbjbeHraC6GXsFMQFKhZW_06698790659765042") %Host_obj-0_map)
+                                  )
+                                  (ap ("installationSpells" #array-inline-3-0) %Host_obj-0_map)
+                                 )
+                                 (ap ("relayId" "12D3KooWSMH42NaRdq8uN3pTsBgnJYSZjYrmC1DhBmBXy1hCatrj") %Host_obj-0_map)
                                 )
-                                (ap ("installationSpells" #array-inline-1-0) %Host_obj-0_map)
+                                (ap ("timestamp" "2024-02-29T10:46:19.080Z") %Host_obj-0_map)
                                )
-                               (ap ("relayId" "12D3KooWSMH42NaRdq8uN3pTsBgnJYSZjYrmC1DhBmBXy1hCatrj") %Host_obj-0_map)
+                               (canon %init_peer_id% %Host_obj-0_map  Host_obj-0)
                               )
-                              (ap ("timestamp" "2024-02-19T18:43:56.059Z") %Host_obj-0_map)
                              )
-                             (canon %init_peer_id% %Host_obj-0_map  Host_obj-0)
                             )
+                            (ap Host_obj-0 $array-inline-2)
                            )
-                          )
-                          (xor
-                           (ap Host_obj-0 $option-inline-1)
-                           (null)
+                           (canon %init_peer_id% $array-inline-2  #array-inline-2-0)
                           )
                          )
-                         (canon %init_peer_id% $option-inline-1  #option-inline-1-0)
+                         (ap #array-inline-2-0.$.[0].installationSpells array-inline-2-0_flat)
                         )
-                       )
-                       (new %Hosts_obj-0_map
-                        (seq
-                         (ap ("dsgWorkerV1" #option-inline-1-0) %Hosts_obj-0_map)
-                         (canon %init_peer_id% %Hosts_obj-0_map  Hosts_obj-0)
-                        )
-                       )
-                      )
-                      (ap Hosts_obj-0.$.dsgWorkerV1 Hosts_obj-0_flat)
-                     )
-                     (ap Hosts_obj-0_flat.$.[0].installationSpells Hosts_obj-0_flat_flat)
-                    )
-                    (fold Hosts_obj-0_flat_flat w-1-0
-                     (seq
-                      (xor
-                       (seq
-                        (seq
+                        (fold array-inline-2-0_flat w-1-0
                          (seq
-                          (seq
+                          (xor
                            (seq
                             (seq
                              (seq
                               (seq
-                               (new $-ephemeral-stream-
-                                (new #-ephemeral-canon-
-                                 (canon -relay- $-ephemeral-stream-  #-ephemeral-canon-)
-                                )
-                               )
-                               (new $-ephemeral-stream-
-                                (new #-ephemeral-canon-
-                                 (canon w-1-0.$.hostId $-ephemeral-stream-  #-ephemeral-canon-)
-                                )
-                               )
-                              )
-                              (call w-1-0.$.workerId ("aqua-ipfs" "dag_get") [-tempTask-arg-.$.publication] ret-2)
-                             )
-                             (ap ret-2 $ipfs_results-0)
-                            )
-                            (new $ipfs_results-0_test
-                             (seq
-                              (seq
-                               (fold $ipfs_results-0 ipfs_results-0_fold_var
+                               (seq
                                 (seq
                                  (seq
-                                  (ap ipfs_results-0_fold_var $ipfs_results-0_test)
-                                  (canon w-1-0.$.workerId $ipfs_results-0_test  #ipfs_results-0_iter_canon)
-                                 )
-                                 (xor
-                                  (match #ipfs_results-0_iter_canon.length 1
-                                   (null)
+                                  (seq
+                                   (new $-ephemeral-stream-
+                                    (new #-ephemeral-canon-
+                                     (canon -relay- $-ephemeral-stream-  #-ephemeral-canon-)
+                                    )
+                                   )
+                                   (new $-ephemeral-stream-
+                                    (new #-ephemeral-canon-
+                                     (canon w-1-0.$.hostId $-ephemeral-stream-  #-ephemeral-canon-)
+                                    )
+                                   )
                                   )
-                                  (next ipfs_results-0_fold_var)
+                                  (call w-1-0.$.workerId ("aqua-ipfs" "dag_get") [-tempTask-arg-.$.publication] ret-2)
+                                 )
+                                 (ap ret-2 $ipfs_results-0)
+                                )
+                                (new $ipfs_results-0_test
+                                 (seq
+                                  (seq
+                                   (fold $ipfs_results-0 ipfs_results-0_fold_var
+                                    (seq
+                                     (seq
+                                      (ap ipfs_results-0_fold_var $ipfs_results-0_test)
+                                      (canon w-1-0.$.workerId $ipfs_results-0_test  #ipfs_results-0_iter_canon)
+                                     )
+                                     (xor
+                                      (match #ipfs_results-0_iter_canon.length 1
+                                       (null)
+                                      )
+                                      (next ipfs_results-0_fold_var)
+                                     )
+                                    )
+                                    (never)
+                                   )
+                                   (canon w-1-0.$.workerId $ipfs_results-0_test  #ipfs_results-0_result_canon)
+                                  )
+                                  (ap #ipfs_results-0_result_canon ipfs_results-0_gate)
                                  )
                                 )
-                                (never)
                                )
-                               (canon w-1-0.$.workerId $ipfs_results-0_test  #ipfs_results-0_result_canon)
+                               (call w-1-0.$.workerId ("vault" "cat") [ipfs_results-0_gate.$.[0].path] ret-3)
                               )
-                              (ap #ipfs_results-0_result_canon ipfs_results-0_gate)
+                              (ap ret-3 $s-1)
+                             )
+                             (new $-ephemeral-stream-
+                              (new #-ephemeral-canon-
+                               (canon w-1-0.$.hostId $-ephemeral-stream-  #-ephemeral-canon-)
+                              )
+                             )
+                            )
+                            (new $-ephemeral-stream-
+                             (new #-ephemeral-canon-
+                              (canon -relay- $-ephemeral-stream-  #-ephemeral-canon-)
                              )
                             )
                            )
-                           (call w-1-0.$.workerId ("vault" "cat") [ipfs_results-0_gate.$.[0].path] ret-3)
+                           (seq
+                            (seq
+                             (seq
+                              (new $-ephemeral-stream-
+                               (new #-ephemeral-canon-
+                                (canon w-1-0.$.hostId $-ephemeral-stream-  #-ephemeral-canon-)
+                               )
+                              )
+                              (new $-ephemeral-stream-
+                               (new #-ephemeral-canon-
+                                (canon -relay- $-ephemeral-stream-  #-ephemeral-canon-)
+                               )
+                              )
+                             )
+                             (new $-ephemeral-stream-
+                              (new #-ephemeral-canon-
+                               (canon %init_peer_id% $-ephemeral-stream-  #-ephemeral-canon-)
+                              )
+                             )
+                            )
+                            (fail :error:)
+                           )
                           )
-                          (ap ret-3 $s-1)
+                          (next w-1-0)
                          )
-                         (new $-ephemeral-stream-
-                          (new #-ephemeral-canon-
-                           (canon w-1-0.$.hostId $-ephemeral-stream-  #-ephemeral-canon-)
-                          )
-                         )
-                        )
-                        (new $-ephemeral-stream-
-                         (new #-ephemeral-canon-
-                          (canon -relay- $-ephemeral-stream-  #-ephemeral-canon-)
-                         )
+                         (null)
                         )
                        )
+                       (new $s-1_test
+                        (seq
+                         (seq
+                          (fold $s-1 s-1_fold_var
+                           (seq
+                            (seq
+                             (ap s-1_fold_var $s-1_test)
+                             (canon %init_peer_id% $s-1_test  #s-1_iter_canon)
+                            )
+                            (xor
+                             (match #s-1_iter_canon.length 1
+                              (null)
+                             )
+                             (next s-1_fold_var)
+                            )
+                           )
+                           (never)
+                          )
+                          (canon %init_peer_id% $s-1_test  #s-1_result_canon)
+                         )
+                         (ap #s-1_result_canon s-1_gate)
+                        )
+                       )
+                      )
+                      (call %init_peer_id% ("json" "parse") [s-1_gate.$.[0]] ret-4)
+                     )
+                    )
+                   )
+                  )
+                  (new %TuDsgPublishTask_obj_map
+                   (seq
+                    (seq
+                     (seq
+                      (seq
+                       (seq
+                        (ap ("author" ret-1) %TuDsgPublishTask_obj_map)
+                        (ap ("payload" -tempTask-arg-.$.payload) %TuDsgPublishTask_obj_map)
+                       )
+                       (ap ("post_type" -tempTask-arg-.$.post_type) %TuDsgPublishTask_obj_map)
+                      )
+                      (ap ("publication" ret-4) %TuDsgPublishTask_obj_map)
+                     )
+                     (ap ("slug" -tempTask-arg-.$.slug) %TuDsgPublishTask_obj_map)
+                    )
+                    (canon %init_peer_id% %TuDsgPublishTask_obj_map  TuDsgPublishTask_obj)
+                   )
+                  )
+                 )
+                 (call %init_peer_id% ("run-console" "print") [TuDsgPublishTask_obj])
+                )
+                (new $option-inline
+                 (seq
+                  (seq
+                   (seq
+                    (new $array-inline-4
+                     (seq
+                      (seq
+                       (new %SpellLocation_obj-1_map
+                        (seq
+                         (seq
+                          (seq
+                           (ap ("hostId" "12D3KooWSMH42NaRdq8uN3pTsBgnJYSZjYrmC1DhBmBXy1hCatrj") %SpellLocation_obj-1_map)
+                           (ap ("spellId" "05b0a957-afe0-4056-99c1-63d421cebe9f") %SpellLocation_obj-1_map)
+                          )
+                          (ap ("workerId" "12D3KooWD1NWe6JxtS1UWAuSmwys9VZZbQaSTFKykTWKmaVxY5MQ") %SpellLocation_obj-1_map)
+                         )
+                         (canon %init_peer_id% %SpellLocation_obj-1_map  SpellLocation_obj-1)
+                        )
+                       )
+                       (ap SpellLocation_obj-1 $array-inline-4)
+                      )
+                      (canon %init_peer_id% $array-inline-4  #array-inline-4-0)
+                     )
+                    )
+                    (new %Host_obj-1_map
+                     (seq
+                      (seq
                        (seq
                         (seq
                          (seq
-                          (new $-ephemeral-stream-
-                           (new #-ephemeral-canon-
-                            (canon w-1-0.$.hostId $-ephemeral-stream-  #-ephemeral-canon-)
-                           )
-                          )
-                          (new $-ephemeral-stream-
-                           (new #-ephemeral-canon-
-                            (canon -relay- $-ephemeral-stream-  #-ephemeral-canon-)
-                           )
-                          )
+                          (ap ("definition" "bafkreienbxzaz4cn5ri4m5h2gcdm4if67rbmfy5xmgkoegebjv6vunchrm") %Host_obj-1_map)
+                          (ap ("dummyDealId" "devWorkerV0_12D3KooWAD4ShUWoUeoe77EMnosDaicYbjbeHraC6GXsFMQFKhZW_6847503897257674") %Host_obj-1_map)
                          )
-                         (new $-ephemeral-stream-
-                          (new #-ephemeral-canon-
-                           (canon %init_peer_id% $-ephemeral-stream-  #-ephemeral-canon-)
-                          )
-                         )
+                         (ap ("installationSpells" #array-inline-4-0) %Host_obj-1_map)
                         )
-                        (fail :error:)
+                        (ap ("relayId" "12D3KooWSMH42NaRdq8uN3pTsBgnJYSZjYrmC1DhBmBXy1hCatrj") %Host_obj-1_map)
                        )
+                       (ap ("timestamp" "2024-02-29T11:32:26.267Z") %Host_obj-1_map)
                       )
-                      (next w-1-0)
+                      (canon %init_peer_id% %Host_obj-1_map  Host_obj-1)
                      )
                     )
                    )
-                   (new $s-1_test
-                    (seq
-                     (seq
-                      (fold $s-1 s-1_fold_var
-                       (seq
-                        (seq
-                         (ap s-1_fold_var $s-1_test)
-                         (canon %init_peer_id% $s-1_test  #s-1_iter_canon)
-                        )
-                        (xor
-                         (match #s-1_iter_canon.length 1
-                          (null)
-                         )
-                         (next s-1_fold_var)
-                        )
-                       )
-                       (never)
-                      )
-                      (canon %init_peer_id% $s-1_test  #s-1_result_canon)
-                     )
-                     (ap #s-1_result_canon s-1_gate)
-                    )
-                   )
-                  )
-                  (call %init_peer_id% ("json" "parse") [s-1_gate.$.[0]] ret-4)
-                 )
-                )
-               )
-              )
-              (new %TuDsgPublishTask_obj_map
-               (seq
-                (seq
-                 (seq
-                  (seq
-                   (seq
-                    (ap ("author" ret-1) %TuDsgPublishTask_obj_map)
-                    (ap ("payload" -tempTask-arg-.$.payload) %TuDsgPublishTask_obj_map)
-                   )
-                   (ap ("post_type" -tempTask-arg-.$.post_type) %TuDsgPublishTask_obj_map)
-                  )
-                  (ap ("publication" ret-4) %TuDsgPublishTask_obj_map)
-                 )
-                 (ap ("slug" -tempTask-arg-.$.slug) %TuDsgPublishTask_obj_map)
-                )
-                (canon %init_peer_id% %TuDsgPublishTask_obj_map  TuDsgPublishTask_obj)
-               )
-              )
-             )
-             (new $option-inline-2
-              (seq
-               (seq
-                (seq
-                 (new $array-inline-2
-                  (seq
-                   (seq
-                    (new %SpellLocation_obj-1_map
-                     (seq
-                      (seq
-                       (seq
-                        (ap ("hostId" "12D3KooWSMH42NaRdq8uN3pTsBgnJYSZjYrmC1DhBmBXy1hCatrj") %SpellLocation_obj-1_map)
-                        (ap ("spellId" "4ed24aa7-f796-4db0-a5cf-4863de6faefa") %SpellLocation_obj-1_map)
-                       )
-                       (ap ("workerId" "12D3KooWNFVvhwo1vYi17wed7gqwuu1SrVys8dit4Syv4Xr8kQPt") %SpellLocation_obj-1_map)
-                      )
-                      (canon %init_peer_id% %SpellLocation_obj-1_map  SpellLocation_obj-1)
-                     )
-                    )
-                    (ap SpellLocation_obj-1 $array-inline-2)
-                   )
-                   (canon %init_peer_id% $array-inline-2  #array-inline-2-0)
-                  )
-                 )
-                 (new %Host_obj-1_map
-                  (seq
-                   (seq
-                    (seq
-                     (seq
-                      (seq
-                       (ap ("definition" "bafkreibkicou34jhrfycsrx3sc42jnzbtdzbyug4sip547nakawd6umaja") %Host_obj-1_map)
-                       (ap ("dummyDealId" "dsgWorkerV1_12D3KooWGLCQNpvW6tyjZQD4JcGYRZg6vw7zneRgCi4D8aEdatKe_21233612088348064") %Host_obj-1_map)
-                      )
-                      (ap ("installationSpells" #array-inline-2-0) %Host_obj-1_map)
-                     )
-                     (ap ("relayId" "12D3KooWSMH42NaRdq8uN3pTsBgnJYSZjYrmC1DhBmBXy1hCatrj") %Host_obj-1_map)
-                    )
-                    (ap ("timestamp" "2024-02-19T18:43:56.059Z") %Host_obj-1_map)
-                   )
-                   (canon %init_peer_id% %Host_obj-1_map  Host_obj-1)
-                  )
-                 )
-                )
-                (xor
-                 (ap Host_obj-1 $option-inline-2)
-                 (null)
-                )
-               )
-               (canon %init_peer_id% $option-inline-2  #option-inline-2-0)
-              )
-             )
-            )
-            (new %Hosts_obj-1_map
-             (seq
-              (ap ("dsgWorkerV1" #option-inline-2-0) %Hosts_obj-1_map)
-              (canon %init_peer_id% %Hosts_obj-1_map  Hosts_obj-1)
-             )
-            )
-           )
-           (ap Hosts_obj-1.$.dsgWorkerV1 Hosts_obj-1_flat)
-          )
-          (ap Hosts_obj-1_flat.$.[0].installationSpells Hosts_obj-1_flat_flat)
-         )
-         (xor
-          (seq
-           (seq
-            (seq
-             (new $-ephemeral-stream-
-              (new #-ephemeral-canon-
-               (canon -relay- $-ephemeral-stream-  #-ephemeral-canon-)
-              )
-             )
-             (new $-ephemeral-stream-
-              (new #-ephemeral-canon-
-               (canon Hosts_obj-1_flat_flat.$.[0].hostId $-ephemeral-stream-  #-ephemeral-canon-)
-              )
-             )
-            )
-            (call Hosts_obj-1_flat_flat.$.[0].workerId ("aqua-ipfs" "get_local_api_multiaddr") [] ret-5)
-           )
-           (new -if-error-
-            (xor
-             (seq
-              (seq
-               (match ret-5.$.success true
-                (seq
-                 (seq
-                  (seq
-                   (seq
-                    (seq
-                     (seq
-                      (seq
-                       (seq
-                        (call Hosts_obj-1_flat_flat.$.[0].workerId ("tuDsgContent" "persist_single") [TuDsgPublishTask_obj ret-5.$.multiaddr] ret-6)
-                        (call Hosts_obj-1_flat_flat.$.[0].workerId ("tuDsgContent" "create_render_objects") [TuDsgPublishTask_obj ret-6 ret-5.$.multiaddr] ret-7)
-                       )
-                       (ap ret-7 $queue)
-                      )
-                      (call Hosts_obj-1_flat_flat.$.[0].workerId ("tuDsgRenderer" "imports") [-archive_cid-arg- TuDsgPublishTask_obj.$.publication ret-5.$.multiaddr] ret-8)
-                     )
-                     (ap ret-8 $debug)
-                    )
-                    (canon Hosts_obj-1_flat_flat.$.[0].workerId $queue  #queue_canon)
-                   )
-                   (fold #queue_canon ros-0
-                    (seq
-                     (fold ros-0 ro-0
-                      (seq
-                       (seq
-                        (call Hosts_obj-1_flat_flat.$.[0].workerId ("tuDsgRenderer" "single") [ro-0 ret-5.$.multiaddr] ret-9)
-                        (ap ret-9 $results)
-                       )
-                       (next ro-0)
-                      )
-                     )
-                     (next ros-0)
-                    )
-                   )
-                  )
-                  (call Hosts_obj-1_flat_flat.$.[0].workerId ("tuDsgRenderer" "collect") [TuDsgPublishTask_obj.$.publication.name ret-5.$.multiaddr] ret-10)
-                 )
-                 (ap ret-10 $results)
-                )
-               )
-               (new $-ephemeral-stream-
-                (new #-ephemeral-canon-
-                 (canon Hosts_obj-1_flat_flat.$.[0].hostId $-ephemeral-stream-  #-ephemeral-canon-)
-                )
-               )
-              )
-              (new $-ephemeral-stream-
-               (new #-ephemeral-canon-
-                (canon -relay- $-ephemeral-stream-  #-ephemeral-canon-)
-               )
-              )
-             )
-             (seq
-              (seq
-               (seq
-                (ap :error: -if-error-)
-                (xor
-                 (seq
-                  (seq
-                   (match :error:.$.error_code 10001
+                   (xor
+                    (ap Host_obj-1 $option-inline)
                     (null)
                    )
-                   (new $-ephemeral-stream-
-                    (new #-ephemeral-canon-
-                     (canon Hosts_obj-1_flat_flat.$.[0].hostId $-ephemeral-stream-  #-ephemeral-canon-)
-                    )
-                   )
                   )
-                  (new $-ephemeral-stream-
-                   (new #-ephemeral-canon-
-                    (canon -relay- $-ephemeral-stream-  #-ephemeral-canon-)
-                   )
-                  )
+                  (canon %init_peer_id% $option-inline  #option-inline-0)
                  )
-                 (fail -if-error-)
                 )
                )
-               (new $-ephemeral-stream-
-                (new #-ephemeral-canon-
-                 (canon Hosts_obj-1_flat_flat.$.[0].hostId $-ephemeral-stream-  #-ephemeral-canon-)
+               (new %Hosts_obj_map
+                (seq
+                 (ap ("devWorkerV0" #option-inline-0) %Hosts_obj_map)
+                 (canon %init_peer_id% %Hosts_obj_map  Hosts_obj)
                 )
+               )
+              )
+              (ap Hosts_obj.$.devWorkerV0 Hosts_obj_flat)
+             )
+             (ap Hosts_obj_flat.$.[0].installationSpells Hosts_obj_flat_flat)
+            )
+            (call %init_peer_id% ("run-console" "print") [Hosts_obj_flat_flat.$.[0]])
+           )
+           (xor
+            (seq
+             (seq
+              (seq
+               (seq
+                (seq
+                 (seq
+                  (seq
+                   (seq
+                    (seq
+                     (seq
+                      (new $-ephemeral-stream-
+                       (new #-ephemeral-canon-
+                        (canon -relay- $-ephemeral-stream-  #-ephemeral-canon-)
+                       )
+                      )
+                      (new $-ephemeral-stream-
+                       (new #-ephemeral-canon-
+                        (canon Hosts_obj_flat_flat.$.[0].hostId $-ephemeral-stream-  #-ephemeral-canon-)
+                       )
+                      )
+                     )
+                     (call Hosts_obj_flat_flat.$.[0].workerId ("aqua-ipfs" "dag_get") [TuDsgPublishTask_obj.$.author.content_mappings] ret-5)
+                    )
+                    (call Hosts_obj_flat_flat.$.[0].workerId ("vault" "cat") [ret-5.$.path] ret-6)
+                   )
+                   (call Hosts_obj_flat_flat.$.[0].workerId ("tuDsgContent" "map") [TuDsgPublishTask_obj ret-6] ret-7)
+                  )
+                  (call Hosts_obj_flat_flat.$.[0].workerId ("tuContentTable" "insert") [ret-7] ret-8)
+                 )
+                 (call Hosts_obj_flat_flat.$.[0].workerId ("tuDsgContent" "pebble") [TuDsgPublishTask_obj ret-7] ret-9)
+                )
+                (ap ret-9 $queue)
+               )
+               (fold ret-9.$.template.ripples ripple-0
+                (seq
+                 (call Hosts_obj_flat_flat.$.[0].workerId ("tuContentTable" "queryRipple") [ripple-0] ret-10)
+                 (next ripple-0)
+                )
+                (null)
                )
               )
               (new $-ephemeral-stream-
                (new #-ephemeral-canon-
-                (canon -relay- $-ephemeral-stream-  #-ephemeral-canon-)
+                (canon Hosts_obj_flat_flat.$.[0].hostId $-ephemeral-stream-  #-ephemeral-canon-)
                )
-              )
-             )
-            )
-           )
-          )
-          (seq
-           (seq
-            (seq
-             (new $-ephemeral-stream-
-              (new #-ephemeral-canon-
-               (canon Hosts_obj-1_flat_flat.$.[0].hostId $-ephemeral-stream-  #-ephemeral-canon-)
               )
              )
              (new $-ephemeral-stream-
@@ -1788,15 +1117,33 @@ export const renderOnDSG_script = `
               )
              )
             )
-            (new $-ephemeral-stream-
-             (new #-ephemeral-canon-
-              (canon %init_peer_id% $-ephemeral-stream-  #-ephemeral-canon-)
+            (seq
+             (seq
+              (seq
+               (new $-ephemeral-stream-
+                (new #-ephemeral-canon-
+                 (canon Hosts_obj_flat_flat.$.[0].hostId $-ephemeral-stream-  #-ephemeral-canon-)
+                )
+               )
+               (new $-ephemeral-stream-
+                (new #-ephemeral-canon-
+                 (canon -relay- $-ephemeral-stream-  #-ephemeral-canon-)
+                )
+               )
+              )
+              (new $-ephemeral-stream-
+               (new #-ephemeral-canon-
+                (canon %init_peer_id% $-ephemeral-stream-  #-ephemeral-canon-)
+               )
+              )
              )
+             (fail :error:)
             )
            )
-           (fail :error:)
           )
+          (canon %init_peer_id% $queue  #queue_canon)
          )
+         (call %init_peer_id% ("run-console" "print") [#queue_canon])
         )
         (canon %init_peer_id% $debug  #debug_canon)
        )
@@ -1815,20 +1162,11 @@ export const renderOnDSG_script = `
 
 export type RenderOnDSGArgTempTask = { author: string; payload: string; post_type: string; slug: string; publication: string; }
 
-export function renderOnDSG(
-    tempTask: RenderOnDSGArgTempTask,
-    archive_cid: string,
-    config?: {ttl?: number}
-): Promise<{ errors: string[]; results: string[]; }[]>;
+export type RenderOnDSGParams = [tempTask: RenderOnDSGArgTempTask, archive_cid: string, config?: {ttl?: number}] | [peer: IFluenceClient$$, tempTask: RenderOnDSGArgTempTask, archive_cid: string, config?: {ttl?: number}];
 
-export function renderOnDSG(
-    peer: IFluenceClient$$,
-    tempTask: RenderOnDSGArgTempTask,
-    archive_cid: string,
-    config?: {ttl?: number}
-): Promise<{ errors: string[]; results: string[]; }[]>;
+export type RenderOnDSGResult = Promise<{ errors: string[]; output: number[][]; results: string[]; }[]>;
 
-export function renderOnDSG(...args: any[]) {
+export function renderOnDSG(...args: RenderOnDSGParams): RenderOnDSGResult {
     return callFunction$$(
         args,
         {
@@ -1879,6 +1217,16 @@ export function renderOnDSG(...args: any[]) {
                                 "type": {
                                     "name": "string",
                                     "tag": "scalar"
+                                },
+                                "tag": "array"
+                            },
+                            "output": {
+                                "type": {
+                                    "type": {
+                                        "name": "u8",
+                                        "tag": "scalar"
+                                    },
+                                    "tag": "array"
                                 },
                                 "tag": "array"
                             },
@@ -1941,71 +1289,57 @@ export const bulkRender_script = `
               (seq
                (seq
                 (seq
-                 (seq
+                 (new $array-inline
                   (seq
-                   (new $option-inline
+                   (seq
                     (seq
-                     (seq
+                     (new $array-inline-0
                       (seq
-                       (new $array-inline
-                        (seq
-                         (seq
-                          (new %SpellLocation_obj_map
-                           (seq
-                            (seq
-                             (seq
-                              (ap ("hostId" "12D3KooWSMH42NaRdq8uN3pTsBgnJYSZjYrmC1DhBmBXy1hCatrj") %SpellLocation_obj_map)
-                              (ap ("spellId" "4ed24aa7-f796-4db0-a5cf-4863de6faefa") %SpellLocation_obj_map)
-                             )
-                             (ap ("workerId" "12D3KooWNFVvhwo1vYi17wed7gqwuu1SrVys8dit4Syv4Xr8kQPt") %SpellLocation_obj_map)
-                            )
-                            (canon %init_peer_id% %SpellLocation_obj_map  SpellLocation_obj)
-                           )
-                          )
-                          (ap SpellLocation_obj $array-inline)
-                         )
-                         (canon %init_peer_id% $array-inline  #array-inline-0)
-                        )
-                       )
-                       (new %Host_obj_map
-                        (seq
+                       (seq
+                        (new %SpellLocation_obj_map
                          (seq
                           (seq
                            (seq
-                            (seq
-                             (ap ("definition" "bafkreibkicou34jhrfycsrx3sc42jnzbtdzbyug4sip547nakawd6umaja") %Host_obj_map)
-                             (ap ("dummyDealId" "dsgWorkerV1_12D3KooWGLCQNpvW6tyjZQD4JcGYRZg6vw7zneRgCi4D8aEdatKe_21233612088348064") %Host_obj_map)
-                            )
-                            (ap ("installationSpells" #array-inline-0) %Host_obj_map)
+                            (ap ("hostId" "12D3KooWSMH42NaRdq8uN3pTsBgnJYSZjYrmC1DhBmBXy1hCatrj") %SpellLocation_obj_map)
+                            (ap ("spellId" "743113bb-44d3-4544-b7c9-46768eb44b6a") %SpellLocation_obj_map)
                            )
-                           (ap ("relayId" "12D3KooWSMH42NaRdq8uN3pTsBgnJYSZjYrmC1DhBmBXy1hCatrj") %Host_obj_map)
+                           (ap ("workerId" "12D3KooWK7VMoFkhgNkC6BEGi21hVfVcxUKvkTkfWArSrhJRizvk") %SpellLocation_obj_map)
                           )
-                          (ap ("timestamp" "2024-02-19T18:43:56.059Z") %Host_obj_map)
+                          (canon %init_peer_id% %SpellLocation_obj_map  SpellLocation_obj)
                          )
-                         (canon %init_peer_id% %Host_obj_map  Host_obj)
                         )
+                        (ap SpellLocation_obj $array-inline-0)
                        )
-                      )
-                      (xor
-                       (ap Host_obj $option-inline)
-                       (null)
+                       (canon %init_peer_id% $array-inline-0  #array-inline-0-0)
                       )
                      )
-                     (canon %init_peer_id% $option-inline  #option-inline-0)
+                     (new %Host_obj_map
+                      (seq
+                       (seq
+                        (seq
+                         (seq
+                          (seq
+                           (ap ("definition" "bafkreighfmwh6ij3vblgud2bvbpk6hh43joqcyb3oymqv2bfqinhhr56a4") %Host_obj_map)
+                           (ap ("dummyDealId" "dsgWorkerV3_12D3KooWAD4ShUWoUeoe77EMnosDaicYbjbeHraC6GXsFMQFKhZW_06698790659765042") %Host_obj_map)
+                          )
+                          (ap ("installationSpells" #array-inline-0-0) %Host_obj_map)
+                         )
+                         (ap ("relayId" "12D3KooWSMH42NaRdq8uN3pTsBgnJYSZjYrmC1DhBmBXy1hCatrj") %Host_obj_map)
+                        )
+                        (ap ("timestamp" "2024-02-29T10:46:19.080Z") %Host_obj_map)
+                       )
+                       (canon %init_peer_id% %Host_obj_map  Host_obj)
+                      )
+                     )
                     )
+                    (ap Host_obj $array-inline)
                    )
-                   (new %Hosts_obj_map
-                    (seq
-                     (ap ("dsgWorkerV1" #option-inline-0) %Hosts_obj_map)
-                     (canon %init_peer_id% %Hosts_obj_map  Hosts_obj)
-                    )
-                   )
+                   (canon %init_peer_id% $array-inline  #array-inline-1)
                   )
-                  (ap Hosts_obj.$.dsgWorkerV1 Hosts_obj_flat)
                  )
-                 (ap Hosts_obj_flat.$.[0].installationSpells Hosts_obj_flat_flat)
+                 (ap #array-inline-1.$.[0].installationSpells array-inline-1_flat)
                 )
-                (fold Hosts_obj_flat_flat w-0-0
+                (fold array-inline-1_flat w-0-0
                  (seq
                   (xor
                    (seq
@@ -2096,6 +1430,7 @@ export const bulkRender_script = `
                   )
                   (next w-0-0)
                  )
+                 (null)
                 )
                )
                (new $s_test
@@ -2128,11 +1463,11 @@ export const bulkRender_script = `
            )
            (call %init_peer_id% ("run-console" "print") [ret-1])
           )
-          (new $option-inline-1
+          (new $option-inline
            (seq
             (seq
              (seq
-              (new $array-inline-1
+              (new $array-inline-2
                (seq
                 (seq
                  (new %SpellLocation_obj-0_map
@@ -2140,16 +1475,16 @@ export const bulkRender_script = `
                    (seq
                     (seq
                      (ap ("hostId" "12D3KooWSMH42NaRdq8uN3pTsBgnJYSZjYrmC1DhBmBXy1hCatrj") %SpellLocation_obj-0_map)
-                     (ap ("spellId" "4ed24aa7-f796-4db0-a5cf-4863de6faefa") %SpellLocation_obj-0_map)
+                     (ap ("spellId" "05b0a957-afe0-4056-99c1-63d421cebe9f") %SpellLocation_obj-0_map)
                     )
-                    (ap ("workerId" "12D3KooWNFVvhwo1vYi17wed7gqwuu1SrVys8dit4Syv4Xr8kQPt") %SpellLocation_obj-0_map)
+                    (ap ("workerId" "12D3KooWD1NWe6JxtS1UWAuSmwys9VZZbQaSTFKykTWKmaVxY5MQ") %SpellLocation_obj-0_map)
                    )
                    (canon %init_peer_id% %SpellLocation_obj-0_map  SpellLocation_obj-0)
                   )
                  )
-                 (ap SpellLocation_obj-0 $array-inline-1)
+                 (ap SpellLocation_obj-0 $array-inline-2)
                 )
-                (canon %init_peer_id% $array-inline-1  #array-inline-1-0)
+                (canon %init_peer_id% $array-inline-2  #array-inline-2-0)
                )
               )
               (new %Host_obj-0_map
@@ -2158,38 +1493,38 @@ export const bulkRender_script = `
                  (seq
                   (seq
                    (seq
-                    (ap ("definition" "bafkreibkicou34jhrfycsrx3sc42jnzbtdzbyug4sip547nakawd6umaja") %Host_obj-0_map)
-                    (ap ("dummyDealId" "dsgWorkerV1_12D3KooWGLCQNpvW6tyjZQD4JcGYRZg6vw7zneRgCi4D8aEdatKe_21233612088348064") %Host_obj-0_map)
+                    (ap ("definition" "bafkreienbxzaz4cn5ri4m5h2gcdm4if67rbmfy5xmgkoegebjv6vunchrm") %Host_obj-0_map)
+                    (ap ("dummyDealId" "devWorkerV0_12D3KooWAD4ShUWoUeoe77EMnosDaicYbjbeHraC6GXsFMQFKhZW_6847503897257674") %Host_obj-0_map)
                    )
-                   (ap ("installationSpells" #array-inline-1-0) %Host_obj-0_map)
+                   (ap ("installationSpells" #array-inline-2-0) %Host_obj-0_map)
                   )
                   (ap ("relayId" "12D3KooWSMH42NaRdq8uN3pTsBgnJYSZjYrmC1DhBmBXy1hCatrj") %Host_obj-0_map)
                  )
-                 (ap ("timestamp" "2024-02-19T18:43:56.059Z") %Host_obj-0_map)
+                 (ap ("timestamp" "2024-02-29T11:32:26.267Z") %Host_obj-0_map)
                 )
                 (canon %init_peer_id% %Host_obj-0_map  Host_obj-0)
                )
               )
              )
              (xor
-              (ap Host_obj-0 $option-inline-1)
+              (ap Host_obj-0 $option-inline)
               (null)
              )
             )
-            (canon %init_peer_id% $option-inline-1  #option-inline-1-0)
+            (canon %init_peer_id% $option-inline  #option-inline-0)
            )
           )
          )
-         (new %Hosts_obj-0_map
+         (new %Hosts_obj_map
           (seq
-           (ap ("dsgWorkerV1" #option-inline-1-0) %Hosts_obj-0_map)
-           (canon %init_peer_id% %Hosts_obj-0_map  Hosts_obj-0)
+           (ap ("devWorkerV0" #option-inline-0) %Hosts_obj_map)
+           (canon %init_peer_id% %Hosts_obj_map  Hosts_obj)
           )
          )
         )
-        (ap Hosts_obj-0.$.dsgWorkerV1 Hosts_obj-0_flat)
+        (ap Hosts_obj.$.devWorkerV0 Hosts_obj_flat)
        )
-       (ap Hosts_obj-0_flat.$.[0].installationSpells Hosts_obj-0_flat_flat)
+       (ap Hosts_obj_flat.$.[0].installationSpells Hosts_obj_flat_flat)
       )
       (xor
        (seq
@@ -2202,11 +1537,11 @@ export const bulkRender_script = `
           )
           (new $-ephemeral-stream-
            (new #-ephemeral-canon-
-            (canon Hosts_obj-0_flat_flat.$.[0].hostId $-ephemeral-stream-  #-ephemeral-canon-)
+            (canon Hosts_obj_flat_flat.$.[0].hostId $-ephemeral-stream-  #-ephemeral-canon-)
            )
           )
          )
-         (call Hosts_obj-0_flat_flat.$.[0].workerId ("aqua-ipfs" "get_local_api_multiaddr") [] ret-2)
+         (call Hosts_obj_flat_flat.$.[0].workerId ("aqua-ipfs" "get_local_api_multiaddr") [] ret-2)
         )
         (new -if-error-
          (xor
@@ -2219,12 +1554,12 @@ export const bulkRender_script = `
                 (seq
                  (seq
                   (seq
-                   (call Hosts_obj-0_flat_flat.$.[0].workerId ("tuDsgContent" "bulk") [ret-1 -post_type-arg- ret-2.$.multiaddr] ret-3)
+                   (call Hosts_obj_flat_flat.$.[0].workerId ("tuDsgContent" "bulk") [ret-1 -post_type-arg- ret-2.$.multiaddr] ret-3)
                    (ap ret-3 $queue)
                   )
-                  (call Hosts_obj-0_flat_flat.$.[0].workerId ("tuDsgRenderer" "imports") [-archive_cid-arg- ret-1 ret-2.$.multiaddr] ret-4)
+                  (call Hosts_obj_flat_flat.$.[0].workerId ("tuDsgRenderer" "imports") [-archive_cid-arg- ret-1 ret-2.$.multiaddr] ret-4)
                  )
-                 (canon Hosts_obj-0_flat_flat.$.[0].workerId $queue  #queue_canon)
+                 (canon Hosts_obj_flat_flat.$.[0].workerId $queue  #queue_canon)
                 )
                 (fold #queue_canon ros-0
                  (seq
@@ -2232,26 +1567,28 @@ export const bulkRender_script = `
                    (seq
                     (seq
                      (seq
-                      (call Hosts_obj-0_flat_flat.$.[0].workerId ("tuDsgRenderer" "single") [ro-0 ret-2.$.multiaddr] ret-5)
+                      (call Hosts_obj_flat_flat.$.[0].workerId ("tuDsgRenderer" "single") [ro-0 ret-2.$.multiaddr] ret-5)
                       (ap ret-5 $results)
                      )
-                     (call Hosts_obj-0_flat_flat.$.[0].workerId ("peer" "timeout") [10 "buffering not to overload tableland"] ret-6)
+                     (call Hosts_obj_flat_flat.$.[0].workerId ("peer" "timeout") [10 "buffering not to overload tableland"] ret-6)
                     )
                     (next ro-0)
                    )
+                   (null)
                   )
                   (next ros-0)
                  )
+                 (null)
                 )
                )
-               (call Hosts_obj-0_flat_flat.$.[0].workerId ("tuDsgRenderer" "collect") [ret-1.$.name ret-2.$.multiaddr] ret-7)
+               (call Hosts_obj_flat_flat.$.[0].workerId ("tuDsgRenderer" "collect") [ret-1.$.name ret-2.$.multiaddr] ret-7)
               )
               (ap ret-7 $results)
              )
             )
             (new $-ephemeral-stream-
              (new #-ephemeral-canon-
-              (canon Hosts_obj-0_flat_flat.$.[0].hostId $-ephemeral-stream-  #-ephemeral-canon-)
+              (canon Hosts_obj_flat_flat.$.[0].hostId $-ephemeral-stream-  #-ephemeral-canon-)
              )
             )
            )
@@ -2273,7 +1610,7 @@ export const bulkRender_script = `
                 )
                 (new $-ephemeral-stream-
                  (new #-ephemeral-canon-
-                  (canon Hosts_obj-0_flat_flat.$.[0].hostId $-ephemeral-stream-  #-ephemeral-canon-)
+                  (canon Hosts_obj_flat_flat.$.[0].hostId $-ephemeral-stream-  #-ephemeral-canon-)
                  )
                 )
                )
@@ -2288,7 +1625,7 @@ export const bulkRender_script = `
             )
             (new $-ephemeral-stream-
              (new #-ephemeral-canon-
-              (canon Hosts_obj-0_flat_flat.$.[0].hostId $-ephemeral-stream-  #-ephemeral-canon-)
+              (canon Hosts_obj_flat_flat.$.[0].hostId $-ephemeral-stream-  #-ephemeral-canon-)
              )
             )
            )
@@ -2306,7 +1643,7 @@ export const bulkRender_script = `
          (seq
           (new $-ephemeral-stream-
            (new #-ephemeral-canon-
-            (canon Hosts_obj-0_flat_flat.$.[0].hostId $-ephemeral-stream-  #-ephemeral-canon-)
+            (canon Hosts_obj_flat_flat.$.[0].hostId $-ephemeral-stream-  #-ephemeral-canon-)
            )
           )
           (new $-ephemeral-stream-
@@ -2335,22 +1672,11 @@ export const bulkRender_script = `
 )
 `;
 
-export function bulkRender(
-    publication_cid: string,
-    post_type: string,
-    archive_cid: string,
-    config?: {ttl?: number}
-): Promise<{ errors: string[]; results: string[]; }[]>;
+export type BulkRenderParams = [publication_cid: string, post_type: string, archive_cid: string, config?: {ttl?: number}] | [peer: IFluenceClient$$, publication_cid: string, post_type: string, archive_cid: string, config?: {ttl?: number}];
 
-export function bulkRender(
-    peer: IFluenceClient$$,
-    publication_cid: string,
-    post_type: string,
-    archive_cid: string,
-    config?: {ttl?: number}
-): Promise<{ errors: string[]; results: string[]; }[]>;
+export type BulkRenderResult = Promise<{ errors: string[]; output: number[][]; results: string[]; }[]>;
 
-export function bulkRender(...args: any[]) {
+export function bulkRender(...args: BulkRenderParams): BulkRenderResult {
     return callFunction$$(
         args,
         {
@@ -2383,6 +1709,16 @@ export function bulkRender(...args: any[]) {
                                 "type": {
                                     "name": "string",
                                     "tag": "scalar"
+                                },
+                                "tag": "array"
+                            },
+                            "output": {
+                                "type": {
+                                    "type": {
+                                        "name": "u8",
+                                        "tag": "scalar"
+                                    },
+                                    "tag": "array"
                                 },
                                 "tag": "array"
                             },

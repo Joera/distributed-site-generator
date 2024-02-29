@@ -1,0 +1,34 @@
+aqua PersistedHosts declares *
+
+data SpellLocation:
+    hostId: string
+    spellId: string
+    workerId: string
+
+data Host:
+    definition: string
+    installationSpells: []SpellLocation
+    timestamp: string
+    relayId: string
+    dummyDealId: string
+
+data Hosts:
+    dsgWorkerV0: ?Host
+    dsgWorkerV1: ?Host
+
+func get() -> []Host:
+    <- [
+            Host(
+                definition="bafkreighfmwh6ij3vblgud2bvbpk6hh43joqcyb3oymqv2bfqinhhr56a4",
+                installationSpells=[
+                    SpellLocation(
+                        hostId="12D3KooWSMH42NaRdq8uN3pTsBgnJYSZjYrmC1DhBmBXy1hCatrj",
+                        spellId="743113bb-44d3-4544-b7c9-46768eb44b6a",
+                        workerId="12D3KooWK7VMoFkhgNkC6BEGi21hVfVcxUKvkTkfWArSrhJRizvk"
+                    )
+                ],
+                timestamp="2024-02-29T10:46:19.080Z",
+                relayId="12D3KooWSMH42NaRdq8uN3pTsBgnJYSZjYrmC1DhBmBXy1hCatrj",
+                dummyDealId="dsgWorkerV3_12D3KooWAD4ShUWoUeoe77EMnosDaicYbjbeHraC6GXsFMQFKhZW_06698790659765042"
+            )
+        ]

@@ -19,7 +19,7 @@ pub fn extract(cid: &String, external_path: &String, aliased_path: &String, kubo
     let call_data = marine_rs_sdk::get_call_parameters();
     let mut am_result = AquaMarineResult::new();
 
-    let workdir = format!("/.fluence/v1/services/workdir/{}", call_data.service_id);
+    let workdir = format!("/.fluence/services/workdir/{}", call_data.service_id);
     let pubdir = format!("{}{}", workdir, external_path);
 
     let url =  format!("{}/api/v0/cat?arg={}", to_url(kubo_multiaddr), cid);
@@ -27,16 +27,20 @@ pub fn extract(cid: &String, external_path: &String, aliased_path: &String, kubo
     let response = curl(
         vec![
             String::from("-s"),
+            String::from("-m"),
+            String::from("1"),
             String::from("-X"),
             String::from("POST"),
             url
         ]
     );
  
+    // println!("{:?}", response.stderr);
+    // println!("{:?}", response.stdout);
 
     let res = fs::write(PathBuf::from("/templates/tmp.car"), response.stdout);
 
-    let _ = fs::create_dir_all(
+    let _ = fs::create_dir_all( 
         PathBuf::from(
             &aliased_path
         )
@@ -66,7 +70,7 @@ pub fn archive(path: &String, kubo_multiaddr: &String) -> AquaMarineResult {
     let calldata = marine_rs_sdk::get_call_parameters();
     let mut am_result = AquaMarineResult::new();
 
-    let workdir = format!("/.fluence/v1/services/workdir/{}", calldata.service_id);
+    let workdir = format!("/.fluence/services/workdir/{}", calldata.service_id);
     let archive = format!("{}/publication/archive.car",workdir);
 
     am_result = am_result.merge_mounted_binary_result(

@@ -8,5 +8,6 @@ name = "tu_dsg_types"
 path = "lib.rs"
 
 [dependencies]
-marine-rs-sdk = "0.10.0"
+marine-rs-sdk = "0.10.3"
 serde = "1.0.171"
+serde_json = "1.0.108"

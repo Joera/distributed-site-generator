@@ -1,3 +1,5 @@
+aqua Services declares *
+
 import "./types"
 
 service TuDsgPublicationFromJson("json"):
@@ -15,18 +17,31 @@ service TuDsgPublish("tuDsgPublish"):
 
 service TuDsgContent("tuDsgContent"):
   bulk(publication: TuDsgPublication, post_type: string, subnet_kubo: string) -> []TuDsgRenderObject
-  persist_single(task: TuDsgPublishTask, subnet_kubo: string) -> string
-  create_render_objects(task: TuDsgPublishTask, body_cid: string, subnet_kubo: string) ->  []TuDsgRenderObject
+  map(task: TuDsgPublishTask, mappings: string) -> []u8
+  pebble(task: TuDsgPublishTask, content: []u8) ->  TuDsgRenderObject
+  ripple(task: TuDsgPublishTask, ripple: TuDsgRipple, content: []u8) ->  TuDsgRenderObject
   test() -> TuDsgContentData
 
 service TuDsgDb("tuDsgDb"):
   store(content: TuDsgContentData) -> AquaMarineResult
 
 service TuDsgRenderer("tuDsgRenderer"):
-  test() -> AquaMarineResult
   collect(publication_name: string, kubo_multiaddr: string) -> AquaMarineResult
   imports(archive_cid: string, publication: TuDsgPublication, kubo_multiaddr: string) -> AquaMarineResult
   single(ro: TuDsgRenderObject, kubo_multiaddr: string) -> AquaMarineResult
+  test() -> AquaMarineResult
+
+service TuDsgRenderImport("tuDsgRenderImport"):
+  imports(archive_cid: string, publication: TuDsgPublication, kubo_multiaddr: string) -> AquaMarineResult
+
+service TuDsgRenderData("tuDsgRenderData"):
+  single(ro: TuDsgRenderObject, kubo_multiaddr: string) -> AquaMarineResult
+
+service TuDsgRendererStripped("tuDsgRendererStripped"):
+  single(ro: TuDsgRenderObject, td: []u8, kubo_multiaddr: string) -> AquaMarineResult
+
+service TuDsgRenderCollect("tuDsgRenderCollect"):
+  collect(publication_name: string, kubo_multiaddr: string) -> AquaMarineResult
 
 service TuDsgHost("tuDsgHost"):
   update(html_cid: string, publication: TuDsgPublication, kubo: string) -> AquaMarineResult
@@ -34,11 +49,14 @@ service TuDsgHost("tuDsgHost"):
   certify(publication: TuDsgPublication) -> AquaMarineResult
   a_record(publication: TuDsgPublication, ip: string) -> AquaMarineResult
 
-service TuDsgRenderUndressed("tuDsgRenderUndressed"):
-  test() -> AquaMarineResult
-  collect(publication_name: string, kubo_multiaddr: string) -> AquaMarineResult
-  imports(archive_cid: string, publication: TuDsgPublication, kubo_multiaddr: string) -> AquaMarineResult
-  single(ro: TuDsgRenderObject, kubo_multiaddr: string) -> AquaMarineResult
-
 service MyService("myService"):
   greeting(name: string) -> string
+
+service TuCar("tuCar"):
+  extract(cid: string, path: string) 
+  archive(path: string) -> string
+
+service TuContentTable("tuContentTable"): 
+  insert(content: []u8) -> AquaMarineResult
+  queryRipple(ripple: TuDsgRipple) -> []u8
+

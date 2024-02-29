@@ -8,8 +8,8 @@
     "debug": "DEBUG=fluence:* npx nodemon src/app.ts",
     "build": "npx tsc",
     "deploy": "cd dist && git add . && git commit -am 'automated' && git push img master && cd ..",
-    "aqua:compile": "fluence aqua -i ../dsg-fluence/src/aqua/ -o ./src/_aqua",
-    "aqua:watch": "fluence aqua -w -i ../dsg-fluence/src/aqua/ -o ./src/_aqua"
+    "aqua:compile": "fluence aqua -i ../fluence/src/aqua/ -o ./src/_aqua",
+    "aqua:watch": "fluence aqua -w -i ../fluence/src/aqua/ -o ./src/_aqua"
   },
   "type": "module",
   "keywords": [],
@@ -23,7 +23,7 @@
     "typescript": "^4.9.5"
   },
   "dependencies": {
-    "@fluencelabs/js-client": "^0.5.4",
+    "@fluencelabs/js-client": "^0.8.3",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",

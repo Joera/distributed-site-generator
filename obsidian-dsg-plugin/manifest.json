@@ -1,7 +1,7 @@
 {
 	"id": "obsidian-dsg",
 	"name": "DSG",
-	"version": "1.0.1",
+	"version": "0.0.2",
 	"minAppVersion": "0.15.0",
 	"description": "Adds notes to distributed static site renderer",
 	"author": "Joera",

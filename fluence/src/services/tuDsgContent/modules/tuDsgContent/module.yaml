@@ -9,6 +9,3 @@ version: 0
 type: rust
 
 name: tuDsgContent
-
-mountedBinaries:
-  curl: /usr/bin/curl

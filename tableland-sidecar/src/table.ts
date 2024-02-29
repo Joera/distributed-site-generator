@@ -9,7 +9,7 @@ export interface TuContentItem {
     parent : string,
     creation_date : string,
     modified_date : string,
-    content_cid: string
+    content: string
 }
 
 

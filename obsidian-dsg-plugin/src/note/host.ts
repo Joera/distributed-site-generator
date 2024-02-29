@@ -15,7 +15,7 @@ const fetchCar = async (cid: string) => {
 
 	return new Promise( (resolve, reject) => {
 
-		const path = "/home/joera/Documents/dsg-publications/unamore";
+		const path = "/home/joera/Documents/dsg/publications/unamore";
 
         const exec = require('child-process-promise').exec;
         const cmd = `curl -X POST http://143.176.14.172:15001/api/v0/cat?arg=${cid} --output ${path}/archive.car`;
@@ -40,7 +40,7 @@ const unpack = async () => {
 
 	return new Promise( (resolve, reject) => {
 
-		const path = "/home/joera/Documents/dsg-publications/unamore";
+		const path = "/home/joera/Documents/dsg/publications/unamore";
 
         const exec = require('child-process-promise').exec;
         const cmd = `bash ${path}/unpack.sh`;

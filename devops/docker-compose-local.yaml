@@ -1,0 +1,84 @@
+# yaml-language-server: $schema=schemas/docker-compose.json
+
+# Defines a multi-containers based application.
+
+# Documentation: https://github.com/fluencelabs/cli/tree/main/docs/configs/docker-compose.md
+
+version: "3"
+
+services:
+
+  nox-l:
+    image: nox-dsg
+    container_name: nox-dsg-local
+    build:
+      context: .
+      dockerfile: ./nox-dsg.Dockerfile
+    pull_policy: always
+    ports:
+      - 7771:7771
+      - 9991:9991
+    environment:
+#      FLUENCE_ENV_AQUA_IPFS_EXTERNAL_API_MULTIADDR: /ip4/143.176.14.172/tcp/15001
+#      FLUENCE_ENV_DECIDER_IPFS_MULTIADDR: /dns4/ipfs/tcp/5001
+#      FLUENCE_ENV_AQUA_IPFS_LOCAL_API_MULTIADDR: /dns4/ipfs/tcp/5001
+      FLUENCE_ENV_CONNECTOR_API_ENDPOINT: http://143.176.14.172:8545
+      FLUENCE_ENV_CONNECTOR_FROM_BLOCK: earliest
+      WASM_LOG: info
+      RUST_LOG: info
+#      FLUENCE_SYSTEM_SERVICES__ENABLE: aqua-ipfs,decider
+      FLUENCE_ENV_CONNECTOR_WALLET_KEY: "0xfdc4ba94809c7930fe4676b7d845cbf8fa5c1beae8744d959530e5073004cf3f"
+      FLUENCE_ENV_CONNECTOR_CONTRACT_ADDRESS: "0x0f68c702dC151D07038fA40ab3Ed1f9b8BAC2981"
+      FLUENCE_SYSTEM_SERVICES__DECIDER__DECIDER_PERIOD_SEC: 10
+      FLUENCE_MAX_SPELL_PARTICLE_TTL: 9s
+      FLUENCE_SYSTEM_SERVICES__DECIDER__NETWORK_ID: 31337
+      FLUENCE_ROOT_KEY_PAIR__PATH: /run/secrets/nox-2
+    command:
+      - --aqua-pool-size=5
+      - -t=7771
+      - -w=9991
+    # depends_on:
+    #   - ipfs
+    secrets:
+      - nox-2
+    volumes: 
+      - ./Config.toml:/.fluence/v1/Config.toml
+      - webhost1:/.fluence/v1/shared
+    networks:
+      - dsg
+
+  tl-sidecar: 
+    image: tl-sidecar_node
+    container_name: tl-sidecar
+    build:
+      context: ..
+      dockerfile: ./devops/tl-sidecar.Dockerfile
+    ports: 
+      - "3088:3088"
+    networks:
+      - dsg
+
+  webhost-sidecar:
+    image: webhost-sidecar_node
+    container_name: webhost-sidecar
+    build:
+      context: ..
+      dockerfile: ./devops/webhost-sidecar.Dockerfile
+    ports: 
+      - "8001:8001"
+    volumes:
+      - webhost1:/.fluence/v1/shared
+    networks:
+      - dsg
+
+secrets:
+  nox-2:
+    file: ../secrets/nox-2.txt
+
+volumes:
+  webhost1:
+  ipfs:
+
+networks:
+  dsg:
+    name: dsg

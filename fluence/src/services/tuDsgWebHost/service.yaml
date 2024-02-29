@@ -11,9 +11,5 @@ name: tuDsgWebHost
 modules:
   facade:
     get: modules/tuDsgWebHost
-  tu_volumes:
-    get: ../../modules/tu_volumes
   tu_car:
     get: ../../modules/tu_car
-  tu_ipfs:
-    get: ../../modules/tu_ipfs

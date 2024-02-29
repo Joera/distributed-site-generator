@@ -11,5 +11,3 @@ name: tuDsgContent
 modules:
   facade:
     get: modules/tuDsgContent
-  tu_ipfs:
-    get: ../../modules/tu_ipfs

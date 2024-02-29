@@ -43,3 +43,8 @@ export interface SGTask {
 	post_type: string,
 	publication: string
 }
+
+
+export interface DSGPublicationInput {
+	
+}

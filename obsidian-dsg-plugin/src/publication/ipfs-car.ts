@@ -1,6 +1,6 @@
-import { DSGPublicationInput } from './note';
 import { filePut } from './ipfs'
 import { Kubos } from '../types'
+import { DSGPublicationInput } from './note';
 
 export const cars = async (pubInput: DSGPublicationInput, kubos: Kubos) : Promise<DSGPublicationInput>  =>  {
 
@@ -15,8 +15,8 @@ export const cars = async (pubInput: DSGPublicationInput, kubos: Kubos) : Promis
  
     for (let kubo of kubos.externals_url) {
     
-        pubInput.templates = await filePut("/home/joera/Documents/dsg-publications/unamore/cars/templates.car", kubo);
-        pubInput.assets = await filePut("/home/joera/Documents/dsg-publications/unamore/cars/assets.car", kubo);
+        pubInput.templates = await filePut("/home/joera/Documents/dsg/publications/unamore/cars/templates.car", kubo);
+        pubInput.assets = await filePut("/home/joera/Documents/dsg/publications/unamore/cars/assets.car", kubo);
     }
 }
     // }, 1000);
@@ -29,7 +29,7 @@ const createFromPath = async (fileName: string, path: string)  => {
     return new Promise( (resolve, reject) => {
 
         const exec = require('child-process-promise').exec;
-        const cmd = `/home/joera/.cargo/bin/car-utils ar -c /home/joera/Documents/dsg-publications/unamore/cars/${fileName}.car -s ${path}`;
+        const cmd = `/home/joera/.cargo/bin/car-utils ar -c /home/joera/Documents/dsg/publications/unamore/cars/${fileName}.car -s ${path}`;
         const promise = exec(cmd, { cwd: path, stdio: 'inherit', shell: true }); 
         const childProcess = promise.childProcess;
 

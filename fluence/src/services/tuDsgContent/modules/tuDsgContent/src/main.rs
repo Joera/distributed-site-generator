@@ -4,78 +4,70 @@ use marine_rs_sdk::MountedBinaryResult;
 use marine_rs_sdk::module_manifest;
 use serde_json;
 use serde_json::{json, Value};
-use tu_dsg_types::{TuDsgAuthorData,TuDsgPublication, TuDsgRenderObject, TuDsgPublishTask, TuContentItem};
+use tu_dsg_types::{TuDsgAuthorData,TuDsgPublication, TuDsgRenderObject, TuDsgPublishTask, TuContentItem, TuDsgRipple};
 use std::collections::HashMap;
 use tu_types::results::AquaMarineResult;
+// use tu_types::bytes::{pmEncode, pmDecode};
 
 module_manifest!();
 
 mod content;
 mod helpers;
-mod tableland;
+// mod tableland;
 
 pub fn main() {}
 
+#[macro_use]
+extern crate rmp_serde as rmps;
+use serde::{Deserialize, Serialize};
+use rmps::{Deserializer, Serializer};
+
+// #[marine]
+// pub fn bulk(publication: TuDsgPublication, post_type: String, subnet_kubo: String, ) -> Vec<TuDsgRenderObject> {
+
+//     let mut am_result = AquaMarineResult::new();
+
+//     let mut renderObjects: Vec<TuDsgRenderObject> = vec!();
+
+//     let sql_query = format!("select * from {{table}} where post_type = '{}' and publication = '{}'", post_type, publication.name);
+
+//     am_result = am_result.merge(
+//         tableland::query(&sql_query)
+//     );
+
+//     let res: Value = serde_json::from_str(&am_result.results[0]).unwrap();
+//     let items: Vec<TuContentItem> = serde_json::from_value(res["results"].clone()).unwrap();
+
+//     for item in items {
+
+//         let renderObject = TuDsgRenderObject {
+//             name: item.slug.clone(),
+//             post_type: post_type.clone(),
+//             template : publication.mapping.clone().into_iter().find( |m| m.reference == post_type.clone()).unwrap(),
+//             publication_name : publication.name.clone(),
+//             domain: publication.domains[0].clone(),
+//             body: item.content
+//         };
+
+//         println!("ci: {:?}", renderObject);    
+//         renderObjects.push(renderObject.clone());
+//     }
+
+//     renderObjects
+// }
 
 #[marine]
-pub fn bulk(publication: TuDsgPublication, post_type: String, subnet_kubo: String, ) -> Vec<TuDsgRenderObject> {
-
-    let mut am_result = AquaMarineResult::new();
-
-    let mut renderObjects: Vec<TuDsgRenderObject> = vec!();
-
-    let sql_query = format!("select * from {{table}} where post_type = '{}' and publication = '{}'", post_type, publication.name);
-
-    am_result = am_result.merge(
-        tableland::query(&sql_query)
-    );
-
-    let res: Value = serde_json::from_str(&am_result.results[0]).unwrap();
-    let items: Vec<TuContentItem> = serde_json::from_value(res["results"].clone()).unwrap();
-
-    for item in items {
-
-        let renderObject = TuDsgRenderObject {
-            name: item.slug.clone(),
-            post_type: post_type.clone(),
-            template : publication.mapping.clone().into_iter().find( |m| m.reference == post_type.clone()).unwrap(),
-            publication_name : publication.name.clone(),
-            domain: publication.domains[0].clone(),
-            body: item.content_cid
-        };
-
-        println!("ci: {:?}", renderObject);
-    
-        renderObjects.push(renderObject.clone());
-    }
-
-
-    renderObjects
-
-}
-
-#[marine]
-pub fn persist_single(task: TuDsgPublishTask, _subnet_kubo: String) -> String {
+pub fn map(task: TuDsgPublishTask, mappings: &str) -> Vec<u8> {
 
     let mut am_result = AquaMarineResult::new();
 
     let payload : Value = serde_json::from_str(&task.payload).unwrap();
-
-    let cid = task.author.content_mappings.to_string().replace("\"","");
-
-    let res = dag_get(cid.clone(), &_subnet_kubo);
-
-    if (res.results.len() > 0) {} // combineer met returning a vec
     
     let body = content::map(
-        serde_json::from_str(&res.results[0]).unwrap(),
+        serde_json::from_str(&mappings).unwrap(),
         serde_json::from_str(&task.payload).unwrap(),
         &task.post_type
     );
-
-    let res = dag_put(body.clone(), &_subnet_kubo);
-    let body_cid = res.results[1].clone();
-    // am_result.results.push(body_cid.clone());
 
     let content = TuContentItem {
         id: payload["sgId"].to_string().replace("\"","").replace("-",""),
@@ -88,24 +80,29 @@ pub fn persist_single(task: TuDsgPublishTask, _subnet_kubo: String) -> String {
         parent: payload["parent"].to_string().replace("\"",""),
         creation_date: payload["creation_date"].to_string().replace("\"",""),
         modified_date: payload["modified_date"].to_string().replace("\"",""),
-        content_cid: body_cid.clone()
+        content: body 
     };
 
-    println!("b4 tl");
+    let mut buf = Vec::new();
+    content.serialize(&mut Serializer::new(&mut buf)).unwrap();
+    buf
+   
 
-    am_result = am_result.merge(
-        tableland::insert(content)
-    );
-
-    println!("tl: {:?}", am_result);
-
-    body_cid
 }
 
-#[marine]
-pub fn create_render_objects(task: TuDsgPublishTask, body_cid: String, _subnet_kubo: String) -> Vec<TuDsgRenderObject> {
+//     am_result = am_result.merge(
+//         tableland::insert(content)
+//     );
 
-    let mut renderObjects: Vec<TuDsgRenderObject> = vec!();
+//     println!("tl: {:?}", am_result);
+
+//     body_cid
+// }
+
+#[marine]
+pub fn pebble(task: TuDsgPublishTask, content: Vec<u8>) -> TuDsgRenderObject {
+
+    println!("1");
 
     let renderObject = TuDsgRenderObject {
         name: task.slug.clone(),
@@ -113,55 +110,76 @@ pub fn create_render_objects(task: TuDsgPublishTask, body_cid: String, _subnet_k
         template : task.publication.mapping.clone().into_iter().find( |m| m.reference == task.post_type.clone()).unwrap(),
         publication_name : task.publication.name.clone(),
         domain: task.publication.domains[0].clone(),
-        body: body_cid
+        body: content
     };
 
-    renderObjects.push(renderObject.clone());
+    println!("2");
+    
+    renderObject
+}
 
+#[marine]
+pub fn ripple(task: TuDsgPublishTask, ripple: TuDsgRipple, content: Vec<u8>) -> TuDsgRenderObject {
 
-    // for ripple in renderObject.template.ripples {
+    let rippleOject = TuDsgRenderObject {
+        name: task.slug.clone(),
+        post_type: ripple.post_type.clone(),
+        template : task.publication.mapping.clone().into_iter().find( |m| m.reference == ripple.post_type.clone()).unwrap(),
+        publication_name : task.publication.name.clone(),
+        domain: task.publication.domains[0].clone(),
+        body: content
+    };
 
-    //     let tl_result = tableland::query(
-    //         &ripple.query
-    //         .replace("{value}",&format!("'{}'", &ripple.value))
-    //         .replace("{post_type}",&format!("'{}'", &ripple.post_type))
-    //     );
+    println!("rippled");
 
-    //     let res : Value = serde_json::from_str(&tl_result.results[0]).unwrap();
-
-    //     if let Some(results) = res["results"].as_array() {
-
-    //         for r in results {
-
-    //             // println!("should be an item: : {:?}", r);
-
-    //                 let item: TuContentItem = serde_json::from_value(r.clone()).unwrap(); // res["results"][0].into(); // serde_json::from_str(res["results"][0]).unwrap();
-
-    //                 // println!("should be the item: : {:?}", item);
-
-    //                 // let ipfs_res = dag_get(item.content_cid, &_subnet_kubo);
-    //                 // let body: Value = serde_json::from_str(&ipfs_res.results[0]).unwrap();
-
-    //                 let rippleOject = TuDsgRenderObject {
-    //                     name: task.slug.clone(),
-    //                     post_type: ripple.post_type.clone(),
-    //                     template : task.publication.mapping.clone().into_iter().find( |m| m.reference == ripple.post_type.clone()).unwrap(),
-    //                     publication_name : task.publication.name.clone(),
-    //                     domain: task.publication.domains[0].clone(),
-    //                     body: item.content_cid
-    //                 };
-
-    //                 renderObjects.push(rippleOject);
-    //         }
-    //     }
-    // }
-
-    println!("renderobjects: {:?}", renderObjects.len());
-
-    // can i return a tuple? with aqresult AND typed payload? 
-    renderObjects
+    rippleOject
 
 }
+
+
+  //  for ripple in renderObject.template.ripples {
+
+        // let tl_result = tableland::query(
+        //     &ripple.query
+        //     .replace("{value}",&format!("'{}'", &ripple.value))
+        //     .replace("{post_type}",&format!("'{}'", &ripple.post_type))
+        // );
+
+        // let res : Value = serde_json::from_str(&tl_result.results[0]).unwrap();
+
+        // if let Some(results) = res["results"].as_array() {
+
+        //     for r in results {
+
+        //         // println!("should be an item: : {:?}", r);
+
+        //             let item: TuContentItem = serde_json::from_value(r.clone()).unwrap(); // res["results"][0].into(); // serde_json::from_str(res["results"][0]).unwrap();
+
+        //             // println!("should be the item: : {:?}", item);
+
+        //             // let ipfs_res = dag_get(item.content_cid, &_subnet_kubo);
+        //             // let body: Value = serde_json::from_str(&ipfs_res.results[0]).unwrap();
+
+        //             let rippleOject = TuDsgRenderObject {
+        //                 name: task.slug.clone(),
+        //                 post_type: ripple.post_type.clone(),
+        //                 template : task.publication.mapping.clone().into_iter().find( |m| m.reference == ripple.post_type.clone()).unwrap(),
+        //                 publication_name : task.publication.name.clone(),
+        //                 domain: task.publication.domains[0].clone(),
+        //                 body: item.content_cid
+        //             };
+
+        //             renderObjects.push(rippleOject);
+        //     }
+        // }
+  //  }
+
+//     println!("renderobjects: {:?}", renderObjects.len());
+
+//     // can i return a tuple? with aqresult AND typed payload? 
+//     renderObjects
+
+// }
 
 // #[marine]
 // pub fn test() -> TuDsgRenderObject {
@@ -245,12 +263,12 @@ pub fn create_render_objects(task: TuDsgPublishTask, body_cid: String, _subnet_k
 
 // }
 
-#[marine]
-#[link(wasm_import_module = "tu_ipfs")]
-extern "C" {
-    pub fn file_get(cid: &String, kubo_multiaddr: &String) -> AquaMarineResult;
-    pub fn dag_get(cid: String, kubo_multiaddr: &String) -> AquaMarineResult;
-    pub fn dag_put(obj: String, kubo_multiaddr: &String) -> AquaMarineResult;
-}
+// #[marine]
+// #[link(wasm_import_module = "tu_ipfs")]
+// extern "C" {
+//     pub fn file_get(cid: &String, kubo_multiaddr: &String) -> AquaMarineResult;
+//     pub fn dag_get(cid: String, kubo_multiaddr: &String) -> AquaMarineResult;
+//     pub fn dag_put(obj: String, kubo_multiaddr: &String) -> AquaMarineResult;
+// }
 
 

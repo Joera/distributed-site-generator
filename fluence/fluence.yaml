@@ -1,45 +1,74 @@
 # yaml-language-server: $schema=.fluence/schemas/fluence.json
-
 # Defines Fluence Project, most importantly - what exactly you want to deploy and how. You can use `fluence init` command to generate a template for new Fluence project
-
 # Documentation: https://github.com/fluencelabs/cli/tree/main/docs/configs/fluence.md
 
-version: 5
-
-aquaInputPath: src/aqua/main.aqua
+version: 7
 
 deals:
-  dealName:
-    minWorkers: 1
-    targetWorkers: 3
-    services: [ tuDsgContent, tuDsgRenderer ]
+  devWorkerV0:
+    targetWorkers: 1
+    pricePerWorkerEpoch: 0.00001
+    collateralPerWorker: 1
+    services: []
     spells: []
 
 hosts:
-  dsgWorkerV1:
+  devWorkerV0:
     peerIds:
       - 12D3KooWSMH42NaRdq8uN3pTsBgnJYSZjYrmC1DhBmBXy1hCatrj
+      #- 12D3KooWCcWYUmbCoMUGeZ7QUjLkXfSa3pKzVG554s56amfsWkm4
       # - 12D3KooWP55ziK6EDVvwHAeHx7pb6XEHG6ztzGKrydrCFZciKZ2E
-      # - 12D3KooWCcWYUmbCoMUGeZ7QUjLkXfSa3pKzVG554s56amfsWkm4
     services:
       - tuDsgContent
-      - tuDsgRenderer
-      # - tuDsgWebHost
+      - tuContentTable
+      - tuDsgRenderImport
+      - tuDsgRenderData
+      - tuDsgRendererStripped
+      - tuDsgRenderCollect
     spells: []
+
+aquaDependencies:
+  "@fluencelabs/aqua-lib": 0.9.1
+  "@fluencelabs/aqua-ipfs": 0.5.30
+  "@fluencelabs/spell": 0.6.10
 
 services:
   tuDsgContent:
     get: src/services/tuDsgContent
+  tuDsgRenderImport:
+    get: src/services/tuDsgRenderImport
+  tuDsgRenderData:
+    get: src/services/tuDsgRenderData
   tuDsgRenderer:
     get: src/services/tuDsgRenderer
-  # tuDsgWebHost:
-  #   get: src/services/tuDsgWebHost
+  tuDsgRendererStripped:
+    get: src/services/tuDsgRendererStripped
+  tuDsgRenderCollect:
+    get: src/services/tuDsgRenderCollect
+  tuDsgWebHost:
+    get: src/services/tuDsgWebHost
+  myService1:
+    get: src/services/myService
+  myService2:
+    get: src/services/myService
+  myService3:
+    get: src/services/myService
+  tuContentTable:
+    get: src/services/tuContentTable
+
+relaysPath:
+  - src/gateway/src
+
+compileAqua:
+  gateway:
+    input: src/aqua
+    output: src/gateway/src/compiled-aqua
+    target: js
 
 customFluenceEnv:
   contractsEnv: local
   relays:
     - /ip4/143.176.14.172/tcp/9991/ws/p2p/12D3KooWSMH42NaRdq8uN3pTsBgnJYSZjYrmC1DhBmBXy1hCatrj
+    # - /ip4/127.0.0.1/tcp/9991/ws/p2p/12D3KooWCcWYUmbCoMUGeZ7QUjLkXfSa3pKzVG554s56amfsWkm4
 
-dependencies:
-  npm:
-    "@fluencelabs/aqua-ipfs": 0.5.30
+defaultSecretKeyName: joera3

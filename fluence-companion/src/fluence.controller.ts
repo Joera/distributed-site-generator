@@ -1,5 +1,5 @@
 import { Fluence, IFluenceClient, randomKras } from "@fluencelabs/js-client";
-import { bulkUpload, bulkRender, gatherKubos, renderOnDSG, helloWorldRemote } from "./_aqua/main";
+import { bulkUpload, bulkRender, gatherKubos, renderOnDSG } from "./_aqua/main";
 
 export class FluenceController {
 
@@ -37,18 +37,22 @@ export class FluenceController {
 
         await this.init()
 
-        return await gatherKubos({ ttl: 20000 });
+        return await gatherKubos({ ttl: 30000 });
     }
 
     async renderOnDSG(body:any) {
 
         await this.init();
 
-        return await renderOnDSG(
+        let response = await renderOnDSG(
             body.task,
             body.archive_cid,
-            { ttl: 240000 }
+            { ttl: 60000 }
         )
+
+        console.log(response);
+
+        return response;
     }
 
     async bulkUpload(body:any) {

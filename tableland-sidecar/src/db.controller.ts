@@ -48,7 +48,7 @@ export class DbController {
                     parent text,
                     creation_date text,
                     modified_date text,
-                    content_cid text
+                    content text
                 );
             `)
             .run();
@@ -120,7 +120,7 @@ export class DbController {
 
         const { meta: insert } = await db
         .prepare(body.sql_query)
-        .bind(body.content.id, body.content.slug,body.content._owner,body.content.publication,body.content.author, body.content.post_type, body.content.tags,body.content.categories,body.content.parent,body.content.creation_date,body.content.modified_date,body.content.content_cid)
+        .bind(body.content.id, body.content.slug,body.content._owner,body.content.publication,body.content.author, body.content.post_type, body.content.tags,body.content.categories,body.content.parent,body.content.creation_date,body.content.modified_date,body.content.content)
         .run();
 
         console.log('insert');
@@ -132,8 +132,8 @@ export class DbController {
     async update(db: Database, body: any) : Promise<string> {
 
         const { meta: insert } = await db
-        .prepare(`UPDATE ${body.table} SET slug = ?, publication = ?, author = ?, post_type = ?, tags = ?, categories = ?, parent = ?, creation_date = ?, modified_date = ?, content_cid = ? WHERE id = ?`)
-        .bind(body.content.slug, body.content.publication,body.content.author, body.content.post_type, body.content.tags,body.content.categories,body.content.parent,body.content.creation_date, body.content.modified_date,body.content.content_cid, body.content.id)
+        .prepare(`UPDATE ${body.table} SET slug = ?, publication = ?, author = ?, post_type = ?, tags = ?, categories = ?, parent = ?, creation_date = ?, modified_date = ?, content = ? WHERE id = ?`)
+        .bind(body.content.slug, body.content.publication,body.content.author, body.content.post_type, body.content.tags,body.content.categories,body.content.parent,body.content.creation_date, body.content.modified_date,body.content.content, body.content.id)
         .run();
 
         console.log('update');

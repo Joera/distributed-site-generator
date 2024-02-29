@@ -1,5 +1,5 @@
 import { SGFile } from "../types";
-import { Kubos } from "./ipfs";
+import { Kubos } from "../types";
 
 
 export const gatherKubos = async () : Promise<Kubos> => {

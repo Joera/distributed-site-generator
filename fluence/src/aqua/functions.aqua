@@ -1,0 +1,22 @@
+aqua Functions declares *
+
+import "../../.fluence/aqua-dependencies/node_modules/@fluencelabs/aqua-lib/builtin.aqua"
+import "../../.fluence/aqua-dependencies/node_modules/@fluencelabs/aqua-lib/subnet.aqua"
+import "../../.fluence/aqua-dependencies/node_modules/@fluencelabs/aqua-ipfs/ipfs.aqua"
+
+import "./types.aqua"
+import "./services.aqua"
+
+func dagGetToString(cid: string) -> string:
+
+    ipfsResult = Ipfs.dag_get(cid)
+    s = Vault.cat(ipfsResult.path)
+
+    <- s
+
+
+func extractToPath(cid: string, path: string) :
+
+    ipfsGetResult = Ipfs.get(cid)
+    TuCar.extract(ipfsGetResult.path, path) 
+

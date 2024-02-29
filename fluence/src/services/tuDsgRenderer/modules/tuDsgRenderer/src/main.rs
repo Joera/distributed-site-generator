@@ -15,15 +15,15 @@ mod tableland;
 
 pub fn main() {}
 
-#[marine]
-pub fn test() -> AquaMarineResult {
+// #[marine]
+// pub fn test() -> AquaMarineResult {
 
-    let mut am_result = AquaMarineResult::new();
-    am_result.results.push("harry is gek".to_string());
+//     let mut am_result = AquaMarineResult::new();
+//     am_result.results.push("harry is gek".to_string());
 
-    am_result
+//     am_result
 
-}
+// }
 
 #[marine]
 pub fn imports(archive_cid: String, publication: TuDsgPublication, kubo_multiaddr: String) -> AquaMarineResult {
@@ -74,45 +74,6 @@ pub fn collect(publication_name: &String, kubo_multiaddr: &String) -> AquaMarine
 
     am_result
 }
-
-// #[marine]
-// pub fn test() -> AquaMarineResult {
-
-//     let mut am_result = AquaMarineResult::new();
-
-//     let kubo = String::from("http://localhost:5001");
-
-//     let dns = TuDsgDns {
-//         custodian : String::from("digitalocean"),
-//         item_id: String::from("xxx"),
-//         auth_key: String::from("xxx")
-//     };
-
-//     let domain = TuDsgDomain {
-//         url: String::from("unamore.publikaan.nl"),
-//         dns
-//     };
-
-//     // wat is hier nu relevant voor render en wat voor hosting ?? 
-//     let ro = TuDsgRenderObject {
-//         name: String::from("test"),
-//         template: String::from("serie.handlebars"),
-//         publication_name: String::from("unamore"),
-//         domain,
-//         path: String::from("/"),
-//         body: String::from("{ \"title\": \"Parijs\", \"content\": \"text\" }") // Vec<u8>
-//     };
-
-
-//     am_result = am_result.merge(
-//         single(ro, kubo)
-//     );
-
-
-//     am_result
-
-
-// }
 
 
 #[marine]

@@ -1,51 +1,43 @@
+aqua Helpers declares * 
 
-import "@fluencelabs/aqua-lib/builtin.aqua"
-import "@fluencelabs/aqua-lib/subnet.aqua"
-import "@fluencelabs/aqua-ipfs/ipfs.aqua"
+import "../../.fluence/aqua-dependencies/node_modules/@fluencelabs/aqua-lib/builtin"
+import "../../.fluence/aqua-dependencies/node_modules/@fluencelabs/aqua-lib/subnet"
+import "../../.fluence/aqua-dependencies/node_modules/@fluencelabs/aqua-ipfs/ipfs"
 
--- use "deals.aqua"
-use "../../.fluence/aqua/hosts.aqua"
-import SpellLocation from "../../.fluence/aqua/hosts.aqua"
-import "./types.aqua"
-import "./services.aqua"
+use "persisted_hosts"
+use "../../.fluence/aqua/hosts"
+import SpellLocation from "./persisted_hosts"
+import "./types"
+import "./services"
 
-func getWorkerInfo() -> []SpellLocation:
+func randomWorker(workerIndex: u8) -> SpellLocation:
 
-    hosts <- Hosts.get()  
-    <- hosts.dsgWorkerV1!.installationSpells
+    hosts <- PersistedHosts.get()  
+    workers  = hosts[workerIndex].installationSpells
+    <- workers! 
 
+func randomDevWorker() -> SpellLocation:
 
--- func fetchCar(cid: string, pub_name: string) -> AquaMarineResult:
-
---     car_results: *AquaMarineResult
---     -- ipfs_results: *IpfsGetResult
---     kubo = Ipfs.get_local_api_multiaddr()
---     -- ipfs_results <- Ipfs.get(cid)
---     car_results <- TuCar.extract(cid, pub_name, kubo.multiaddr)
-
---     <- car_results!
-
-func randomWorker() -> SpellLocation:
-
-    -- figure out how to do this; 
-    --- returning first for now
-
-    workers <- getWorkerInfo()
-
+    hosts <- Hosts.get() 
+    workers = hosts.devWorkerV0!.installationSpells
     <- workers! 
 
 
+func getWorkers() -> []SpellLocation:
+
+    hosts <- PersistedHosts.get()  
+    <- hosts[0].installationSpells
 
 func fetchPublication(cid: string) -> TuDsgPublication:
 
     s: *string 
     ipfs_results: *IpfsGetResult
 
-    for w <- getWorkerInfo():
+    for w <- getWorkers():
         on w.workerId via w.hostId:
             ipfs_results <- Ipfs.dag_get(cid)
             s <- Vault.cat(ipfs_results!.path)
-    
+        
     <- TuDsgPublicationFromJson.parse(s!)
 
 func fetchAuthor(cid: string) -> TuDsgAuthorData:
@@ -53,8 +45,7 @@ func fetchAuthor(cid: string) -> TuDsgAuthorData:
     s: *string  
     ipfs_results: *IpfsGetResult
 
-    workers <- getWorkerInfo()
-    for w <- workers:
+    for w <- getWorkers():
         on w.workerId via w.hostId:
             ipfs_results <- Ipfs.dag_get(cid)
             s <- Vault.cat(ipfs_results!.path)
@@ -74,6 +65,8 @@ func fromTempTask(tempTask: TuDsgPublishTaskTemp) -> TuDsgPublishTask:
         post_type = tempTask.post_type, 
         publication = publicationData
     )
+
+
 
 -- func fetchContent(cid: string) -> TuDsgContentData:
 

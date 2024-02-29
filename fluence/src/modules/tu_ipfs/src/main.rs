@@ -19,7 +19,7 @@ fn main() {}
 #[marine]
 pub fn file_add(file_path: &String, kubo_multiaddr: &String) -> AquaMarineResult {
 
-    let call_data = marine_rs_sdk::get_call_parameters();
+  //  let call_data = marine_rs_sdk::get_call_parameters();
     let mut am_result = AquaMarineResult::new();
 
     let url = format!("{}/api/v0/add",  to_url(kubo_multiaddr)); 
@@ -47,7 +47,7 @@ pub fn file_add(file_path: &String, kubo_multiaddr: &String) -> AquaMarineResult
 #[marine]
 pub fn cid_to_file(cid: &String, path: &String, kubo_multiaddr: &String) -> AquaMarineResult {
 
-    let call_data = marine_rs_sdk::get_call_parameters();
+  //  let call_data = marine_rs_sdk::get_call_parameters();
     let mut am_result = AquaMarineResult::new();
 
     let url = format!(
@@ -76,7 +76,7 @@ pub fn cid_to_file(cid: &String, path: &String, kubo_multiaddr: &String) -> Aqua
 #[marine]
 pub fn file_get(cid: &String, kubo_multiaddr: &String) -> AquaMarineResult {
 
-    let call_data = marine_rs_sdk::get_call_parameters();
+  //  let call_data = marine_rs_sdk::get_call_parameters();
     let mut am_result = AquaMarineResult::new();
 
     let url = format!(
@@ -103,7 +103,7 @@ pub fn file_get(cid: &String, kubo_multiaddr: &String) -> AquaMarineResult {
 #[marine]
 pub fn ipfs_hash(data: &String, kubo_multiaddr: &String) -> AquaMarineResultString {
 
-    let call_data = marine_rs_sdk::get_call_parameters();
+  //  let call_data = marine_rs_sdk::get_call_parameters();
     let mut output: Vec<String> = vec!();
     let mut errors: Vec<String> = vec!();
 
@@ -151,7 +151,7 @@ pub fn dag_get(cid: String, kubo_multiaddr: &String) -> AquaMarineResult {
         String::from("-X"),
         String::from("POST"),
         String::from("--max-time"),
-        String::from("5"),
+        String::from("2"),
         url
     ];
 
@@ -210,7 +210,7 @@ pub fn add_folder (path: &str) -> AquaMarineResultString {
     // then create a .car file for the entire dag
     // add that to a networked ipfs peer 
 
-    let call_data = marine_rs_sdk::get_call_parameters();
+ //   let call_data = marine_rs_sdk::get_call_parameters();
     let mut output: Vec<String> = vec!();
     let mut errors: Vec<String> = vec!();
 

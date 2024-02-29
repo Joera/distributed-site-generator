@@ -12,7 +12,3 @@ name: tuDsgRenderer
 
 mountedBinaries:
   curl: /usr/bin/curl
-
-volumes:
-  templates: "./publication/templates/"
-  html: "./publication/html/"
