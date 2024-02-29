@@ -26,6 +26,8 @@ pub fn insert(contentAsBinary: Vec<u8>) -> crate::AquaMarineResult {
     let mut am_result = crate::AquaMarineResult::new();
 
     let content: crate::TuContentItem = rmp_serde::from_slice(&contentAsBinary).unwrap();
+
+    
    
     let url = "http://tl-sidecar:3088/record".to_string();
 

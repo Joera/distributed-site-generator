@@ -99,7 +99,7 @@ func renderOnDSG(tempTask: TuDsgPublishTaskTemp, archive_cid: string) -> *AquaMa
 
     results: *AquaMarineResult
     debug: *AquaMarineResult
-    queue: *TuDsgRenderObject
+    queue: *[]TuDsgRenderObject
 
     -- get encrypted publicationData from chain .... 
 
@@ -116,9 +116,9 @@ func renderOnDSG(tempTask: TuDsgPublishTaskTemp, archive_cid: string) -> *AquaMa
         TuContentTable.insert(content)
         main = TuDsgContent.pebble(task, content)
         queue <<- main
-        for ripple <- main.template.ripples:
+        for ripple <- main!.template.ripples:
             c = TuContentTable.queryRipple(ripple) 
-        --     queue <- TuDsgContent.ripple(task, ripple, c)
+            queue <- TuDsgContent.ripple(task, ripple, c)
 
 
 
