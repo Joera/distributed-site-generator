@@ -2,6 +2,7 @@ import { Database} from "@tableland/sdk";
 import { Wallet, getDefaultProvider } from "ethers";
 import { TuContentItem } from "./table.js";
 import { Creds, Payload } from "./types.js";
+import { unpack, pack } from 'msgpackr';
 import 'dotenv/config'
 
 export class DbController {
@@ -92,18 +93,17 @@ export class DbController {
 
     async insert(db: Database, body: any) : Promise<string> {
 
-        console.log('insert 2');
-
         const c = body.content;
+
+        c.blob = pack(c.content);
 
         console.log(c);
 
         const { meta: insert } = await db
         .prepare(body.sql_query)
-        .bind(c.id, c.slug,c._owner,c.publication,c.author, c.post_type, c.tags,c.categories,c.parent,c.creation_date,c.modified_date, c.content)
+        .bind(c.id, c.slug,c._owner,c.publication,c.author, c.post_type, c.tags,c.categories,c.parent,c.creation_date,c.modified_date, c.blob)
         .run();
 
-        console.log('insert 2');
         let res = await insert.txn?.wait();
         console.log(res);
 
@@ -143,7 +143,7 @@ export class DbController {
 
         const { meta: insert } = await db
         .prepare(`UPDATE ${body.table} SET slug = ?, publication = ?, author = ?, post_type = ?, tags = ?, categories = ?, parent = ?, creation_date = ?, modified_date = ?, content = ? WHERE id = ?`)
-        .bind(c.slug, c.publication,c.author, c.post_type, c.tags, c.categories, c.parent, c.creation_date, c.modified_date, c.content, c.id)
+        .bind(c.slug, c.publication,c.author, c.post_type, c.tags, c.categories, c.parent, c.creation_date, c.modified_date, pack(c.content), c.id)
         .run();
 
         console.log('update');
