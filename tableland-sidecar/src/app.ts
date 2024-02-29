@@ -16,6 +16,12 @@ app.post('/query', async (req, res) => {
   );
 });
 
+app.post('/count', async (req, res) => {
+  res.send(
+    await dbCtrl.query({query : "select count(*) from tusg_content_421614_464"})
+  );
+});
+
 
 app.post('/create_table', async (req, res) => {
   res.send(
@@ -51,6 +57,8 @@ app.post('/record', async (req, res) => {
     res.json(err)
   }
 });
+
+
 
 app.listen(port, () => {
   return console.log(`Express is listening at http://localhost:${port}`);

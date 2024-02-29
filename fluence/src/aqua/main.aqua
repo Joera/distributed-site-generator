@@ -117,20 +117,20 @@ func renderOnDSG(tempTask: TuDsgPublishTaskTemp, archive_cid: string) -> *AquaMa
         main = TuDsgContent.pebble(task, content)
         queue <<- main
         for ripple <- main!.template.ripples:
-            c = TuContentTable.queryRipple(ripple) 
-            queue <- TuDsgContent.ripple(task, ripple, c)
+            r = TuContentTable.queryRipple(ripple) 
+            queue <- TuDsgContent.ripple(task, ripple, r.output[0])
 
-        debug <- extractToPath(archive_cid, "/publication")
-        debug <- extractToPath(task.publication.templates, "/templates")
-        debug <- extractToPath(task.publication.assets, "/publication/assets")
+        -- debug <- extractToPath(archive_cid, "/publication")
+        -- debug <- extractToPath(task.publication.templates, "/templates")
+        -- debug <- extractToPath(task.publication.assets, "/publication/assets")
      
-        for ros <- queue:
-            for ro <- ros:
+        -- for ros <- queue:
+        --     for ro <- ros:
               --  collections = TuDsgRenderData.single(archive_cid, task.publication)
             --         results <- TuDsgRenderer.single(ro, kubo.multiaddr)
                     
             -- results <- TuDsgRenderCollect.collect(task.publication.name, kubo.multiaddr)
-
+    Console.print("hoi")
     Console.print(queue)
     Console.print(debug)
 

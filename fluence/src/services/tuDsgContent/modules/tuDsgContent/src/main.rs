@@ -102,7 +102,7 @@ pub fn map(task: TuDsgPublishTask, mappings: &str) -> Vec<u8> {
 #[marine]
 pub fn pebble(task: TuDsgPublishTask, content: Vec<u8>) -> Vec<TuDsgRenderObject> {
 
-    let renderObjects : Vec<TuDsgRenderObject> = vec!();
+    let mut renderObjects : Vec<TuDsgRenderObject> = vec!();
 
     let renderObject = TuDsgRenderObject {
         name: task.slug.clone(),
@@ -113,6 +113,8 @@ pub fn pebble(task: TuDsgPublishTask, content: Vec<u8>) -> Vec<TuDsgRenderObject
         body: content
     };
 
+    
+
     renderObjects.push(renderObject);
 
     println!("pebbled");
@@ -121,27 +123,24 @@ pub fn pebble(task: TuDsgPublishTask, content: Vec<u8>) -> Vec<TuDsgRenderObject
 }
 
 #[marine]
-pub fn ripple(task: TuDsgPublishTask, ripple: TuDsgRipple, amResult: AquaMarineResult) -> Vec<TuDsgRenderObject> {
+pub fn ripple(task: TuDsgPublishTask, ripple: TuDsgRipple, content: Vec<u8>) -> Vec<TuDsgRenderObject> {
 
+    let mut renderObjects : Vec<TuDsgRenderObject> = vec!();
 
-    let renderObjects : Vec<TuDsgRenderObject> = vec!();
+    let rippleOject = TuDsgRenderObject {
+        name: task.slug.clone(),
+        post_type: ripple.post_type.clone(),
+        template : task.publication.mapping.clone().into_iter().find( |m| m.reference == ripple.post_type.clone()).unwrap(),
+        publication_name : task.publication.name.clone(),
+        domain: task.publication.domains[0].clone(),
+        body: content
+    };
 
-    if amResult.results.len() > 0 && amResult.results[0].results.len() > 0 {
+    renderObjects.push(rippleOject);
+    
+    println!("rippled");
 
-        let rippleOject = TuDsgRenderObject {
-            name: task.slug.clone(),
-            post_type: ripple.post_type.clone(),
-            template : task.publication.mapping.clone().into_iter().find( |m| m.reference == ripple.post_type.clone()).unwrap(),
-            publication_name : task.publication.name.clone(),
-            domain: task.publication.domains[0].clone(),
-            body: content
-        };
-
-        renderObjects.push(renderObject);
-
-    }
-
-    rippleOjects
+    renderObjects
 
 }
 

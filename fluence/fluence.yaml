@@ -71,4 +71,4 @@ customFluenceEnv:
     - /ip4/143.176.14.172/tcp/9991/ws/p2p/12D3KooWSMH42NaRdq8uN3pTsBgnJYSZjYrmC1DhBmBXy1hCatrj
     # - /ip4/127.0.0.1/tcp/9991/ws/p2p/12D3KooWCcWYUmbCoMUGeZ7QUjLkXfSa3pKzVG554s56amfsWkm4
 
-defaultSecretKeyName: joera3
+defaultSecretKeyName: joera4

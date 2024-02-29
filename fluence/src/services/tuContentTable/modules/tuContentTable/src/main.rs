@@ -4,6 +4,8 @@ use marine_rs_sdk::module_manifest;
 use marine_rs_sdk::MountedBinaryResult;
 use tu_dsg_types::{TuContentItem, TuDsgRipple};
 use tu_types::results::AquaMarineResult;
+use crate::serde_json::Value;
+
 
 module_manifest!();
 
@@ -27,8 +29,6 @@ pub fn insert(contentAsBinary: Vec<u8>) -> crate::AquaMarineResult {
 
     let content: crate::TuContentItem = rmp_serde::from_slice(&contentAsBinary).unwrap();
 
-    
-   
     let url = "http://tl-sidecar:3088/record".to_string();
 
     let sql_query: String = format!("INSERT INTO {} (id, slug, _owner, publication, author, post_type, tags, categories, parent, creation_date, modified_date, content_cid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", table::ID);
@@ -105,9 +105,24 @@ pub fn queryRipple(ripple: TuDsgRipple) -> crate::AquaMarineResult {
         url
     );
 
-    am_result = am_result.merge_mounted_binary_result(
-        curl(args)   
-    );
+    let response = curl(args);
+
+    if response.stdout.len() > 0  {
+
+        let r : Value = serde_json::from_str(
+            &String::from_utf8(response.clone().stdout).unwrap()
+        ).unwrap();
+
+        if r["results"].as_array().unwrap().len() > 0 {
+            let mut buf = Vec::new();
+            r["results"][0].serialize(&mut Serializer::new(&mut buf)).unwrap();
+            am_result.output.push(buf);
+        }
+    }
+
+    if response.stderr.len() > 0  {
+        am_result.errors.push(String::from_utf8(response.stderr).unwrap());
+    }
 
     println!("{:?}", am_result);
 

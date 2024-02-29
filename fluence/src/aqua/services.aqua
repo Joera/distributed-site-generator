@@ -19,7 +19,7 @@ service TuDsgContent("tuDsgContent"):
   bulk(publication: TuDsgPublication, post_type: string, subnet_kubo: string) -> []TuDsgRenderObject
   map(task: TuDsgPublishTask, mappings: string) -> []u8
   pebble(task: TuDsgPublishTask, content: []u8) ->  []TuDsgRenderObject
-  ripple(task: TuDsgPublishTask, ripple: TuDsgRipple, amResult: AquaMarineResult) ->  []TuDsgRenderObject
+  ripple(task: TuDsgPublishTask, ripple: TuDsgRipple, content: []u8) ->  []TuDsgRenderObject
   test() -> TuDsgContentData
 
 service TuDsgDb("tuDsgDb"):
