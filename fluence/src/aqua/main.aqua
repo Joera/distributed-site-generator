@@ -124,12 +124,9 @@ func renderOnDSG(tempTask: TuDsgPublishTaskTemp, archive_cid: string) -> *AquaMa
         debug <- extractToPath(task.publication.templates, "/templates")
         debug <- extractToPath(task.publication.assets, "/publication/assets")
      
-
-        --   debug <- TuDsgRenderImport.imports(archive_cid, task.publication, kubo.multiaddr)
-
-            -- for ros <- queue:
-            --     for ro <- ros:
-            --         collections = TuDsgRenderData.single(archive_cid, task.publication, kubo.multiaddr)
+        for ros <- queue:
+            for ro <- ros:
+              --  collections = TuDsgRenderData.single(archive_cid, task.publication)
             --         results <- TuDsgRenderer.single(ro, kubo.multiaddr)
                     
             -- results <- TuDsgRenderCollect.collect(task.publication.name, kubo.multiaddr)
