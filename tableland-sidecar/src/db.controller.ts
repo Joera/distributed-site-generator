@@ -48,7 +48,7 @@ export class DbController {
                     parent text,
                     creation_date text,
                     modified_date text,
-                    content text
+                    content blob
                 );
             `)
             .run();
@@ -100,7 +100,7 @@ export class DbController {
 
         const { meta: insert } = await db
         .prepare(body.sql_query)
-        .bind(c.id, c.slug,c._owner,c.publication,c.author, c.post_type, c.tags,c.categories,c.parent,c.creation_date,c.modified_date, "hi")
+        .bind(c.id, c.slug,c._owner,c.publication,c.author, c.post_type, c.tags,c.categories,c.parent,c.creation_date,c.modified_date, c.content)
         .run();
 
         console.log('insert 2');
