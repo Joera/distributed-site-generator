@@ -15,8 +15,8 @@ func dagGetToString(cid: string) -> string:
     <- s
 
 
-func extractToPath(cid: string, path: string) :
+func extractToPath(cid: string, path: string) -> AquaMarineResult :
 
     ipfsGetResult = Ipfs.get(cid)
-    TuCar.extract(ipfsGetResult.path, path) 
+    <- TuCar.extract(ipfsGetResult.path, path) 
 

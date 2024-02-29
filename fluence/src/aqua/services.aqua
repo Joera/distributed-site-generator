@@ -53,7 +53,7 @@ service MyService("myService"):
   greeting(name: string) -> string
 
 service TuCar("tuCar"):
-  extract(cid: string, path: string) 
+  extract(cid: string, path: string) -> AquaMarineResult
   archive(path: string) -> string
 
 service TuContentTable("tuContentTable"): 

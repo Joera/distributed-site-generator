@@ -120,11 +120,9 @@ func renderOnDSG(tempTask: TuDsgPublishTaskTemp, archive_cid: string) -> *AquaMa
             c = TuContentTable.queryRipple(ripple) 
             queue <- TuDsgContent.ripple(task, ripple, c)
 
-
-
-        -- extractToPath(archive_cid, "/publication")
-        -- extractToPath(task.publication.templates, "/templates")
-        -- extractToPath(task.publication.assets, "/publication/assets")
+        debug <- extractToPath(archive_cid, "/publication")
+        debug <- extractToPath(task.publication.templates, "/templates")
+        debug <- extractToPath(task.publication.assets, "/publication/assets")
      
 
         --   debug <- TuDsgRenderImport.imports(archive_cid, task.publication, kubo.multiaddr)
