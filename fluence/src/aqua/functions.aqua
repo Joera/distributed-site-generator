@@ -15,11 +15,10 @@ func dagGetToString(cid: string) -> string:
     <- s
 
 func stringToCid(s: string) -> string:
-    ipfsResult = Ipfs.put(s) 
-
+    
+    path = Vault.put(s)
+    ipfsResult = Ipfs.put(path) 
     <- ipfsResult.hash
-
-func contentToCid(c tuy)
 
 func extractToPath(cid: string, path: string) -> AquaMarineResult :
 

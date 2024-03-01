@@ -31,6 +31,7 @@ export type DSGPublicationInput = {
 	governor: string,
 	mapping : string,
 	name : string,
+	table: string,
 	templates : string,
 	type : string,
 };
@@ -79,6 +80,7 @@ export const _parsePublication =  async (file: SGFile, vault: Vault) : Promise<D
 		governor: properties.governor,
 		type : properties.type,
 		domains : [],
+		table: properties.table,
 		templates : properties.templates,
 		assets : properties.assets,
 		mapping : properties.mapping,

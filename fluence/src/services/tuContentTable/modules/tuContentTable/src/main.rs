@@ -2,7 +2,7 @@
 use marine_rs_sdk::marine;
 use marine_rs_sdk::module_manifest;
 use marine_rs_sdk::MountedBinaryResult;
-use tu_dsg_types::{TuContentItem, TuDsgRipple};
+use tu_dsg_types::{TuContentItem, TuDsgRipple, TuDsgTable};
 use tu_types::results::AquaMarineResult;
 use crate::serde_json::Value;
 
@@ -10,7 +10,7 @@ use crate::serde_json::Value;
 module_manifest!();
 
 mod types;
-mod table;
+// mod table;
 
 pub fn main() {}
 
@@ -23,7 +23,7 @@ use serde::{Deserialize, Serialize};
 use rmps::{Deserializer, Serializer};
 
 #[marine]
-pub fn insert(content: TuContentItem) -> crate::AquaMarineResult {
+pub fn insert(content: TuContentItem, table: TuDsgTable) -> crate::AquaMarineResult {
 
     let mut am_result = crate::AquaMarineResult::new();
 
@@ -35,10 +35,10 @@ pub fn insert(content: TuContentItem) -> crate::AquaMarineResult {
 
     let url = "http://tl-sidecar:3088/record".to_string();
 
-    let sql_query: String = format!("INSERT INTO {} (id, slug, _owner, publication, author, post_type, tags, categories, parent, creation_date, modified_date, content_cid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", table::ID);
+    let sql_query: String = format!("INSERT INTO {} (id, slug, _owner, publication, author, post_type, tags, categories, parent, creation_date, modified_date, content_cid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", table.id);
 
     let tl_request = types::TLReq {
-        table: table::ID.to_string(),
+        table: table.id,
         sql_query,
         content
     };
@@ -69,24 +69,24 @@ pub fn insert(content: TuContentItem) -> crate::AquaMarineResult {
 }
 
 #[marine]
-pub fn batch_insert(content: crate::TuContentItem) -> crate::AquaMarineResult {
+pub fn batch_insert(content: crate::TuContentItem, table: TuDsgTable) -> crate::AquaMarineResult {
 
     let mut am_result = crate::AquaMarineResult::new();
 
-    let _sql_query: String = format!("INSERT INTO {} (id, slug, _owner, publication, author, post_type, tags, categories, parent, creation_date, modified_date, content) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", table::ID);
+    let _sql_query: String = format!("INSERT INTO {} (id, slug, _owner, publication, author, post_type, tags, categories, parent, creation_date, modified_date, content_cid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", table.id);
 
     am_result
 }
 
 #[marine]
-pub fn queryRipple(ripple: TuDsgRipple) -> crate::AquaMarineResult {
+pub fn queryRipple(ripple: TuDsgRipple, table: TuDsgTable) -> crate::AquaMarineResult {
 
     let mut am_result = crate::AquaMarineResult::new();
 
     let url = "http://tl-sidecar:3088/query".to_string();
 
     let sql_query: String = ripple.query
-        .replace("{table}", &table::ID)
+        .replace("{table}", &table.id)
         .replace("{value}",&format!("'{}'", &ripple.value))
         .replace("{post_type}",&format!("'{}'", &ripple.post_type));
 
@@ -121,6 +121,8 @@ pub fn queryRipple(ripple: TuDsgRipple) -> crate::AquaMarineResult {
             let mut buf = Vec::new();
             r["results"][0].serialize(&mut Serializer::new(&mut buf)).unwrap();
             am_result.output.push(buf);
+
+            am_result.results.push(r["results"][0].to_string())
         }
     }
 
@@ -128,19 +130,19 @@ pub fn queryRipple(ripple: TuDsgRipple) -> crate::AquaMarineResult {
         am_result.errors.push(String::from_utf8(response.stderr).unwrap());
     }
 
-    println!("{:?}", am_result);
+    // println!("{:?}", am_result);
 
     am_result
 }
 
 #[marine]
-pub fn query(query: &str) -> crate::AquaMarineResult {
+pub fn query(query: &str, table: TuDsgTable) -> crate::AquaMarineResult {
 
     let mut am_result = crate::AquaMarineResult::new();
 
     let url = "http://tl-sidecar:3088/query".to_string();
 
-    let sql_query: String = query.replace("{table}", &table::ID);
+    let sql_query: String = query.replace("{table}", &table.id);
 
     println!("{:?}", sql_query);
 

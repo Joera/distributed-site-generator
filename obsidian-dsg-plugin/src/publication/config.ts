@@ -17,11 +17,18 @@ type DSGTemplate = {
     collections: DSGCollection[]
 }
 
+type DSGTable = {
+    id: string
+    gateway: string
+    owner: string
+}
+
 export type  DSGPublication = {
     name: string
     governor: string
     domains: any[]
     assets: string
+    table: DSGTable
     templates: string
     mapping: DSGTemplate[]
 }
@@ -39,11 +46,18 @@ export const publicationConfig = async (pubInput: DSGPublicationInput) :  Promis
         }
     }
 
+    let table : DSGTable = {
+        id: pubInput.table,
+        gateway: "https://arb-sepolia.g.alchemy.com/v2/jix2rYwoEdC5REqw_Ckzcsn57bLjRAcj",
+        owner: "0xA416F7CBd3b3D602f6168a577a32BD9e99566521"
+    }
+
    return  {
         assets: pubInput.assets,
         name: pubInput.name,
         governor: pubInput.governor,
         domains: [domain],
+        table,
         templates: pubInput.templates,
         mapping: JSON.parse(content)
     }

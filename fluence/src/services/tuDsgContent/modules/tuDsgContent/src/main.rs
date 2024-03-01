@@ -81,7 +81,7 @@ pub fn map(task: TuDsgPublishTask, mappings: &str) -> TuContentItem {
         creation_date: payload["creation_date"].to_string().replace("\"",""),
         modified_date: payload["modified_date"].to_string().replace("\"",""),
         content: body,
-        content_cid: ""
+        content_cid: "".to_string()
     };
 
     // let mut buf = Vec::new();
@@ -92,9 +92,14 @@ pub fn map(task: TuDsgPublishTask, mappings: &str) -> TuContentItem {
 }
 
 #[marine] 
-pub fn includeCid(content: TuContentItem, cid: String) -> TuContentItem {
+pub fn includeCid(mut content: TuContentItem, cid: String) -> TuContentItem {
+
+    println!("cid: {:?}", cid);
 
     content.content_cid = cid;
+
+    println!("contentItem: {:?}", content);
+
     content
 }
 
@@ -108,7 +113,7 @@ pub fn includeCid(content: TuContentItem, cid: String) -> TuContentItem {
 // }
 
 #[marine]
-pub fn pebble(task: TuDsgPublishTask, content: TuContentItem) -> Vec<TuDsgRenderObject> {
+pub fn pebble(task: TuDsgPublishTask, contentItem: TuContentItem) -> Vec<TuDsgRenderObject> {
 
     let mut renderObjects : Vec<TuDsgRenderObject> = vec!();
 
@@ -118,7 +123,7 @@ pub fn pebble(task: TuDsgPublishTask, content: TuContentItem) -> Vec<TuDsgRender
         template : task.publication.mapping.clone().into_iter().find( |m| m.reference == task.post_type.clone()).unwrap(),
         publication_name : task.publication.name.clone(),
         domain: task.publication.domains[0].clone(),
-        body: content
+        body: contentItem.content
     };
 
     
@@ -131,7 +136,9 @@ pub fn pebble(task: TuDsgPublishTask, content: TuContentItem) -> Vec<TuDsgRender
 }
 
 #[marine]
-pub fn ripple(task: TuDsgPublishTask, ripple: TuDsgRipple, content: Vec<u8>) -> Vec<TuDsgRenderObject> {
+pub fn ripple(task: TuDsgPublishTask, ripple: TuDsgRipple, contentItem: String) -> Vec<TuDsgRenderObject> {
+
+    let c : TuContentItem = serde_json::from_str(&contentItem).unwrap();
 
     let mut renderObjects : Vec<TuDsgRenderObject> = vec!();
 
@@ -141,7 +148,7 @@ pub fn ripple(task: TuDsgPublishTask, ripple: TuDsgRipple, content: Vec<u8>) -> 
         template : task.publication.mapping.clone().into_iter().find( |m| m.reference == ripple.post_type.clone()).unwrap(),
         publication_name : task.publication.name.clone(),
         domain: task.publication.domains[0].clone(),
-        body: content
+        body: c.content
     };
 
     renderObjects.push(rippleOject);

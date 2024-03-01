@@ -142,7 +142,7 @@ export class DbController {
         const c = body.content;
 
         const { meta: insert } = await db
-        .prepare(`UPDATE ${body.table} SET slug = ?, publication = ?, author = ?, post_type = ?, tags = ?, categories = ?, parent = ?, creation_date = ?, modified_date = ?, content = ? WHERE id = ?`)
+        .prepare(`UPDATE ${body.table} SET slug = ?, publication = ?, author = ?, post_type = ?, tags = ?, categories = ?, parent = ?, creation_date = ?, modified_date = ?, content_cid = ? WHERE id = ?`)
         .bind(c.slug, c.publication,c.author, c.post_type, c.tags, c.categories, c.parent, c.creation_date, c.modified_date, c.content_cid, c.id)
         .run();
 

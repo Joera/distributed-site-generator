@@ -52,12 +52,18 @@ data TuDsgDomain:
   url: string
   dns: TuDsgDns
 
+data TuDsgTable:
+    id: string
+    gateway: string
+    owner: string
+
 data TuDsgPublication:
   assets: string
   domains: []TuDsgDomain
   governor: string
   mapping: []TuDsgTemplate
   name: string
+  table: TuDsgTable
   templates: string
   
 data TuDsgRenderObject: 

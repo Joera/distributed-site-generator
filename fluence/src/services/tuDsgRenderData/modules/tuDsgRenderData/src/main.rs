@@ -23,7 +23,7 @@ pub fn single(ro: TuDsgRenderObject, kubo_multiaddr: String) -> AquaMarineResult
 
     let mut am_result = AquaMarineResult::new();
 
-    let content: &str = rmp_serde::from_slice(&ro.body).unwrap();
+    let content = &ro.body; //  &str = rmp_serde::from_slice(&ro.body).unwrap();
  
     let mut data: BTreeMap<String, Value> = serde_json::from_str(&content).unwrap();
    

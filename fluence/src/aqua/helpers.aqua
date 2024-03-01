@@ -22,6 +22,10 @@ func randomDevWorker() -> SpellLocation:
     workers = hosts.devWorkerV0!.installationSpells
     <- workers! 
 
+func getDevWorkers() -> []SpellLocation:
+
+    hosts <- Hosts.get()  
+    <- hosts.devWorkerV0!.installationSpells
 
 func getWorkers() -> []SpellLocation:
 
@@ -33,7 +37,7 @@ func fetchPublication(cid: string) -> TuDsgPublication:
     s: *string 
     ipfs_results: *IpfsGetResult
 
-    for w <- getWorkers():
+    for w <- getDevWorkers():
         on w.workerId via w.hostId:
             ipfs_results <- Ipfs.dag_get(cid)
             s <- Vault.cat(ipfs_results!.path)
@@ -45,7 +49,7 @@ func fetchAuthor(cid: string) -> TuDsgAuthorData:
     s: *string  
     ipfs_results: *IpfsGetResult
 
-    for w <- getWorkers():
+    for w <- getDevWorkers():
         on w.workerId via w.hostId:
             ipfs_results <- Ipfs.dag_get(cid)
             s <- Vault.cat(ipfs_results!.path)

@@ -55,12 +55,21 @@ pub struct TuDsgDomain {
 
 #[marine]
 #[derive(Debug, Serialize, Deserialize)]
+pub struct TuDsgTable {
+    pub id : String,
+    pub gateway: String,
+    pub owner: String
+}
+
+#[marine]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct TuDsgPublication {
     pub assets: String,
     pub domains: Vec<TuDsgDomain>,
     pub governor: String,
     pub mapping: Vec<TuDsgTemplate>,
     pub name: String,
+    pub table: TuDsgTable,
     pub templates: String
 }
 
@@ -72,7 +81,7 @@ pub struct TuDsgRenderObject {
     pub template: TuDsgTemplate,
     pub publication_name: String,
     pub domain: TuDsgDomain,
-    pub body: Vec<u8>
+    pub body: String
 }
 
 #[marine]
@@ -98,7 +107,7 @@ pub struct TuContentItem {
     pub parent: String,
     pub creation_date: String,
     pub modified_date: String,
-    pub content: String
+    pub content: String,
     pub content_cid: String
 }
 

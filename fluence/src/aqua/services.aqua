@@ -22,8 +22,8 @@ service TuDsgContent("tuDsgContent"):
   bulk(publication: TuDsgPublication, post_type: string, subnet_kubo: string) -> []TuDsgRenderObject
   map(task: TuDsgPublishTask, mappings: string) -> TuContentItem
   includeCid(content: TuContentItem, cid: string) -> TuContentItem
-  pebble(task: TuDsgPublishTask, content: TuContentItem) ->  []TuDsgRenderObject
-  ripple(task: TuDsgPublishTask, ripple: TuDsgRipple, content: []u8) ->  []TuDsgRenderObject
+  pebble(task: TuDsgPublishTask, contentItem: TuContentItem) ->  []TuDsgRenderObject
+  ripple(task: TuDsgPublishTask, ripple: TuDsgRipple, contentItem: string) ->  []TuDsgRenderObject
 --   test() -> TuDsgContentData
 
 -- service TuDsgDb("tuDsgDb"):
@@ -61,6 +61,6 @@ service TuCar("tuCar"):
   archive(path: string) -> string
 
 service TuContentTable("tuContentTable"): 
-  insert(content: TuContentItem) -> AquaMarineResult
-  queryRipple(ripple: TuDsgRipple) -> AquaMarineResult
+  insert(content: TuContentItem, table: TuDsgTable) -> AquaMarineResult
+  queryRipple(ripple: TuDsgRipple, table: TuDsgTable) -> AquaMarineResult
 

@@ -122,7 +122,6 @@ export class PublicationController {
     }
 }
 
-
 const parsePublication = (vault: Vault) => 
 	(file: SGFile) : TE.TaskEither<Error,DSGPublicationInput> => 
 		pipe(

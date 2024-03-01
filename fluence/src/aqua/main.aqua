@@ -78,7 +78,7 @@ func gatherKubos() -> Kubos :
 
     -- Console.print(workers)
 
-    for w <- getWorkers():
+    for w <- getDevWorkers():
         on w.workerId via w.hostId:
             res: *IpfsMultiaddrResult
             res <- Ipfs.get_local_api_multiaddr()
@@ -114,15 +114,15 @@ func renderOnDSG(tempTask: TuDsgPublishTaskTemp, archive_cid: string) -> *AquaMa
     on w.workerId via w.hostId:
 
         mappings = dagGetToString(task.author.content_mappings)
-        content = TuDsgContent.map(task, mappings)
-        cid = stringToCid(content.content)
-        content = TuDsgContent.includeCid(content,cid)
-        TuContentTable.insert(content)
-        main = TuDsgContent.pebble(task, content)
+        contentItem_ = TuDsgContent.map(task, mappings)
+        cid = stringToCid(contentItem_.content)
+        contentItem = TuDsgContent.includeCid(contentItem_,cid)
+        TuContentTable.insert(contentItem, task.publication.table)
+        main = TuDsgContent.pebble(task, contentItem)
         queue <<- main
         for ripple <- main!.template.ripples:
-            r = TuContentTable.queryRipple(ripple) 
-            queue <- TuDsgContent.ripple(task, ripple, r.output[0])
+            r = TuContentTable.queryRipple(ripple, task.publication.table) 
+            queue <- TuDsgContent.ripple(task, ripple, r.results[0])
 
         -- debug <- extractToPath(archive_cid, "/publication")
         -- debug <- extractToPath(task.publication.templates, "/templates")
