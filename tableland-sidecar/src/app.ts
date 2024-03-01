@@ -18,13 +18,13 @@ app.post('/query', async (req, res) => {
 
 app.post('/count', async (req, res) => {
   res.send(
-    await dbCtrl.query({query : "select count(*) from tusg_content_421614_464"})
+    await dbCtrl.query({query : "select count(*) from tusg_content_421614_466"})
   );
 });
 
 app.post('/all', async (req, res) => {
   res.send(
-    await dbCtrl.query({query : "select * from tusg_content_421614_464"})
+    await dbCtrl.query({query : "select * from tusg_content_421614_466"})
   );
 });
 
