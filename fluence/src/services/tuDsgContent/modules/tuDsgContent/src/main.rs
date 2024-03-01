@@ -57,7 +57,7 @@ use rmps::{Deserializer, Serializer};
 // }
 
 #[marine]
-pub fn map(task: TuDsgPublishTask, mappings: &str) -> Vec<u8> {
+pub fn map(task: TuDsgPublishTask, mappings: &str) -> TuContentItem {
 
     let mut am_result = AquaMarineResult::new();
 
@@ -80,14 +80,22 @@ pub fn map(task: TuDsgPublishTask, mappings: &str) -> Vec<u8> {
         parent: payload["parent"].to_string().replace("\"",""),
         creation_date: payload["creation_date"].to_string().replace("\"",""),
         modified_date: payload["modified_date"].to_string().replace("\"",""),
-        content: body 
+        content: body,
+        content_cid: ""
     };
 
-    let mut buf = Vec::new();
-    content.serialize(&mut Serializer::new(&mut buf)).unwrap();
-    buf
-   
+    // let mut buf = Vec::new();
+    // content.serialize(&mut Serializer::new(&mut buf)).unwrap();
+    // buf
+    content
 
+}
+
+#[marine] 
+pub fn includeCid(content: TuContentItem, cid: String) -> TuContentItem {
+
+    content.content_cid = cid;
+    content
 }
 
 //     am_result = am_result.merge(
@@ -100,7 +108,7 @@ pub fn map(task: TuDsgPublishTask, mappings: &str) -> Vec<u8> {
 // }
 
 #[marine]
-pub fn pebble(task: TuDsgPublishTask, content: Vec<u8>) -> Vec<TuDsgRenderObject> {
+pub fn pebble(task: TuDsgPublishTask, content: TuContentItem) -> Vec<TuDsgRenderObject> {
 
     let mut renderObjects : Vec<TuDsgRenderObject> = vec!();
 

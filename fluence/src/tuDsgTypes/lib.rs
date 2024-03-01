@@ -99,6 +99,7 @@ pub struct TuContentItem {
     pub creation_date: String,
     pub modified_date: String,
     pub content: String
+    pub content_cid: String
 }
 
 // impl rmp::Encode for TuContentItem {

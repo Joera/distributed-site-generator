@@ -8,6 +8,9 @@ service TuDsgPublicationFromJson("json"):
 service TuDsgAuthorFromJson("json"):
   parse(s: string) -> TuDsgAuthorData
 
+service TuDsgContentToJson("json"):
+  parse(c: TuContentItem) -> string
+
 -- service TuDsgAuthor("tuDsgAuthor"):
 --   fetch() -> TuDsgAuthorData
 
@@ -17,13 +20,14 @@ service TuDsgPublish("tuDsgPublish"):
 
 service TuDsgContent("tuDsgContent"):
   bulk(publication: TuDsgPublication, post_type: string, subnet_kubo: string) -> []TuDsgRenderObject
-  map(task: TuDsgPublishTask, mappings: string) -> []u8
-  pebble(task: TuDsgPublishTask, content: []u8) ->  []TuDsgRenderObject
+  map(task: TuDsgPublishTask, mappings: string) -> TuContentItem
+  includeCid(content: TuContentItem, cid: string) -> TuContentItem
+  pebble(task: TuDsgPublishTask, content: TuContentItem) ->  []TuDsgRenderObject
   ripple(task: TuDsgPublishTask, ripple: TuDsgRipple, content: []u8) ->  []TuDsgRenderObject
-  test() -> TuDsgContentData
+--   test() -> TuDsgContentData
 
-service TuDsgDb("tuDsgDb"):
-  store(content: TuDsgContentData) -> AquaMarineResult
+-- service TuDsgDb("tuDsgDb"):
+--   store(content: TuDsgContentData) -> AquaMarineResult
 
 service TuDsgRenderer("tuDsgRenderer"):
   collect(publication_name: string, kubo_multiaddr: string) -> AquaMarineResult
@@ -57,6 +61,6 @@ service TuCar("tuCar"):
   archive(path: string) -> string
 
 service TuContentTable("tuContentTable"): 
-  insert(content: []u8) -> AquaMarineResult
+  insert(content: TuContentItem) -> AquaMarineResult
   queryRipple(ripple: TuDsgRipple) -> AquaMarineResult
 

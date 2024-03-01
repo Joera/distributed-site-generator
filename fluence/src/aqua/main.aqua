@@ -105,6 +105,8 @@ func renderOnDSG(tempTask: TuDsgPublishTaskTemp, archive_cid: string) -> *AquaMa
 
     task = fromTempTask(tempTask)
 
+    cids: *string
+
     Console.print(task)
 
     w = randomDevWorker()
@@ -113,6 +115,8 @@ func renderOnDSG(tempTask: TuDsgPublishTaskTemp, archive_cid: string) -> *AquaMa
 
         mappings = dagGetToString(task.author.content_mappings)
         content = TuDsgContent.map(task, mappings)
+        cid = stringToCid(content.content)
+        content = TuDsgContent.includeCid(content,cid)
         TuContentTable.insert(content)
         main = TuDsgContent.pebble(task, content)
         queue <<- main

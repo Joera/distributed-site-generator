@@ -5,14 +5,20 @@ data AquaMarineResult:
   results: []string
   errors: []string
 
-data TuDsgContentData:
-  id: string
-  slug: string
-  content_hash: string
-  post_type: string
-  author: string
-  tags: []string
-  date: string
+data TuContentItem:
+    id: string
+    slug: string
+    publication: string
+    author: string
+    post_type: string
+    tags: string
+    categories: string
+    parent: string
+    creation_date: string
+    modified_date: string
+    content: string
+    content_cid: string
+
 
 data TuDsgAuthorData:
   name: string
@@ -60,7 +66,7 @@ data TuDsgRenderObject:
   publication_name: string
   domain: TuDsgDomain
   path: string
-  body: []u8
+  body: TuContentItem
 
 data TuDsgPublishTaskTemp:
   slug: string

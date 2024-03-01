@@ -23,21 +23,19 @@ use serde::{Deserialize, Serialize};
 use rmps::{Deserializer, Serializer};
 
 #[marine]
-pub fn insert(contentAsBinary: Vec<u8>) -> crate::AquaMarineResult {
+pub fn insert(content: TuContentItem) -> crate::AquaMarineResult {
 
     let mut am_result = crate::AquaMarineResult::new();
 
-    let content: crate::TuContentItem = rmp_serde::from_slice(&contentAsBinary).unwrap();
+  //  let content: crate::TuContentItem = rmp_serde::from_slice(&contentAsBinary).unwrap();
 
     // let mut buf = Vec::new();
     // content.content.serialize(&mut Serializer::new(&mut buf)).unwrap();
     // am_result.output.push(buf);
 
-    content.content
-
     let url = "http://tl-sidecar:3088/record".to_string();
 
-    let sql_query: String = format!("INSERT INTO {} (id, slug, _owner, publication, author, post_type, tags, categories, parent, creation_date, modified_date, content) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", table::ID);
+    let sql_query: String = format!("INSERT INTO {} (id, slug, _owner, publication, author, post_type, tags, categories, parent, creation_date, modified_date, content_cid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", table::ID);
 
     let tl_request = types::TLReq {
         table: table::ID.to_string(),

@@ -49,7 +49,7 @@ export class DbController {
                     parent text,
                     creation_date text,
                     modified_date text,
-                    content blob
+                    content_cid text
                 );
             `)
             .run();
@@ -95,13 +95,13 @@ export class DbController {
 
         const c = body.content;
 
-        c.blob = pack(c.content);
+        // c.blob = pack(c.content);
 
         console.log(c);
 
         const { meta: insert } = await db
         .prepare(body.sql_query)
-        .bind(c.id, c.slug,c._owner,c.publication,c.author, c.post_type, c.tags,c.categories,c.parent,c.creation_date,c.modified_date, c.blob)
+        .bind(c.id, c.slug,c._owner,c.publication,c.author, c.post_type, c.tags,c.categories,c.parent,c.creation_date,c.modified_date, c.content_cid)
         .run();
 
         let res = await insert.txn?.wait();
@@ -128,7 +128,7 @@ export class DbController {
 
         const { meta: insert } = await db
         .prepare(body.sql_query)
-        .bind(c.id, c.slug,c._owner,c.publication,c.author, c.post_type, c.tags,c.categories,c.parent,c.creation_date,c.modified_date,c.content)
+        .bind(c.id, c.slug,c._owner,c.publication,c.author, c.post_type, c.tags,c.categories,c.parent,c.creation_date,c.modified_date,c.content_cid)
         .run();
 
         console.log('insert');
@@ -143,7 +143,7 @@ export class DbController {
 
         const { meta: insert } = await db
         .prepare(`UPDATE ${body.table} SET slug = ?, publication = ?, author = ?, post_type = ?, tags = ?, categories = ?, parent = ?, creation_date = ?, modified_date = ?, content = ? WHERE id = ?`)
-        .bind(c.slug, c.publication,c.author, c.post_type, c.tags, c.categories, c.parent, c.creation_date, c.modified_date, pack(c.content), c.id)
+        .bind(c.slug, c.publication,c.author, c.post_type, c.tags, c.categories, c.parent, c.creation_date, c.modified_date, c.content_cid, c.id)
         .run();
 
         console.log('update');
