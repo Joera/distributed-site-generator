@@ -13,8 +13,6 @@ name: tuDsgWebHost
 mountedBinaries:
   ipfs: /usr/bin/ipfs
   curl: /usr/bin/curl
-  ln: /usr/bin/ln
-  cp: /usr/bin/cp
 
 volumes:
   html: "./html/"

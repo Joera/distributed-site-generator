@@ -2,22 +2,22 @@
 use marine_rs_sdk::marine;
 use marine_rs_sdk::module_manifest;
 use marine_rs_sdk::MountedBinaryResult;
-// use tu_dsg_types::{ TuDsgDns, TuDsgDomain, TuDsgPublication };
+use tu_dsg_types::{ TuDsgDns, TuDsgDomain, TuDsgPublication };
 use tu_types::results::{AquaMarineResult};   
 
 module_manifest!();
 
 pub fn main() {}
 
-// #[marine]
-// pub fn serve(publication: TuDsgPublication) -> AquaMarineResult {
+#[marine]
+pub fn serve(publication: TuDsgPublication) -> AquaMarineResult {
     
-//     let mut am_result = AquaMarineResult::new();
-//     let _call_data = marine_rs_sdk::get_call_parameters();
+    let mut am_result = AquaMarineResult::new();
+    let _call_data = marine_rs_sdk::get_call_parameters();
  
 
-//     am_result
-// }
+    am_result
+}
 
 #[marine]
 pub fn addManual(pubName: String) -> AquaMarineResult {
@@ -41,7 +41,6 @@ pub fn addManual(pubName: String) -> AquaMarineResult {
         let r = &String::from_utf8(response.clone().stdout).unwrap();
         println!("ipfs add result: {:?}", r);
         am_result.results.push(r.to_string());
-        
     }
 
     if response.stderr.len() > 0  {
@@ -60,7 +59,5 @@ pub fn addManual(pubName: String) -> AquaMarineResult {
 extern "C" {
     pub fn ipfs(cmd: Vec<String>) -> MountedBinaryResult;
     pub fn curl(cmd: Vec<String>) -> MountedBinaryResult;
-    pub fn cp(cmd: Vec<String>) -> MountedBinaryResult;
-    pub fn ln(cmd: Vec<String>) -> MountedBinaryResult;
 }
 

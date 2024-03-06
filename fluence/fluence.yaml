@@ -5,7 +5,7 @@
 version: 7
 
 deals:
-  devWorkerV01:
+  devWorkerV0:
     targetWorkers: 1
     pricePerWorkerEpoch: 0.00001
     collateralPerWorker: 1
@@ -13,7 +13,7 @@ deals:
     spells: []
 
 hosts:
-  devWorkerV01:
+  devWorkerV0:
     peerIds:
       # - 12D3KooWSMH42NaRdq8uN3pTsBgnJYSZjYrmC1DhBmBXy1hCatrj
       #- 12D3KooWCcWYUmbCoMUGeZ7QUjLkXfSa3pKzVG554s56amfsWkm4
@@ -21,7 +21,7 @@ hosts:
     services:
      # - tuDsgContent
       # - tuContentStore
-      # - tuDsgTemplateData
+      - tuDsgTemplateData
       - tuDsgRenderer
       - tuDsgWebHost
     spells: []
