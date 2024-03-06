@@ -190,17 +190,17 @@ secrets:
 
 volumes:
   webhost1:
-    driver: local
-    driver_opts:
-      type: 'none'
-      o: 'bind'
-      device: '/media/drive-blue/dsg/webhost'
+    # driver: local
+    # driver_opts:
+    #   type: 'none'
+    #   o: 'bind'
+    #   device: '/media/drive-blue/dsg/webhost'
   letsencrypt:
-    driver: local
-    driver_opts:
-      type: 'none'
-      o: 'bind'
-      device: '/media/drive-blue/dsg/letsencrypt'
+    # driver: local
+    # driver_opts:
+    #   type: 'none'
+    #   o: 'bind'
+    #   device: '/media/drive-blue/dsg/letsencrypt'
 
   ipfs:
 
