@@ -171,6 +171,6 @@ outbound_substream_timeout = "10s"
 [kademlia]
 max_packet_size = 1677721600
 query_timeout = "3s"
-replication_factor = 0
+replication_factor = 1
 peer_fail_threshold = 3
 ban_cooldown = "60s"
