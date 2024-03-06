@@ -64,7 +64,7 @@ services:
       - nox-0
     volumes: 
       - ./Config.toml:/.fluence/v1/Config.toml
-      - webhost1:/.fluence/v1/shared
+      - webhost1:/.fluence/shared
     networks:
       - dsg
       
