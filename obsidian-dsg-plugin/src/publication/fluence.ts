@@ -1,25 +1,10 @@
-import { SGFile } from "../types";
+import { DSGPublicationInput, SGFile } from "../types";
 import { Kubos } from "../types";
 
 
 export const gatherKubos = async () : Promise<Kubos> => {
 
 	return new Promise( async (resolve, reject) => {
-
-		// const exec = require('child-process-promise').exec;
-		// const path = "/home/joera/Documents/transport-union/fluence_tusg";
-		// const cmd = `source /home/joera/.nvm/nvm.sh && nvm use 18 >/dev/null && fluence run -f 'gatherKubos()'`;
-
-
-		// console.log(path);
-
-		// // had to add symlink: 
-		// // sudo ln -s /home/joera/.nvm/versions/node/v16.20.1/bin/fluence /usr/bin/fluence
-
-		// const promise = exec(cmd, { cwd : path, stdio: 'inherit', shell: true }); 
-		// const childProcess = promise.childProcess;
-
-		// childProcess.stdout.on('data', function (data: any) {
 
 		let res = await fetch("http://127.0.0.1:3099/gather_kubos", {
 			method: "post",
@@ -58,5 +43,30 @@ export const gatherKubos = async () : Promise<Kubos> => {
 			console.log(e);
 		}
 	
+	});                                                                 
+}
+
+export const goAndFetch = async (hash: string, ipfs_multiaddress: string) : Promise<string> => {
+
+	return new Promise( async (resolve, reject) => {
+
+		let res = await fetch("http://127.0.0.1:3099/go_and_fetch", {
+			method: "post",
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ hash: hash, ipfs_multiaddress: ipfs_multiaddress})
+		});
+	
+		const data = await res.json();
+
+		console.log(data);
+
+		if (data != undefined) {
+			
+		}	
+
+		resolve(hash);
 	});                                                                 
 }

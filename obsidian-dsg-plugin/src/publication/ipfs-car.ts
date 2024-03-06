@@ -24,6 +24,8 @@ export const cars = async (pubInput: DSGPublicationInput, kubos: Kubos) : Promis
     return pubInput;
 }
 
+
+
 const createFromPath = async (fileName: string, path: string)  => {
 
     return new Promise( (resolve, reject) => {
@@ -45,4 +47,41 @@ const createFromPath = async (fileName: string, path: string)  => {
 
         resolve("whatever");
     });	
+}
+
+
+export const dir = async (key: string, path: string): Promise<string> => {
+
+    return new Promise( (resolve, reject) => {
+
+        const exec = require('child-process-promise').exec;
+
+        const dirPath = `/home/joera/Documents/dsg/publications/${path}`; 
+        const cmd = `ipfs add -r -Q ${dirPath}`;
+        const promise = exec(cmd, { cwd: dirPath, stdio: 'inherit', shell: true }); 
+        const childProcess = promise.childProcess;
+
+        childProcess.stdout.on('data', function (data: any) {
+            console.log('[serve] stdout: ', data.toString());
+            // pubInput[key] = data.toString()
+
+            resolve(data.toString());
+        });
+
+        childProcess.stderr.on('data', function (data: any) {
+            console.log('[serve] stderr: ', data.toString());
+            reject("");
+        });
+
+
+    });	
+}
+
+export const includeDirCid = (hash: string, key: string, input: DSGPublicationInput): Promise<DSGPublicationInput> => {
+
+    return new Promise( async (resolve, reject) => {
+
+        input[key] = hash;
+        resolve(input);
+    });
 }

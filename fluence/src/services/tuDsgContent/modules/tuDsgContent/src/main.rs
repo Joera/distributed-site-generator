@@ -4,7 +4,7 @@ use marine_rs_sdk::MountedBinaryResult;
 use marine_rs_sdk::module_manifest;
 use serde_json;
 use serde_json::{json, Value};
-use tu_dsg_types::{TuDsgAuthorData,TuDsgPublication, TuDsgRenderObject, TuDsgPublishTask, TuContentItem, TuDsgRipple};
+use tu_dsg_types::{TuDsgAuthorData,TuDsgPublication, TuDsgRenderObject, TuDsgPublishTask, TuContentItem, TuDsgRipple, TuDsgMapped };
 use std::collections::HashMap;
 use tu_types::results::AquaMarineResult;
 // use tu_types::bytes::{pmEncode, pmDecode};
@@ -57,7 +57,7 @@ use rmps::{Deserializer, Serializer};
 // }
 
 #[marine]
-pub fn map(task: TuDsgPublishTask, mappings: &str) -> TuContentItem {
+pub fn map(task: TuDsgPublishTask, mappings: &str) -> TuDsgMapped {
 
     let mut am_result = AquaMarineResult::new();
 
@@ -69,7 +69,7 @@ pub fn map(task: TuDsgPublishTask, mappings: &str) -> TuContentItem {
         &task.post_type
     );
 
-    let content = TuContentItem {
+    let item = TuContentItem {
         id: payload["sgId"].to_string().replace("\"","").replace("-",""),
         slug: helpers::slugify(&payload["title"].to_string()), // to do: force unique value 
         publication: task.publication.name.clone(),
@@ -80,14 +80,16 @@ pub fn map(task: TuDsgPublishTask, mappings: &str) -> TuContentItem {
         parent: payload["parent"].to_string().replace("\"",""),
         creation_date: payload["creation_date"].to_string().replace("\"",""),
         modified_date: payload["modified_date"].to_string().replace("\"",""),
-        content: body,
         content_cid: "".to_string()
     };
 
     // let mut buf = Vec::new();
     // content.serialize(&mut Serializer::new(&mut buf)).unwrap();
     // buf
-    content
+    TuDsgMapped {
+        item: item,
+        body: body   
+    }
 
 }
 
@@ -123,7 +125,7 @@ pub fn pebble(task: TuDsgPublishTask, contentItem: TuContentItem) -> Vec<TuDsgRe
         template : task.publication.mapping.clone().into_iter().find( |m| m.reference == task.post_type.clone()).unwrap(),
         publication_name : task.publication.name.clone(),
         domain: task.publication.domains[0].clone(),
-        body: contentItem.content
+        body_cid: contentItem.content_cid
     };
 
     
@@ -148,7 +150,7 @@ pub fn ripple(task: TuDsgPublishTask, ripple: TuDsgRipple, contentItem: String) 
         template : task.publication.mapping.clone().into_iter().find( |m| m.reference == ripple.post_type.clone()).unwrap(),
         publication_name : task.publication.name.clone(),
         domain: task.publication.domains[0].clone(),
-        body: c.content
+        body_cid: c.content_cid
     };
 
     renderObjects.push(rippleOject);

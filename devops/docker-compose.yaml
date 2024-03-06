@@ -25,6 +25,7 @@ services:
     volumes:
       - ./ipfs/ipfs.sh:/container-init.d/01-ipfs.sh
       - ipfs:/data/ipfs 
+      - ../archive:/archive
     networks:
       - dsg
 
@@ -173,7 +174,8 @@ services:
     ports: 
       - "8001:8001"
     volumes:
-      - webhost1:/.fluence/v1/shared
+      - webhost1:/usr/share/nginx/html
+      - letsencrypt:/etc/letsencrypt
     networks:
       - dsg
 
@@ -188,6 +190,18 @@ secrets:
 
 volumes:
   webhost1:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '/media/drive-blue/dsg/webhost'
+  letsencrypt:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '/media/drive-blue/dsg/letsencrypt'
+
   ipfs:
 
 networks:

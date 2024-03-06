@@ -5,42 +5,12 @@ import {
 	Workspace,
 } from "obsidian";
 	
-import { SGFile } from "../types";
+import { DSGAuthorInput, DSGPublicationInput, SGFile } from "../types";
 
 import * as YAML from 'yaml'
 import { filePut } from "./ipfs";
 import { Kubos} from "../types";
 
-
-type TuDsgDns = {
-
-	custodian: string,
-	item_id: string,
-	auth_key: string,
-}
-
-type TuDsgDomain = {
-
-	url: string,
-	dns: TuDsgDns
-}
-
-export type DSGPublicationInput = {
-	assets : string,
-	domains: TuDsgDomain[],
-	governor: string,
-	mapping : string,
-	name : string,
-	table: string,
-	templates : string,
-	type : string,
-};
-
-export type DSGAuthorInput = {
-	name : string,
-	repository: string,
-	content_mappings: string
-};
 
 export const _parseAuthor =  async (file: SGFile, vault: Vault) : Promise<DSGAuthorInput> =>   {
 
@@ -76,20 +46,19 @@ export const _parsePublication =  async (file: SGFile, vault: Vault) : Promise<D
 	properties = YAML.parse(frontmatter_str);
 
 	return  {
-		name : properties.name,
-		governor: properties.governor,
-		type : properties.type,
+		
 		domains : [],
-		table: properties.table,
-		templates : properties.templates,
-		assets : properties.assets,
+		governor: properties.governor,
 		mapping : properties.mapping,
+		name : properties.name,
+		repo : properties.repo,
+		table: properties.table,
+		type : properties.type,
+		
 	}
 }
 
 export const insertPubCid = async (workspace: Workspace, cid: string, fileManager: FileManager) : Promise<string> => {
-
-	// console.log(cid);
 
 	let file = workspace.getActiveFile();
 
@@ -105,7 +74,7 @@ export const insertPubCid = async (workspace: Workspace, cid: string, fileManage
 
 export const _uploadMapping = async (authInput: any, kubos: Kubos):  Promise<any> => {
 
-	const cids = [];
+	const cids: string[] = [];
 
 	if (kubos.externals_url != undefined) {
 

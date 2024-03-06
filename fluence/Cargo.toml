@@ -3,13 +3,12 @@ members = [
   "src/services/tuDsgContent/modules/tuDsgContent",
   "src/modules/tu_ipfs",
   "src/services/myService/modules/myService",
-  "src/services/tuDsgRenderImport/modules/tuDsgRenderImport",
-  "src/modules/tu_car",
-  "src/services/tuDsgRenderData/modules/tuDsgRenderData",
   "src/services/tuDsgRenderer/modules/tuDsgRenderer",
   "src/modules/tu_volumes",
   "src/services/tuDsgRenderCollect/modules/tuDsgRenderCollect",
   "src/services/tuDsgWebHost/modules/tuDsgWebHost",
-  "src/services/tuDsgRendererStripped/modules/tuDsgRendererStripped",
-  "src/services/tuContentTable/modules/tuContentTable"
+  "src/services/tuCars/modules/tuCars",
+  "src/services/tuContentStore/modules/tuContentStore",
+  "src/services/tuDsgTemplateData/modules/tuDsgTemplateData",
+  "src/services/tuGit/modules/tuGit"
 ]

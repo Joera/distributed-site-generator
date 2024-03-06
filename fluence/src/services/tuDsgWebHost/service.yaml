@@ -11,5 +11,3 @@ name: tuDsgWebHost
 modules:
   facade:
     get: modules/tuDsgWebHost
-  tu_car:
-    get: ../../modules/tu_car

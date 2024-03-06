@@ -1,20 +1,10 @@
 use handlebars::Handlebars;
 use handlebars::handlebars_helper;
 use chrono::NaiveDate;
-use serde_json::{Map, Value};
-use std::collections::BTreeMap;
+
 use serde::Serialize;
 use std::fs;
-
-
-#[derive(Debug,Serialize)]
-pub struct TemplateData  {
-    pub body: BTreeMap<String, Value>,
-    pub collections: BTreeMap<String, Vec<BTreeMap<String, Value>>>,
-    pub base_url: String,
-    pub assets_url: String,
-    pub render_env: String
-}
+use rmp_serde;
 
 pub struct Renderer{
     handlebars: Handlebars<'static>,        
@@ -46,17 +36,17 @@ impl Renderer {
         self.handlebars.register_helper("extract_images", Box::new(crate::helpers::extract_images));
         self.handlebars.register_helper("trim_seo_desc", Box::new(crate::helpers::trim_seo_desc));
 
-
-        //  read filelist from dir
     }
 
-    pub fn render_template(self: &mut Self, ro : &crate::TuDsgRenderObject, subnet_kubo: &String) -> crate::AquaMarineResult {
+    pub fn render_template(self: &mut Self, ro: crate::TuDsgRenderObject, td: &Vec<u8>) -> crate::AquaMarineResult {
         
         let mut am_result = crate::AquaMarineResult::new();
+        let calldata = marine_rs_sdk::get_call_parameters();
+        let vault = format!("/tmp/vault/{}", calldata.particle_id);
 
-        crate::partials::load(&ro.publication_name, &mut self.handlebars);
+        crate::partials::load(&ro.publication_name, &mut self.handlebars, &vault);
 
-        let res = crate::read(&format!("{}/{}",ro.publication_name,&ro.template.file),"/templates/");
+        let res = crate::filesystem::read(&vault, &ro.template.file);
         for e in res.errors.iter() {
             println!("{:?}", e);
         }
@@ -64,49 +54,33 @@ impl Renderer {
 
             self.handlebars.register_template_string("t1",  String::from_utf8(res.output[0].clone()).unwrap());
 
-            let result = crate::dag_get(&ro.body, subnet_kubo);
+            let template_data: crate::TemplateData = rmp_serde::from_slice(&td).unwrap();
 
-            // println!("dag get result: {:?}", result);
-         
-            let mut data: BTreeMap<String, Value> = serde_json::from_str(&result.results[0]).unwrap();
-           
-            let collections = crate::collections::gather(ro, &data, &subnet_kubo);
-
-            let template_data = TemplateData {
-                body: data.clone(),
-                collections,
-                base_url: "https://x.yz".to_string(),
-                assets_url:"../assets".to_string(),
-                render_env: "some_publisher".to_string()
-            };
+            println!("should be parsed template data: {:?}", template_data);
         
             let html = self.handlebars.render("t1", &template_data).unwrap();
 
             let file_name = "index.html";
-            let path = ro.template.path.replace("{slug}", &crate::helpers::slugify(data["title"].as_str().unwrap())).to_owned();
+            let path = ro.template.path.replace("{slug}", &ro.name).to_owned();
             let folder = format!("/html/{}{}", ro.publication_name, path);
 
             // println!("{:?}", folder);
 
             am_result = am_result.merge(
-                crate::create_dir(
+                crate::filesystem::create_dir(
                     &folder,
                     "",
                 )
             );
 
             am_result = am_result.merge(
-                crate::write(
+                crate::filesystem::write(
                     &file_name,
                     &folder,
                     &html.clone()
                 )
             );
-
-
         }
-
-        // println!("{:?}", am_result);
 
         am_result
     }

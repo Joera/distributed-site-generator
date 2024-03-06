@@ -81,7 +81,7 @@ pub struct TuDsgRenderObject {
     pub template: TuDsgTemplate,
     pub publication_name: String,
     pub domain: TuDsgDomain,
-    pub body: String
+    pub body_cid: String
 }
 
 #[marine]
@@ -107,8 +107,15 @@ pub struct TuContentItem {
     pub parent: String,
     pub creation_date: String,
     pub modified_date: String,
-    pub content: String,
     pub content_cid: String
+}
+
+#[marine]
+#[derive(Debug, Serialize, Deserialize)]
+pub struct TuDsgMapped {
+
+    pub item: TuContentItem,
+    pub body: String
 }
 
 // impl rmp::Encode for TuContentItem {

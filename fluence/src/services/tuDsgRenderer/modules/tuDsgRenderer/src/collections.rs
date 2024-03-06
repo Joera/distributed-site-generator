@@ -59,12 +59,12 @@ pub fn gather(ro: &TuDsgRenderObject, data: &BTreeMap<String, Value>, subnet_kub
                 let mut data: Vec<BTreeMap<String, Value>> = vec!(); 
 
                 for i in arr {
-
-                    // println!("collection item: {:?}", i["slug"]);
                 
                     let cid = i["content_cid"].to_string().replace("\"","");
                     let res = crate::dag_get(&cid.clone(), subnet_kubo);
-                    data.push(serde_json::from_str(&res.results[0]).unwrap());
+                    if res.results.len() > 0 {
+                        data.push(serde_json::from_str(&res.results[0]).unwrap());
+                    }
                 }
 
                 collections.insert(collection.key.clone(), data);

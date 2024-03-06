@@ -20,41 +20,32 @@ hosts:
       # - 12D3KooWP55ziK6EDVvwHAeHx7pb6XEHG6ztzGKrydrCFZciKZ2E
     services:
       - tuDsgContent
-      - tuContentTable
-      - tuDsgRenderImport
-      - tuDsgRenderData
-      - tuDsgRendererStripped
-      - tuDsgRenderCollect
+      - tuContentStore
+      - tuDsgTemplateData
+      - tuDsgRenderer
+      - tuDsgWebHost
     spells: []
 
 aquaDependencies:
   "@fluencelabs/aqua-lib": 0.9.1
-  "@fluencelabs/aqua-ipfs": 0.5.30
+  "@fluencelabs/aqua-ipfs": 0.5.31
   "@fluencelabs/spell": 0.6.10
 
 services:
   tuDsgContent:
     get: src/services/tuDsgContent
-  tuDsgRenderImport:
-    get: src/services/tuDsgRenderImport
-  tuDsgRenderData:
-    get: src/services/tuDsgRenderData
+  tuContentStore:
+    get: src/services/tuContentStore
+  tuCars:
+    get: src/services/tuCars
+  tuDsgTemplateData:
+    get: src/services/tuDsgTemplateData
   tuDsgRenderer:
     get: src/services/tuDsgRenderer
-  tuDsgRendererStripped:
-    get: src/services/tuDsgRendererStripped
-  tuDsgRenderCollect:
-    get: src/services/tuDsgRenderCollect
+  tuGit:
+    get: src/services/tuGit
   tuDsgWebHost:
     get: src/services/tuDsgWebHost
-  myService1:
-    get: src/services/myService
-  myService2:
-    get: src/services/myService
-  myService3:
-    get: src/services/myService
-  tuContentTable:
-    get: src/services/tuContentTable
 
 relaysPath:
   - src/gateway/src

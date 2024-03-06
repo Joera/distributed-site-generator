@@ -24,13 +24,13 @@ type DSGTable = {
 }
 
 export type  DSGPublication = {
-    name: string
-    governor: string
+    
     domains: any[]
-    assets: string
-    table: DSGTable
-    templates: string
+    governor: string
     mapping: DSGTemplate[]
+    name: string
+    repo: string
+    table: DSGTable
 }
 
 export const publicationConfig = async (pubInput: DSGPublicationInput) :  Promise<DSGPublication> => {
@@ -53,13 +53,12 @@ export const publicationConfig = async (pubInput: DSGPublicationInput) :  Promis
     }
 
    return  {
-        assets: pubInput.assets,
-        name: pubInput.name,
-        governor: pubInput.governor,
         domains: [domain],
-        table,
-        templates: pubInput.templates,
-        mapping: JSON.parse(content)
+        governor: pubInput.governor,
+        mapping: JSON.parse(content),
+        name: pubInput.name,
+        repo: pubInput.repo,
+        table
     }
 }
 

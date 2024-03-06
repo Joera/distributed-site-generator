@@ -3,30 +3,45 @@ use std::fs;
 use std::path::Path;
 use handlebars::Handlebars;
 
-pub fn load(publication_name : &String, mut handlebars: &mut Handlebars) -> bool {
+pub fn load(publication_name : &String, mut handlebars: &mut Handlebars, vault: &String) -> bool {
 
-    let partials = fs::read_dir(&format!("/templates/{}/partials/", publication_name))
-    .unwrap()
-    .filter_map(|e| e.ok())
-    .map(|e| e.path())
-    .collect::<Vec<_>>();
+    // let calldata = marine_rs_sdk::get_call_parameters();
+    // let vault = format!("/tmp/vault/{}/templates/partials", calldata.particle_id);
 
-    // println!("{:?}", partials);
+    println!("vault: {:?}", vault);
+    let folder = format!("{}/templates", vault);
+    println!("folder: {:?}", folder);
 
-    for path in partials.iter() {
+    let root = fs::read_dir(&vault)
+        .unwrap()
+        .filter_map(|e| e.ok())
+        .map(|e| e.path())
+        .collect::<Vec<_>>();
 
-        let _path = Path::new(path);
-        let file_name = path.file_stem().unwrap().to_str().unwrap();
-        // PARTIALS 
-        let res = crate::read(&format!("{}/partials/{}.handlebars", publication_name, &file_name),"/templates/");
+    println!("{:?}", root);
 
-        for e in res.errors.iter() {
-            println!("{:?}", e);
-        }
-        if res.output.len() == 1 {
-            handlebars.register_template_string(&file_name, std::str::from_utf8(&res.output[0]).unwrap());
-        }
-    }
+    let partials = fs::read_dir(&folder)
+        .unwrap()
+        .filter_map(|e| e.ok())
+        .map(|e| e.path())
+        .collect::<Vec<_>>();
+
+    println!("{:?}", partials);
+
+    // for path in partials.iter() {
+
+    //     let _path = Path::new(path);
+    //     let file_name = path.file_stem().unwrap().to_str().unwrap();
+    //     // PARTIALS 
+    //     let res = crate::filesystem::read(&format!("{}/partials/", vault), &format!("{}.handlebars", file_name));
+
+    //     for e in res.errors.iter() {
+    //         println!("{:?}", e);
+    //     }
+    //     if res.output.len() == 1 {
+    //         handlebars.register_template_string(&file_name, std::str::from_utf8(&res.output[0]).unwrap());
+    //     }
+    // }
 
     true
 

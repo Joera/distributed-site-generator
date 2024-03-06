@@ -11,17 +11,38 @@ func dagGetToString(cid: string) -> string:
 
     ipfsResult = Ipfs.dag_get(cid)
     s = Vault.cat(ipfsResult.path)
-
     <- s
 
 func stringToCid(s: string) -> string:
     
+    rez: *string
     path = Vault.put(s)
-    ipfsResult = Ipfs.put(path) 
-    <- ipfsResult.hash
+    ipfsResult = Ipfs.dag_put(path) 
+    if ipfsResult.success == true: 
+        rez <<- ipfsResult.hash
+    else:
+        rez <<- ipfsResult.error
+    <- rez!
+
+
+func cidToString(cid: string) -> string:
+
+    rez: *string
+    ipfsResult = Ipfs.dag_get(cid)
+    if ipfsResult.success == true: 
+        rez <- Vault.cat(ipfsResult.path)
+    else:
+        rez <<- ipfsResult.error
+    <- rez!
 
 func extractToPath(cid: string, path: string) -> AquaMarineResult :
-
-    ipfsGetResult = Ipfs.get(cid)
-    <- TuCar.extract(ipfsGetResult.path, path) 
-
+    rez : *string
+    -- car files .. dont work with 
+    ipfsResult = Ipfs.cat(cid)
+    -- if ipfsResult.success == true: 
+    --     rez <- Vault.cat(ipfsResult.path)
+    -- else:
+    --     rez <<- ipfsResult.error
+    -- filepath = Vault.put(ipfsResult.contents)
+    -- Peer.timeout(100,"just chill a little")
+    <- TuCars.extract(ipfsResult.contents, path) 

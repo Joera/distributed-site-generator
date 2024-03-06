@@ -4,17 +4,18 @@ import { Settings } from './settings';
 import * as E from "fp-ts/lib/Either";
 import { Lazy, pipe } from "fp-ts/lib/function";
 import * as TE from "fp-ts/lib/TaskEither";
-import { SGFile, SGTask } from './types';
+import { DSGPublicationInput, SGFile, SGTask } from './types';
 import { _bulkUpload, _bulkRender, gatherKubos } from './note/fluence';
-import { DSGPublicationInput, _parsePublication, insertPubCid } from './publication/note';
 import { DSGPublication, publicationConfig, upload, uploadAndMerge } from './publication/config';
 
 import { readdirSync, statSync } from 'fs';
 import { prepareNote } from './note.controller';
 import { isLeft, isRight } from 'fp-ts/lib/Either';
-import { cars } from './publication/ipfs-car';
+import { cars, dir, includeDirCid } from './publication/ipfs-car';
 import { followLink, saveRoot, saveRootDirectly } from './note/note';
 import { localhost } from './note/host';
+import { goAndFetch } from './publication/fluence';
+import { _parsePublication, insertPubCid } from './publication/note';
 
 const TEthunk = <A>(f: Lazy<Promise<A>>) => TE.tryCatch(f, E.toError);
 
@@ -40,7 +41,8 @@ export class PublicationController {
             file,
             TE.fromNullable(new Error("File not found")),
             TE.chain(parsePublication(app.vault)),
-            TE.chain(createCars()),
+            // TE.chain(createCars()),
+            // TE.chain(uploadDir("templates","/unamore/templates")),
             TE.chain(createConfig()),
             TE.chain(uploadConfig(app)),
             TE.match(	
@@ -117,8 +119,6 @@ export class PublicationController {
 
         await saveRootDirectly(new_archive_cid, "", pubName, app);
         await localhost(new_archive_cid, "")
-        
-      
     }
 }
 
@@ -126,8 +126,7 @@ const parsePublication = (vault: Vault) =>
 	(file: SGFile) : TE.TaskEither<Error,DSGPublicationInput> => 
 		pipe(
 			TE.right(file),
-			TE.chain((file) => TEthunk(() => _parsePublication(file, vault))),
-			TE.chain((pubInput) => TE.right(pubInput))
+			TE.chain((file) => TEthunk(() => _parsePublication(file, vault)))
 		);
 
 const createCars = () => 
@@ -137,6 +136,20 @@ const createCars = () =>
 			TE.chain(() => TEthunk(() => gatherKubos())),
 			TE.chain((kubos) => TEthunk(() => cars(pubInput, kubos))),
 		);
+
+const uploadDir = (name: string, path: string) => 
+(pubInput: DSGPublicationInput) : TE.TaskEither<Error,DSGPublicationInput> => 
+    pipe(
+        TE.right({}),
+        TE.chain(() => TEthunk(() => dir(name, path))),
+        TE.chain((hash) => TEthunk(() => goAndFetch(hash, "/ip4/"))),
+        TE.chain((hash) => TEthunk(() => includeDirCid(hash, name, pubInput))),
+        TE.chain((input: DSGPublicationInput) => TE.right(input))
+    );
+
+        // // TE.chain(() => TEthunk(() => dir(pubInput, "assets", "/unamore/public/assets"))),
+        // // TE.chain(() => TEthunk(() => goAndFetch(hash, "templates", pubInput))),
+
 const createConfig = () => 
 	(input: DSGPublicationInput) : TE.TaskEither<Error,DSGPublication> => 
 		pipe(
@@ -162,3 +175,7 @@ const notify = (e: Error | undefined, msg: string) => {
 
 	new Notice(msg);
 };
+function includeCid(hash: DSGPublicationInput, name: string, input: any): Promise<unknown> {
+    throw new Error('Function not implemented.');
+}
+

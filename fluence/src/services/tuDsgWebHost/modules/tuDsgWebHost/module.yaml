@@ -10,11 +10,11 @@ type: rust
 
 name: tuDsgWebHost
 
-# mountedBinaries:
-#   curl: /usr/bin/curl
-#   ln: /usr/bin/ln
-#   cp: /usr/bin/cp
+mountedBinaries:
+  ipfs: /usr/bin/ipfs
+  curl: /usr/bin/curl
+  ln: /usr/bin/ln
+  cp: /usr/bin/cp
 
-# volumes:
-#   templates: "./publication/templates/"
-#   html: "./publication/html/"
+volumes:
+  html: "./html/"
