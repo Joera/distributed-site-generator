@@ -8,4 +8,4 @@ RUN mkdir /etc/letsencrypt
 WORKDIR /
 # COPY ../nginx/conf.d/__upstreams.conf /etc/nginx/conf.d/__upstreams.conf
 # COPY ../nginx/conf.d/_server.conf.template /etc/nginx/conf.d/_server.conf.template
-# COPY ../nginx/nginx.conf /etc/nginx/nginx.conf
+COPY ../nginx/nginx.conf /etc/nginx/nginx.conf
