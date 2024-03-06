@@ -174,7 +174,7 @@ services:
     ports: 
       - "8001:8001"
     volumes:
-      - webhost1:/usr/share/nginx/html
+      - webhost1:/usr/share/nginx
       - letsencrypt:/etc/letsencrypt
     networks:
       - dsg
