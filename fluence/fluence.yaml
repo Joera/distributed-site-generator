@@ -19,9 +19,9 @@ hosts:
       #- 12D3KooWCcWYUmbCoMUGeZ7QUjLkXfSa3pKzVG554s56amfsWkm4
       - 12D3KooWP55ziK6EDVvwHAeHx7pb6XEHG6ztzGKrydrCFZciKZ2E
     services:
-      - tuDsgContent
-      - tuContentStore
-      - tuDsgTemplateData
+     # - tuDsgContent
+      # - tuContentStore
+      # - tuDsgTemplateData
       - tuDsgRenderer
       - tuDsgWebHost
     spells: []
