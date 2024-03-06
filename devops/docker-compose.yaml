@@ -41,7 +41,7 @@ services:
       - 9991:9991
     environment:
       FLUENCE_ENV_AQUA_IPFS_EXTERNAL_API_MULTIADDR: /ip4/143.176.14.172/tcp/15001
-   #   FLUENCE_ENV_DECIDER_IPFS_MULTIADDR: /dns4/ipfs.fluence.dev/tcp/5001
+      FLUENCE_ENV_DECIDER_IPFS_MULTIADDR: /dns4/ipfs.fluence.dev/tcp/5001
       FLUENCE_ENV_AQUA_IPFS_LOCAL_API_MULTIADDR: /dns4/ipfs/tcp/5001
       FLUENCE_ENV_CONNECTOR_API_ENDPOINT: http://chain:8545
       FLUENCE_ENV_CONNECTOR_FROM_BLOCK: earliest
@@ -58,6 +58,8 @@ services:
       - --aqua-pool-size=5
       - -t=7771
       - -w=9991
+      - --bootstraps=/dns/nox-1/tcp/7772
+      - --bootstraps=/dns/nox-2/tcp/7773
     depends_on:
       - ipfs
     secrets:
@@ -80,7 +82,7 @@ services:
       - 9992:9992
     environment:
       FLUENCE_ENV_AQUA_IPFS_EXTERNAL_API_MULTIADDR: /ip4/143.176.14.172/tcp/15001
-   #   FLUENCE_ENV_DECIDER_IPFS_MULTIADDR: /dns4/ipfs.fluence.dev/tcp/5001
+      FLUENCE_ENV_DECIDER_IPFS_MULTIADDR: /dns4/ipfs.fluence.dev/tcp/5001
       FLUENCE_ENV_AQUA_IPFS_LOCAL_API_MULTIADDR: /dns4/ipfs/tcp/5001
       FLUENCE_ENV_CONNECTOR_API_ENDPOINT: http://chain:8545
       FLUENCE_ENV_CONNECTOR_FROM_BLOCK: earliest
@@ -121,7 +123,7 @@ services:
       - 9993:9993
     environment:
       FLUENCE_ENV_AQUA_IPFS_EXTERNAL_API_MULTIADDR: /ip4/143.176.14.172/tcp/15001
-   #   FLUENCE_ENV_DECIDER_IPFS_MULTIADDR: /dns4/ipfs.fluence.dev/tcp/5001
+      FLUENCE_ENV_DECIDER_IPFS_MULTIADDR: /dns4/ipfs.fluence.dev/tcp/5001
       FLUENCE_ENV_AQUA_IPFS_LOCAL_API_MULTIADDR: /dns4/ipfs/tcp/5001
       FLUENCE_ENV_CONNECTOR_API_ENDPOINT: http://chain:8545
       FLUENCE_ENV_CONNECTOR_FROM_BLOCK: earliest
@@ -138,7 +140,6 @@ services:
       - --aqua-pool-size=5
       - -t=7773
       - -w=9993
-      - --allow-private-ips
       - --bootstraps=/dns/nox-0/tcp/7771
       - --bootstraps=/dns/nox-1/tcp/7772
     depends_on:
