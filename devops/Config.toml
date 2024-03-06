@@ -13,8 +13,7 @@ print_config= false
 
 allowed_binaries = [
   "/usr/bin/curl",
-  "/home/joera/.local/bin/ipfs",
-  /home/joera/.cargo/bin/car-utils
+  "/home/bin/ipfs"
 ]
 
 aquavm_pool_size = 2
@@ -40,7 +39,7 @@ particle_execution_timeout = "20s"
 allow_local_addresses = true
 
 # if false will connect to bootstrap nodes
-local = false
+local = true
 bootstrap_nodes = [
  #   "/ip4/143.176.14.172/tcp/9991"
 #  "/dns4/0-testnet.fluence.dev/tcp/9000",
