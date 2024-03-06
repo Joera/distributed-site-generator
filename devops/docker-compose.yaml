@@ -98,7 +98,7 @@ services:
       - -t=7772
       - -w=9992
       - --bootstraps=/dns/nox-0/tcp/7771
-      - --bootstraps=/dns/nox-0/tcp/7773
+      - --bootstraps=/dns/nox-2/tcp/7773
     depends_on:
       - ipfs
     secrets:
@@ -140,7 +140,7 @@ services:
       - -w=9993
       - --allow-private-ips
       - --bootstraps=/dns/nox-0/tcp/7771
-      - --bootstraps=/dns/nox-0/tcp/7772
+      - --bootstraps=/dns/nox-1/tcp/7772
     depends_on:
       - ipfs
     secrets:

@@ -15,9 +15,9 @@ deals:
 hosts:
   devWorkerV01:
     peerIds:
-      - 12D3KooWSMH42NaRdq8uN3pTsBgnJYSZjYrmC1DhBmBXy1hCatrj
+      # - 12D3KooWSMH42NaRdq8uN3pTsBgnJYSZjYrmC1DhBmBXy1hCatrj
       #- 12D3KooWCcWYUmbCoMUGeZ7QUjLkXfSa3pKzVG554s56amfsWkm4
-      # - 12D3KooWP55ziK6EDVvwHAeHx7pb6XEHG6ztzGKrydrCFZciKZ2E
+      - 12D3KooWP55ziK6EDVvwHAeHx7pb6XEHG6ztzGKrydrCFZciKZ2E
     services:
       - tuDsgContent
       - tuContentStore
@@ -59,7 +59,8 @@ compileAqua:
 customFluenceEnv:
   contractsEnv: local
   relays:
-    - /ip4/143.176.14.172/tcp/9991/ws/p2p/12D3KooWSMH42NaRdq8uN3pTsBgnJYSZjYrmC1DhBmBXy1hCatrj
+    # - /ip4/143.176.14.172/tcp/9991/ws/p2p/12D3KooWSMH42NaRdq8uN3pTsBgnJYSZjYrmC1DhBmBXy1hCatrj
     # - /ip4/127.0.0.1/tcp/9991/ws/p2p/12D3KooWCcWYUmbCoMUGeZ7QUjLkXfSa3pKzVG554s56amfsWkm4
+    - /ip4/143.176.14.172/tcp/9992/ws/p2p/12D3KooWP55ziK6EDVvwHAeHx7pb6XEHG6ztzGKrydrCFZciKZ2E
 
 defaultSecretKeyName: vijzel2
