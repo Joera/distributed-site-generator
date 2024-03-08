@@ -1,226 +1,108 @@
 aqua Main
 
-import "../../.fluence/aqua-dependencies/node_modules/@fluencelabs/aqua-lib/builtin.aqua"
-import "../../.fluence/aqua-dependencies/node_modules/@fluencelabs/aqua-lib/subnet.aqua"
-import "../../.fluence/aqua-dependencies/node_modules/@fluencelabs/aqua-ipfs/ipfs.aqua"
+import "@fluencelabs/aqua-lib/builtin.aqua"
+import "@fluencelabs/aqua-lib/subnet.aqua"
 
-import "./types.aqua"
-import "./helpers.aqua"
-import "./services.aqua"
-import "./functions.aqua"
+use "deals.aqua"
+use "hosts.aqua"
+import "services.aqua"
 
-export renderOnDSG, bulkUpload, bulkRender, gatherKubos, goAndFetch, addArchive, test, testCar
+-- IMPORTANT: Add exports for all functions that you want to run
+export helloWorld, helloWorldRemote, getInfo, getInfos
 
--- func dns() -> AquaMarineResult:
-
---     res: *AquaMarineResult
---     publications: *TuDsgPublication
---     publication_cid = "bafyreie5cffczrrnbi6gua6hcxg3oxuqnq6tdto37vqt6rpu3qaq5kkave"
-
---     workers <- getWorkerInfo()
---     for w <- workers:
---         on w.workerId via w.hostId:
---             ip = "143.176.14.172"
---             publications <- fetchPublication(publication_cid)
---             res <- TuDsgHost.a_record(publications!, ip)
---             -- res <- TuDsgHost.certnginx(publications!)
-
---     <- res!
-
--- func restart() -> bool:
-
---     res: *bool
-
---     workers <- getWorkerInfo()
---     for w <- workers:
---         on w.workerId via w.hostId:
-         
---             res <- TuDsgHost.restart()
---     <- res!
-
--- func certify() -> AquaMarineResult:
-
---     res: *AquaMarineResult
---     publications: *TuDsgPublication
---     publication_cid = "bafyreicyzb2h56duhh3xwu7rmf4vgodb6y2u762f3gmmygthyl3nwbtsky"
-
---     workers <- getWorkerInfo()
---     for w <- workers:
---         on w.workerId via w.hostId:
---             publications <- fetchPublication(publication_cid)
---             res <- TuDsgHost.certify(publications!)
---             -- res <- TuDsgHost.certnginx(publications!)
-
---     <- res!
+-- DOCUMENTATION:
+-- https://fluence.dev
 
 
-func streamToArray(stream: *string) -> []string:
-  <- stream
+
+-- -- example of running services deployed using `fluence deploy`
+-- -- with worker 'myDeployment' which has service 'MyService' with method 'greeting'
+
+-- export runDeployedServices, showSubnet
+
+-- data Answer:
+    -- answer: ?string
+    -- worker: Worker
+
+-- func runDeployedServices() -> []Answer:
+    -- deals <- Deals.get()
+    -- dealId = deals.myDeployment!.dealIdOriginal
+    -- answers: *Answer
+    -- on HOST_PEER_ID:
+        -- subnet <- Subnet.resolve(dealId)
+    -- if subnet.success == false:
+        -- Console.print(["Failed to resolve subnet: ", subnet.error])
+
+    -- for w <- subnet.workers:
+        -- if w.worker_id == nil:
+            -- answers <<- Answer(answer=nil, worker=w)
+        -- else:
+            -- on w.worker_id! via w.host_id:
+                -- answer <- MyService.greeting("fluence")
+                -- answers <<- Answer(answer=?[answer], worker=w)
+
+    -- <- answers
+
+-- data WorkerServices:
+    -- host_id: string
+    -- worker_id: ?string
+    -- services: ?[]string
+    -- spells: ?[]string
+
+-- func showSubnet() -> []WorkerServices:
+    -- deals <- Deals.get()
+    -- dealId = deals.myDeployment!.dealIdOriginal
+    -- on HOST_PEER_ID:
+        -- subnet <- Subnet.resolve(dealId)
+    -- if subnet.success == false:
+        -- Console.print(["Failed to resolve subnet: ", subnet.error])
+
+    -- services: *WorkerServices
+    -- for w <- subnet.workers:
+        -- if w.worker_id != nil:
+            -- on w.worker_id! via w.host_id:
+                -- -- get list of all services on this worker
+                -- srvs <- Srv.list()
+
+                -- -- gather spells and services aliases
+                -- spells_aliases: *string
+                -- services_aliases: *string
+                -- for s <- srvs:
+                    -- if s.aliases.length != 0:
+                        -- if s.service_type == "spell":
+                            -- spells_aliases <<- s.aliases[0]
+                        -- if s.service_type == "service":
+                            -- services_aliases <<- s.aliases[0]
+
+                -- services <<- WorkerServices(host_id=w.host_id, worker_id=w.worker_id, services=?[services_aliases], spells=?[spells_aliases])
+        -- else:
+            -- services <<- WorkerServices(host_id=w.host_id, worker_id=nil, services=nil, spells=nil)
+
+    -- <- services
 
 
-func test() -> string :
+-- local
+func helloWorld(name: string) -> string:
+    <- Op.concat_strings("Hello, ", name)
 
-    workers <- getWorkers()
-    Console.print(workers)
+-- remote
+func helloWorldRemote(name: string) -> string:
+    on HOST_PEER_ID:
+        hello_msg <- helloWorld(name)
+        from_msg <- Op.concat_strings(hello_msg, "! From ")
+        from_peer_msg <- Op.concat_strings(from_msg, HOST_PEER_ID)
+    <- from_peer_msg
 
-    <- "hi"
+-- request response
+func getInfo() -> Info, PeerId:
+    on HOST_PEER_ID:
+        info <- Peer.identify()
+    <- info, HOST_PEER_ID
 
-func testCar() ->  *IpfsCatResult, *IpfsMultiaddrResult, *string: 
-
-    res: *IpfsCatResult
-    locals: *IpfsMultiaddrResult
-    kippen: *string
-
-    for w <- getDevWorkers():
-
-        Console.print(w)
-
-        on w.workerId via w.hostId:
-
-            kippen <<- "kip"
-            locals <- Ipfs.get_external_api_multiaddr()
-
-            res <- Ipfs.cat("Qmcgjcrdqgs2G99wW9FtiCcUTA2pAVP8gcKV2Cb3KBLN1L")
-
-    <- res, locals, kippen
-    
-func gatherKubos() -> Kubos :
-
-    internals: *string
-    externals: *string
-
-    for w <- getDevWorkers():
-        on w.workerId via w.hostId:
-            res: *IpfsMultiaddrResult
-            res <- Ipfs.get_local_api_multiaddr()
-            if res!.success == true:
-                internals <<- res!.multiaddr
-            res_: *IpfsMultiaddrResult
-            res_ <- Ipfs.get_external_api_multiaddr() 
-            if res_!.success == true:
-                externals <<- res_!.multiaddr    
-
-    kubos = Kubos(internals = internals, externals= externals)
-
-    Console.print(kubos)
-
-    <- kubos
-
-func goAndFetch(hash: string, remote_multiaddress: string) -> *bool:
-
-    success: *bool
-    for w <- getDevWorkers():
-        on w.workerId via w.hostId:
-            result <- Ipfs.get_from(hash, remote_multiaddress)
-            if result.success == true: 
-                success <<- true
-            else :
-               success <<- false 
-
-    <- success
-
-
-func addArchive(pubName: string) -> *AquaMarineResult:
-
-    results: *AquaMarineResult
-    for w <- getDevWorkers():
-        on w.workerId via w.hostId:
-            results <- TuDsgWebHost.addManual(pubName)
-        
-    <- results
-
-
-func renderOnDSG(tempTask: TuDsgPublishTaskTemp, archive_cid: string) -> *AquaMarineResult:
-
-    results: *AquaMarineResult
-    debug: *AquaMarineResult
-    queue: *[]TuDsgRenderObject
-
-    -- get encrypted publicationData from chain .... 
-
-    task = fromTempTask(tempTask)
-
-    cids: *string
-
-    Console.print(task)
-
-    w = randomDevWorker()
-    Console.print(w)
-    on w.workerId via w.hostId:
-
-        mappings = dagGetToString(task.author.content_mappings)
-        mapped = TuDsgContent.map(task, mappings) 
-        cid = stringToCid(mapped.body)
-        contentItem = TuDsgContent.includeCid(mapped.item, cid)
-        results <- TuContentStore.insert(contentItem, task.publication.table)
-        main = TuDsgContent.pebble(task, contentItem)
-        queue <<- main
-        for ripple <- main!.template.ripples:
-            r = TuContentStore.queryRipple(ripple, task.publication.table) 
-            queue <- TuDsgContent.ripple(task, ripple, r.results[0])
-
-        debug <- extractToPath(archive_cid, "/publication")
-        -- debug <- tuGit(task.publication.repo,"")
-     
-        for ros <- queue:
-            for ro <- ros:
-                body = cidToString(ro.body_cid) 
-                collections: *[]string
-                for c <- ro.template.collections:
-                    if c.source == "tableland":
-                        qr <- TuContentStore.queryCollection(c, task.publication.table) 
-                        debug <<- qr
-                        collection: *string
-                        for res <- qr.results:
-                            collection <- cidToString(res) 
-                            collections <<- collection
-                templateDataResult = TuDsgTemplateData.map(ro, body, collections, task.publication)
-                results <- TuDsgRenderer.single(ro, templateDataResult.output!)
-                    
-            -- results <- TuDsgRenderCollect.collect(task.publication.name, kubo.multiaddr)
-
-  
-
-    <- results
-
-func bulkUpload(tasks: []TuDsgPublishTaskTemp) -> bool:
-
-    results: *string
-
-    -- w = randomWorker(0)
-    -- on w.workerId via w.hostId:
-    --     kubo = Ipfs.get_local_api_multiaddr()
-    --     if kubo.success == true:
-    --         for tempTask <- tasks:
-    --             task = fromTempTask(tempTask)
-    --             results <- TuDsgContent.map(task, kubo.multiaddr)
-    -- Console.print(results)
-
-    <- true
-
-func bulkRender(publication_cid: string, post_type: string, archive_cid: string) -> *AquaMarineResult:
-
-    results: *AquaMarineResult
-
-    publication = fetchPublication(publication_cid)
-
-    Console.print(publication)
-
-    -- w = randomDevWorker()
-    -- on w.workerId via w.hostId:
-    --     queue: *[]TuDsgRenderObject
-    --     kubo = Ipfs.get_local_api_multiaddr()
-    --     if kubo.success == true:
-    --         queue <- TuDsgContent.bulk(publication, post_type, kubo.multiaddr)
-    --         debug <- TuDsgRenderer.imports(archive_cid, publication, kubo.multiaddr)
-    --         for ros <- queue:
-    --             for ro <- ros:
-    --                 results <- TuDsgRenderer.single(ro, kubo.multiaddr)
-    --                 Peer.timeout(10,"buffering not to overload tableland")
-    --         results <- TuDsgRenderer.collect(publication.name, kubo.multiaddr)
-
-
-    <- results
-
-
- 
+-- iterate through several peers
+func getInfos(peers: []PeerId) -> []Info:
+    infos: *Info
+    for p <- peers:
+        on p:
+            infos <- Peer.identify()
+    <- infos
