@@ -1,6 +1,5 @@
 use serde::{Deserialize, Serialize};
 
-
 #[derive(Debug, Serialize, Deserialize)]
 pub struct TLCreds {
     key: String,
@@ -18,5 +17,6 @@ pub struct TLReq {
 pub struct TuQuery {
     pub query: String
 }
+
 
 

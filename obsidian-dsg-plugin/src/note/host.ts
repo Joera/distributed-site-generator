@@ -2,10 +2,10 @@
 
 export const localhost = async (new_archive_cid: string, url: string) : Promise<string> => {
 
-    await fetchCar(new_archive_cid);
-    setTimeout( async () => {
-        await unpack();
-    }, 500);
+    // await fetchCar(new_archive_cid);
+    // setTimeout( async () => {
+    //     await unpack();
+    // }, 500);
 
 
     return url;

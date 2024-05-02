@@ -4,18 +4,19 @@ import { Settings } from './settings';
 import * as E from "fp-ts/lib/Either";
 import { Lazy, pipe } from "fp-ts/lib/function";
 import * as TE from "fp-ts/lib/TaskEither";
-import { DSGPublicationInput, SGFile, SGTask } from './types';
+import { DSGPublicationInput, Kubos, SGFile, SGTask } from './types';
 import { _bulkUpload, _bulkRender, gatherKubos } from './note/fluence';
-import { DSGPublication, publicationConfig, upload, uploadAndMerge } from './publication/config';
+import { DSGPublication, publicationConfig, writeAndUpload } from './publication/config';
 
 import { readdirSync, statSync } from 'fs';
 import { prepareNote } from './note.controller';
 import { isLeft, isRight } from 'fp-ts/lib/Either';
-import { cars, dir, includeDirCid } from './publication/ipfs-car';
 import { followLink, saveRoot, saveRootDirectly } from './note/note';
 import { localhost } from './note/host';
-import { goAndFetch } from './publication/fluence';
 import { _parsePublication, insertPubCid } from './publication/note';
+import pinFromFS from './pinning/pinFromFS';
+import { pinFolder } from './pinning/pinata';
+
 
 const TEthunk = <A>(f: Lazy<Promise<A>>) => TE.tryCatch(f, E.toError);
 
@@ -26,6 +27,12 @@ const log =
 		return a;
 	};
 
+const kubos: Kubos = {
+    internals : [],
+    externals : [],
+    internals_url: [],
+    externals_url: ["http://127.0.0.1:5001","https://ipfs.transport-union.dev"],
+}
 
 export class PublicationController {
 
@@ -36,15 +43,15 @@ export class PublicationController {
         if (!("extension" in file)) {
             return;
         }
- 			    
+            
         return pipe(
             file,
+            //@ts-ignore
             TE.fromNullable(new Error("File not found")),
             TE.chain(parsePublication(app.vault)),
-            // TE.chain(createCars()),
-            // TE.chain(uploadDir("templates","/unamore/templates")),
+            TE.chain(uploadDirs()),
             TE.chain(createConfig()),
-            TE.chain(uploadConfig(app)),
+            TE.chain(uploadConfig(app, kubos)),
             TE.match(	
                 (e) => notify(e, "failed to update publication"),
                 () => notify(undefined, "publication has been updated")
@@ -57,8 +64,10 @@ export class PublicationController {
         console.log('readying for bulk upload');
 
         function deepGetDirectories(distPath: string) {
+            
             return readdirSync(distPath).filter( (file) =>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          {
                 return statSync(distPath + '/' + file).isDirectory();
+            //@ts-ignore
             }).reduce((all, subDir) => {
                 return [...all, ...readdirSync(distPath + '/' + subDir).map(e => subDir + '/' + e)]
             }, []);
@@ -72,9 +81,9 @@ export class PublicationController {
         let tasks: SGTask[] = [];
         const fileNames = deepGetDirectories(path);
 
-        const kubos = await gatherKubos();
+        // const kubos = await gatherKubos();
 
-        for (let fileName of fileNames) {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+        for (let fileName of fileNames.slice(150,200)) {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
 
             const file = await app.vault.getAbstractFileByPath(pubName + "/" + fileName);
 
@@ -84,6 +93,7 @@ export class PublicationController {
 
                 const possibleTask = await pipe(
                     file,
+                    //@ts-ignore
                     TE.fromNullable(new Error("File not found")),
                     TE.chain(prepareNote(app, kubos)),
                     TE.chain(([ file, task, archive_cid]) => TE.right(task))
@@ -129,26 +139,14 @@ const parsePublication = (vault: Vault) =>
 			TE.chain((file) => TEthunk(() => _parsePublication(file, vault)))
 		);
 
-const createCars = () => 
-	(pubInput: DSGPublicationInput) : TE.TaskEither<Error,DSGPublicationInput> => 
-		pipe(
-			TE.right({}),
-			TE.chain(() => TEthunk(() => gatherKubos())),
-			TE.chain((kubos) => TEthunk(() => cars(pubInput, kubos))),
-		);
-
-const uploadDir = (name: string, path: string) => 
+const uploadDirs = () => 
 (pubInput: DSGPublicationInput) : TE.TaskEither<Error,DSGPublicationInput> => 
     pipe(
-        TE.right({}),
-        TE.chain(() => TEthunk(() => dir(name, path))),
-        TE.chain((hash) => TEthunk(() => goAndFetch(hash, "/ip4/"))),
-        TE.chain((hash) => TEthunk(() => includeDirCid(hash, name, pubInput))),
+        TE.right(pubInput),
+        TE.chain((pubInput: DSGPublicationInput) => TEthunk(() => pinFolder("templates", pubInput))),
+        TE.chain((pubInput: DSGPublicationInput) => TEthunk(() => pinFolder("assets", pubInput))),
         TE.chain((input: DSGPublicationInput) => TE.right(input))
     );
-
-        // // TE.chain(() => TEthunk(() => dir(pubInput, "assets", "/unamore/public/assets"))),
-        // // TE.chain(() => TEthunk(() => goAndFetch(hash, "templates", pubInput))),
 
 const createConfig = () => 
 	(input: DSGPublicationInput) : TE.TaskEither<Error,DSGPublication> => 
@@ -157,12 +155,12 @@ const createConfig = () =>
 			TE.chain((input) => TEthunk(() => publicationConfig(input))),
 		);
 
-const uploadConfig = (app: App) => 
+const uploadConfig = (app: App, kubos: Kubos) => 
 	(pub: DSGPublication ) : TE.TaskEither<Error,string> => 
 		pipe(
 			TE.right({}),
-			TE.chain(() => TEthunk(() => gatherKubos())),
-			TE.chain((kubos) => TEthunk(() => upload(pub, kubos))),
+			// TE.chain(() => TEthunk(() => gatherKubos())),
+			TE.chain(() => TEthunk(() => writeAndUpload('publication', pub, kubos))),
 			TE.chain((cid) => TEthunk(() => insertPubCid(app.workspace, cid, app.fileManager))),
 		);
 	
@@ -175,7 +173,4 @@ const notify = (e: Error | undefined, msg: string) => {
 
 	new Notice(msg);
 };
-function includeCid(hash: DSGPublicationInput, name: string, input: any): Promise<unknown> {
-    throw new Error('Function not implemented.');
-}
 

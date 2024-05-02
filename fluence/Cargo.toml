@@ -1,14 +1,10 @@
 [workspace]
 members = [
-  "src/services/tuDsgContent/modules/tuDsgContent",
-  "src/modules/tu_ipfs",
-  "src/services/myService/modules/myService",
-  "src/services/tuDsgRenderer/modules/tuDsgRenderer",
-  "src/modules/tu_volumes",
-  "src/services/tuDsgRenderCollect/modules/tuDsgRenderCollect",
-  "src/services/tuDsgWebHost/modules/tuDsgWebHost",
-  "src/services/tuCars/modules/tuCars",
+  "src/services/cioKubo/modules/cioKubo",
   "src/services/tuContentStore/modules/tuContentStore",
-  "src/services/tuDsgTemplateData/modules/tuDsgTemplateData",
-  "src/services/tuGit/modules/tuGit"
+  "src/services/tuDsgContent/modules/tuDsgContent",
+  "src/services/cioPinata/modules/cioPinata",
+  "src/services/tuDsgRenderer/modules/tuDsgRenderer",
+  "src/services/cioVault/cioVault",
+  "src/services/tuDsgWebHost/modules/tuDsgWebHost"
 ]

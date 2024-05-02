@@ -15,6 +15,12 @@ cd ../fluence-companion
 npm run aqua:compile
 npm run start
 
+docker exec -ti fluence-ipfs-1 ipfs bootstrap add /ip4/143.176.14.172/tcp/15001/p2p/12D3KooWFuS2rgxuzoNSmknDDYiEvp4BNZNgPi25AkadLakiajo3
+
+/publications/unamore/archive.sh
+
+./pinata upload ~/Documents/dsg/publications/unamore/public/
+
 
 
 ## Overview of parts involved 

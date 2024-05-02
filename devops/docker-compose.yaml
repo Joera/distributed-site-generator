@@ -25,7 +25,6 @@ services:
     volumes:
       - ./ipfs/ipfs.sh:/container-init.d/01-ipfs.sh
       - ipfs:/data/ipfs 
-      - ../archive:/archive
     networks:
       - dsg
 
@@ -193,13 +192,12 @@ volumes:
     #   o: 'bind'
     #   device: '/media/drive-blue/dsg/webhost'
   letsencrypt:
-    # driver: local
-    # driver_opts:
-    #   type: 'none'
-    #   o: 'bind'
-    #   device: '/media/drive-blue/dsg/letsencrypt'
-
   ipfs:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '/media/ipfs'
 
 networks:
   dsg:

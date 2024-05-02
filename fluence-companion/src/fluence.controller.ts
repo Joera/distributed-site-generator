@@ -1,5 +1,5 @@
 import { Fluence, IFluenceClient, randomKras } from "@fluencelabs/js-client";
-import { bulkUpload, bulkRender, gatherKubos, goAndFetch, renderOnDSG } from "./_aqua/main";
+import { bulkUpload, bulkRender, renderOnDSG } from "./_aqua/main";
 
 export class FluenceController {
 
@@ -10,6 +10,10 @@ export class FluenceController {
     randomLocal() {
 
         const local_network = [
+            {
+                multiaddr: '/ip4/127.0.0.1/tcp/9991/ws/p2p/12D3KooWP5UnQLWX11pFSMgD78Q9rwq6o2p6hzXTqU74s6z6jBCx',
+                peerId: '12D3KooWP5UnQLWX11pFSMgD78Q9rwq6o2p6hzXTqU74s6z6jBCx'
+            },
             {
                 multiaddr: '/ip4/143.176.14.172/tcp/9991/ws/p2p/12D3KooWSMH42NaRdq8uN3pTsBgnJYSZjYrmC1DhBmBXy1hCatrj',
                 peerId: '12D3KooWSMH42NaRdq8uN3pTsBgnJYSZjYrmC1DhBmBXy1hCatrj'
@@ -33,18 +37,6 @@ export class FluenceController {
         return await Fluence.connect(this.randomLocal(),{});
     }
 
-    async gatherKubos() {
-
-        await this.init()
-
-        return await gatherKubos({ ttl: 30000 });
-    }
-
-    async goAndFetch(body: any) {
-        await this.init();
-        return await goAndFetch(body.hash, body.multiaddress, {ttl:30000})
-    }
-
     async renderOnDSG(body:any) {
 
         await this.init();
@@ -52,7 +44,7 @@ export class FluenceController {
         let response = await renderOnDSG(
             body.task,
             body.archive_cid,
-            { ttl: 60000 }
+            { ttl: 150000 }
         )
 
         console.log(response);
@@ -85,7 +77,4 @@ export class FluenceController {
             { ttl: 2000000 }
         )
     } 
-
-    
-
 }

@@ -15,18 +15,6 @@ import { FluenceController} from './fluence.controller';
 const fluence = new FluenceController();
 
 
-app.post('/gather_kubos', async (req, res) => {
-  res.send(
-    await fluence.gatherKubos()
-  );
-});
-
-app.post('/go_and_fetch', async (req,res)  => {
-
-  res.send(await fluence.goAndFetch(req.body));
-});
-
-
 app.post('/render', async (req, res) => {
 
   try {

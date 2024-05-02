@@ -15,10 +15,9 @@ import slugify from "slugify";
 
 export const parseNote =  async (app: App, file: TFile) : Promise<[SGContentItem, string]>=> {
 
-
 	const rawFile = await app.vault.read(file);
 
-	let contentItem  = await parseFrontmatter(file, app.fileManager);
+	let contentItem = await parseFrontmatter(file, app.fileManager);
 
 	if (file.name != undefined) contentItem.title = file.name.replace(/\.[^/.]+$/, "");
 
@@ -26,7 +25,7 @@ export const parseNote =  async (app: App, file: TFile) : Promise<[SGContentItem
 
 	contentItem.content = content;
 
-	if (title != undefined) contentItem.title = title;
+	if (title != undefined && title != "") contentItem.title = title;
 
 	let publicationLink = contentItem.publication;
 	
@@ -35,10 +34,14 @@ export const parseNote =  async (app: App, file: TFile) : Promise<[SGContentItem
 
 	const archive_cid = await followLink("archive", publicationLink, app);
 
+	// delete contentItem["cid"];
+
 	return [contentItem, archive_cid]
 }
 
 export const insertCid = async (file: TFile, contentItem: SGContentItem, archive_cid: string, content_cid: string, fileManager: FileManager) : Promise<[SGContentItem, string]> => {
+
+	console.log("cid: " + content_cid);
 
 	await fileManager.processFrontMatter( file, (frontmatter) => {
 		frontmatter["cid"] = content_cid;
@@ -49,7 +52,7 @@ export const insertCid = async (file: TFile, contentItem: SGContentItem, archive
 
 const extractTitle = (raw: string) : [string, string | undefined] => {
 
-	let title = undefined;
+	let title: string = "";
 	let content = raw.split("---")[2].trim();
 
 	if (content.slice(0,2) == '# ') {
@@ -77,6 +80,7 @@ const parseFrontmatter = async (file: TFile, fileManager: FileManager) : Promise
 				frontmatter.sgId = uuidv4().replace('-','');
 			}
 
+			// possibly check if content was modified ??? 
 			const now = new Date().toJSON().split(".")[0];
 			frontmatter.modified_date = now;
 			if (frontmatter.creation_date == undefined) frontmatter.creation_date = now;
@@ -143,10 +147,11 @@ export const saveRoot = async (cid: string , url: string, file: TFile, vault: Va
 	let pubfile = vault.getMarkdownFiles().find( (f) => f.basename == publication);
 	if(pubfile != undefined) {
 		await fileManager.processFrontMatter(pubfile, (frontmatter) => {
-			frontmatter["archive"] = cid;
+			// do some check first -- QmYeo7FUc9B5GmJQaqUHnqyJpi6BmwxsfYyNYFJ8J9ndVY
+		//	frontmatter["archive"] = cid;
 		})
 	} else {
-		throw Error("cfailed to include archive in publication")
+		throw Error("failed to include archive in publication")
 	}
 
 	return [cid, url];

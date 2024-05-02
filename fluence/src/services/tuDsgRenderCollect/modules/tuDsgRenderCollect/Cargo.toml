@@ -11,9 +11,9 @@ path = "src/main.rs"
 marine-rs-sdk = "0.10.3"
 tu_dsg_types = { path = "../../../../tuDsgTypes" }
 tu_types = { path = "../../../../tuTypes" }
-serde_json = "1.0.108"
+serde_json = "1.0.116"
 chrono = "0.4.31"
-serde = "1.0.193"
+serde = "1.0.198"
 regex = "1.5"
 thiserror = "1.0"
 

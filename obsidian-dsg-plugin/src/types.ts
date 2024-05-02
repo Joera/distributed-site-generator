@@ -64,11 +64,12 @@ export type DSGAuthorInput = {
 };
 
 export type DSGPublicationInput = {
+	assets: string,
 	domains: TuDsgDomain[],
 	governor: string,
 	mapping : string,
 	name : string,
 	table: string,
 	type : string,
-	repo : string
+	templates : string
 };

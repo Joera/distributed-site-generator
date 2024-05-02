@@ -36,7 +36,7 @@ pub fn create_dir(path: &str, dir_name: &str) -> AquaMarineResult {
 // }
 
 
-pub fn read(file_name: &str, path: &str) -> AquaMarineResult{
+pub fn read(path: &str, file_name: &str) -> AquaMarineResult{
 
     let call_data = marine_rs_sdk::get_call_parameters();
     let mut am_result = AquaMarineResult::new();
@@ -94,7 +94,10 @@ fn _create_dir(
 
     if dir_name != "" { let new_path = format!("{}{}", path, dir_name); } 
 
-    fs::create_dir_all(PathBuf::from(new_path))
+    let r = fs::create_dir_all(PathBuf::from(new_path));
+
+    r
+    
 }
 
 

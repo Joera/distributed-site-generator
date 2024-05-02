@@ -59,15 +59,21 @@ use rmps::{Deserializer, Serializer};
 #[marine]
 pub fn map(task: TuDsgPublishTask, mappings: &str) -> TuDsgMapped {
 
+    println!("HALLO DAN!");
+
     let mut am_result = AquaMarineResult::new();
 
     let payload : Value = serde_json::from_str(&task.payload).unwrap();
+
+    println!("payload: {:?}", payload);
     
     let body = content::map(
         serde_json::from_str(&mappings).unwrap(),
         serde_json::from_str(&task.payload).unwrap(),
         &task.post_type
     );
+
+    println!("body: {:?}", body);
 
     let item = TuContentItem {
         id: payload["sgId"].to_string().replace("\"","").replace("-",""),
@@ -83,9 +89,6 @@ pub fn map(task: TuDsgPublishTask, mappings: &str) -> TuDsgMapped {
         content_cid: "".to_string()
     };
 
-    // let mut buf = Vec::new();
-    // content.serialize(&mut Serializer::new(&mut buf)).unwrap();
-    // buf
     TuDsgMapped {
         item: item,
         body: body   
@@ -138,9 +141,9 @@ pub fn pebble(task: TuDsgPublishTask, contentItem: TuContentItem) -> Vec<TuDsgRe
 }
 
 #[marine]
-pub fn ripple(task: TuDsgPublishTask, ripple: TuDsgRipple, contentItem: String) -> Vec<TuDsgRenderObject> {
+pub fn ripple(task: TuDsgPublishTask, ripple: TuDsgRipple, contentItem: TuContentItem) -> Vec<TuDsgRenderObject> {
 
-    let c : TuContentItem = serde_json::from_str(&contentItem).unwrap();
+    // let c : TuContentItem = serde_json::from_str(&contentItem).unwrap();
 
     let mut renderObjects : Vec<TuDsgRenderObject> = vec!();
 
@@ -150,7 +153,7 @@ pub fn ripple(task: TuDsgPublishTask, ripple: TuDsgRipple, contentItem: String) 
         template : task.publication.mapping.clone().into_iter().find( |m| m.reference == ripple.post_type.clone()).unwrap(),
         publication_name : task.publication.name.clone(),
         domain: task.publication.domains[0].clone(),
-        body_cid: c.content_cid
+        body_cid: contentItem.content_cid
     };
 
     renderObjects.push(rippleOject);

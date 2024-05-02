@@ -1,8 +1,7 @@
 import { readFile } from "fs/promises";
-import { DSGAuthorInput, DSGPublicationInput } from "./note";
-import { dagPut, filePut } from "./ipfs";
 import * as fs from 'fs';
-import { Kubos } from "src/types";
+import { pinFile } from "../pinning/pinata";
+import { DSGAuthorInput, DSGPublicationInput, Kubos } from "../types";
 
 type DSGCollection = {
     source: string,
@@ -25,11 +24,12 @@ type DSGTable = {
 
 export type  DSGPublication = {
     
+    assets: string
     domains: any[]
     governor: string
     mapping: DSGTemplate[]
     name: string
-    repo: string
+    templates: string
     table: DSGTable
 }
 
@@ -53,39 +53,56 @@ export const publicationConfig = async (pubInput: DSGPublicationInput) :  Promis
     }
 
    return  {
+        assets: pubInput.assets,
         domains: [domain],
         governor: pubInput.governor,
         mapping: JSON.parse(content),
         name: pubInput.name,
-        repo: pubInput.repo,
+        templates: pubInput.templates,
         table
     }
 }
 
-export const upload = async (input: any, kubos: Kubos) :  Promise<string> => {
+// export const upload = async (input: any, kubos: Kubos) :  Promise<string> => {
 
-        let cids : string[] = [];
+//         let cids : string[] = [];
 
-        if (kubos.externals_url != undefined) {
+//         // console.log(input);
 
-            for (let kubo of kubos.externals_url) {
-                cids.push(await dagPut(input, kubo));
-            }
-        }
 
-        return cids[0]  
-}       
+//         // if (kubos.externals_url != undefined) {
+
+//         //     for (let kubo of kubos.externals_url) {
+//         //         cids.push(await filePut(input, kubo));
+//         //     }
+//         // }
+
+//         // console.log(cids);
+
+//         return cids[0]  
+// }       
 
 export const uploadAndMerge = async (input: DSGAuthorInput, kubos: Kubos) :  Promise<DSGAuthorInput> => {
 
-    let content = fs.readFileSync(input.content_mappings, "utf8");
+    const cid = await pinFile("mapping", input.content_mappings);
 
-    let json = JSON.parse(content);
-
-    input.content_mappings = await upload(
-        json,
-        kubos
-    );
+    input.content_mappings = cid
 
     return input;      
 }    
+
+export const writeAndUpload = async (name: string, input: any, kubos: Kubos) :  Promise<string> => {
+
+        console.log(input);
+
+        let path = "./tmp.json"
+
+        await fs.writeFileSync("./tmp.json",JSON.stringify(input));
+        // without writing to file ? 
+
+        let cid = await pinFile(name, path);
+
+        console.log(cid);
+
+      return cid;      
+  }  

@@ -6,17 +6,40 @@
 
 version: 8
 
+marineVersion: 0.19.7
+
 deployments:
-  devWorkersV0:
+  contentWorkerV1:
     targetWorkers: 3
     pricePerWorkerEpoch: "0.0001"
     initialBalance: "1"
-    services: [ tuDsgContent ]
+    services: [ cioKubo, tuContentStore, tuDsgContent, cioPinata ] #, 
     spells: []
+  renderWorkerV0:
+    targetWorkers: 3
+    pricePerWorkerEpoch: "0.0001"
+    initialBalance: "1"
+    services:
+      [
+        tuContentStore,
+        tuDsgRenderer,
+        cioKubo,
+        cioPinata,
+        cioVault,
+        tuDsgWebHost
+      ]
+    spells: []
+  # hostWorkerV0:
+  #   targetWorkers: 3
+  #   pricePerWorkerEpoch: "0.0001"
+  #   initialBalance: "1"
+  #   services: [ tuDsgWebHost ]
+  #   spells: []
 
 aquaDependencies:
   "@fluencelabs/aqua-lib": 0.9.1
   "@fluencelabs/spell": 0.7.6
+  "@fluencelabs/aqua-ipfs": ^0.6.0
 
 compileAqua:
   default:
@@ -27,3 +50,17 @@ compileAqua:
 services:
   tuDsgContent:
     get: src/services/tuDsgContent
+  tuContentStore:
+    get: src/services/tuContentStore
+  tuDsgRenderer:
+    get: src/services/tuDsgRenderer
+  tuDsgTemplateData:
+    get: src/services/tuDsgTemplateData
+  tuDsgWebHost:
+    get: src/services/tuDsgWebHost
+  cioKubo:
+    get: src/services/cioKubo
+  cioPinata:
+    get: src/services/cioPinata
+  cioVault:
+    get: src/services/cioVault

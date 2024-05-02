@@ -7,17 +7,19 @@ use std::fs;
 use rmp_serde;
 
 pub struct Renderer{
-    handlebars: Handlebars<'static>,        
+    handlebars: Handlebars<'static>, 
+    vault: String       
 }
 
 impl Renderer {
 
-    pub fn new() -> Renderer  {
+    pub fn new(vault: String) -> Renderer  {
 
         let mut handlebars = Handlebars::new();
 
         Renderer {
-            handlebars
+            handlebars,
+            vault
         }
     }
 
@@ -41,12 +43,10 @@ impl Renderer {
     pub fn render_template(self: &mut Self, ro: crate::TuDsgRenderObject, td: &Vec<u8>) -> crate::AquaMarineResult {
         
         let mut am_result = crate::AquaMarineResult::new();
-        let calldata = marine_rs_sdk::get_call_parameters();
-        let vault = format!("/tmp/vault/{}", calldata.particle_id);
 
-        crate::partials::load(&ro.publication_name, &mut self.handlebars, &vault);
+        crate::partials::load(&ro.publication_name, &mut self.handlebars, &self.vault);
 
-        let res = crate::filesystem::read(&vault, &ro.template.file);
+        let res = crate::filesystem::read(&format!("{}/templates/", &self.vault), &ro.template.file);
         for e in res.errors.iter() {
             println!("{:?}", e);
         }
@@ -60,28 +60,31 @@ impl Renderer {
         
             let html = self.handlebars.render("t1", &template_data).unwrap();
 
+            log::warn!("{:?}", html);
+
+            am_result.results.push(html.clone());
+
             let file_name = "index.html";
             let path = ro.template.path.replace("{slug}", &ro.name).to_owned();
-            let folder = format!("/html/{}{}", ro.publication_name, path);
+         
+            let folder = format!("{}/{}{}", &self.vault, ro.publication_name, path);
 
-            // println!("{:?}", folder);
+            println!("{:?}", folder);
 
-            am_result = am_result.merge(
-                crate::filesystem::create_dir(
-                    &folder,
-                    "",
-                )
+            let r1 = crate::filesystem::create_dir(&folder,"");
+
+            am_result.results.push(format!("created folder: {}", &folder));
+
+            let r2 = crate::filesystem::write(
+                &file_name,
+                &folder,
+                &html.clone()
             );
 
-            am_result = am_result.merge(
-                crate::filesystem::write(
-                    &file_name,
-                    &folder,
-                    &html.clone()
-                )
-            );
-        }
-
+            am_result.results.push(format!("write file @: {}{}", &folder, &file_name));
+            
+   
+     }
         am_result
     }
 }

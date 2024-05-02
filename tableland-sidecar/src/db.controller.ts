@@ -3,7 +3,7 @@ import { Wallet, getDefaultProvider } from "ethers";
 import { TuContentItem } from "./table.js";
 import { Creds, Payload } from "./types.js";
 import { unpack, pack } from 'msgpackr';
-import 'dotenv/config'
+
 
 export class DbController {
 
@@ -14,8 +14,6 @@ export class DbController {
 
         if (process.env.KEY != undefined && process.env.GATEWAY != undefined) {
 
-            // console.log(process.env)
-        
             const wallet = new Wallet(process.env.KEY);
             const provider = getDefaultProvider(process.env.GATEWAY);
             const signer = wallet.connect(provider);
@@ -83,11 +81,24 @@ export class DbController {
 
     async query(body: Payload) {
 
+        console.log("1");
+
+        console.log(body);
+
         if (body.query == undefined ) return;
+
+        console.log("2");
+
+        console.log(body.query);
 
         const db = this.init();
 
-        return await db.prepare(body.query).all();
+        let payload = await db.prepare(body.query).all();
+
+        console.log(payload);
+
+        return payload;
+
     }
 
 
@@ -138,6 +149,8 @@ export class DbController {
     }
 
     async update(db: Database, body: any) : Promise<string> {
+
+        console.log(body);
 
         const c = body.content;
 

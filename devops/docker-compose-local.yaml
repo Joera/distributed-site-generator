@@ -78,6 +78,12 @@ secrets:
 volumes:
   webhost1:
   ipfs:
+    ipfs:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '/media/ipfs'
 
 networks:
   dsg:

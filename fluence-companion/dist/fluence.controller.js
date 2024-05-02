@@ -1,10 +1,14 @@
 import { Fluence } from "@fluencelabs/js-client";
-import { bulkUpload, bulkRender, gatherKubos, goAndFetch, renderOnDSG } from "./_aqua/main";
+import { bulkUpload, bulkRender, gatherKubos, renderOnDSG } from "./_aqua/main";
 export class FluenceController {
     client;
     constructor() { }
     randomLocal() {
         const local_network = [
+            {
+                multiaddr: '/ip4/127.0.0.1/tcp/9991/ws/p2p/12D3KooWHqen5YCnwBJ8zM3zKWRNZPuR4x9fnz5gVhHMb41vAnw4',
+                peerId: '12D3KooWHqen5YCnwBJ8zM3zKWRNZPuR4x9fnz5gVhHMb41vAnw4'
+            },
             {
                 multiaddr: '/ip4/143.176.14.172/tcp/9991/ws/p2p/12D3KooWSMH42NaRdq8uN3pTsBgnJYSZjYrmC1DhBmBXy1hCatrj',
                 peerId: '12D3KooWSMH42NaRdq8uN3pTsBgnJYSZjYrmC1DhBmBXy1hCatrj'
@@ -29,14 +33,14 @@ export class FluenceController {
         return await gatherKubos({ ttl: 30000 });
     }
 
-    async goAndFetch() {
-        await this.init();
-        return await goAndFetch({ttl:30000})
+    // async goAndFetch() {
+    //     await this.init();
+    //     return await goAndFetch({ttl:30000})
 
-    }
+    // }
     async renderOnDSG(body) {
         await this.init();
-        let response = await renderOnDSG(body.task, body.archive_cid, { ttl: 60000 });
+        let response = await renderOnDSG(body.task, body.archive_cid, { ttl: 120000 });
         console.log(response);
         return response;
     }

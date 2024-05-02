@@ -8,7 +8,6 @@ import {
 import { DSGAuthorInput, DSGPublicationInput, SGFile } from "../types";
 
 import * as YAML from 'yaml'
-import { filePut } from "./ipfs";
 import { Kubos} from "../types";
 
 
@@ -47,12 +46,13 @@ export const _parsePublication =  async (file: SGFile, vault: Vault) : Promise<D
 
 	return  {
 		
+		assets: properties.assets,
 		domains : [],
 		governor: properties.governor,
 		mapping : properties.mapping,
 		name : properties.name,
-		repo : properties.repo,
 		table: properties.table,
+		templates: properties.templates,
 		type : properties.type,
 		
 	}
@@ -72,21 +72,23 @@ export const insertPubCid = async (workspace: Workspace, cid: string, fileManage
 
 
 
-export const _uploadMapping = async (authInput: any, kubos: Kubos):  Promise<any> => {
+// export const _uploadMapping = async (authInput: any, kubos: Kubos):  Promise<any> => {
 
-	const cids: string[] = [];
 
-	if (kubos.externals_url != undefined) {
 
-		for (let kubo of kubos.externals_url) {
-			cids.push(await filePut(authInput.content_mappings, kubo));
-		}
-	}
+// 	const cids: string[] = [];
 
-	authInput.content_mappings = cids[0]  
+// 	if (kubos.externals_url != undefined) {
+
+// 		for (let kubo of kubos.externals_url) {
+// 			cids.push(await filePut(authInput.content_mappings, kubo));
+// 		}
+// 	}
+
+// 	authInput.content_mappings = cids[0]  
 		
-	return authInput;
+// 	return authInput;
 
-}
+// }
 
 

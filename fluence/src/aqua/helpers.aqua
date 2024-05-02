@@ -2,81 +2,49 @@ aqua Helpers declares *
 
 import "../../.fluence/aqua-dependencies/node_modules/@fluencelabs/aqua-lib/builtin"
 import "../../.fluence/aqua-dependencies/node_modules/@fluencelabs/aqua-lib/subnet"
-import "../../.fluence/aqua-dependencies/node_modules/@fluencelabs/aqua-ipfs/ipfs"
 
-use "persisted_hosts"
-use "../../.fluence/aqua/hosts"
-import SpellLocation from "./persisted_hosts"
-import "./types"
-import "./services"
+use "../../.fluence/aqua/deals.aqua"
+import "./services.aqua"
+import "./types.aqua"
 
-func randomWorker(workerIndex: u8) -> SpellLocation:
+func getContentWorkers() -> []Worker:
 
-    hosts <- PersistedHosts.get()  
-    workers  = hosts[workerIndex].installationSpells
-    <- workers! 
+    deals <- Deals.get()
+    dealId = deals.contentWorkerV1!.dealIdOriginal
+    on HOST_PEER_ID:
+        subnet <- Subnet.resolve(dealId)
+        if subnet.success == false:
+            Console.print(["Failed to resolve subnet: ", subnet.error])
+    <- subnet.workers
 
-func randomDevWorker() -> SpellLocation:
+func randomContentWorker() -> Worker:
+    <- getContentWorkers()!
 
-    hosts <- Hosts.get() 
-    workers = hosts.devWorkerV0!.installationSpells
-    <- workers! 
+func getRenderWorkers() -> []Worker:
 
-func getDevWorkers() -> []SpellLocation:
-
-    hosts <- Hosts.get()  
-    <- hosts.devWorkerV0!.installationSpells
-
-func getWorkers() -> []SpellLocation:
-
-    hosts <- PersistedHosts.get()  
-    <- hosts[0].installationSpells
-
-func fetchPublication(cid: string) -> TuDsgPublication:
-
-    s: *string 
-    ipfs_results: *IpfsGetResult
-
-    for w <- getDevWorkers():
-        on w.workerId via w.hostId:
-            ipfs_results <- Ipfs.dag_get(cid)
-            s <- Vault.cat(ipfs_results!.path)
-        
-    <- TuDsgPublicationFromJson.parse(s!)
-
-func fetchAuthor(cid: string) -> TuDsgAuthorData:
-
-    s: *string  
-    ipfs_results: *IpfsGetResult
-
-    for w <- getDevWorkers():
-        on w.workerId via w.hostId:
-            ipfs_results <- Ipfs.dag_get(cid)
-            s <- Vault.cat(ipfs_results!.path)
+    deals <- Deals.get()
+    dealId = deals.renderWorkerV0!.dealIdOriginal
+    on HOST_PEER_ID:
+        subnet <- Subnet.resolve(dealId)
+    if subnet.success == false:
+        Console.print(["Failed to resolve subnet: ", subnet.error])
     
-    <- TuDsgAuthorFromJson.parse(s!)
+    <- subnet.workers
 
+func randomRenderWorker() -> Worker:
 
-func fromTempTask(tempTask: TuDsgPublishTaskTemp) -> TuDsgPublishTask:
+    <- getRenderWorkers()!
 
-    authorData = fetchAuthor(tempTask.author)
-    publicationData = fetchPublication(tempTask.publication)
-    
-    <- TuDsgPublishTask(
-        slug = tempTask.slug, 
-        author = authorData, 
-        payload = tempTask.payload, 
-        post_type = tempTask.post_type, 
-        publication = publicationData
+func stringtoAMResult(s: string) -> AquaMarineResult:
+
+    output: *[]u8
+    results: *string
+    results <<- s
+    errors: *string
+
+    <- AquaMarineResult(
+        output = output,
+        results = results,
+        errors = errors
     )
-
-
-
--- func fetchContent(cid: string) -> TuDsgContentData:
-
---     s: *string 
---     ipfs_results: *IpfsGetResult
---     ipfs_results <- Ipfs.dag_get(cid)
---     s <- Vault.cat(ipfs_results!.path)
     
---     <- Json.parse(s!)

@@ -4,11 +4,10 @@ import { Settings } from './settings';
 import * as E from "fp-ts/lib/Either";
 import { Lazy, pipe } from "fp-ts/lib/function";
 import * as TE from "fp-ts/lib/TaskEither";
-import { DSGAuthorInput, _parseAuthor, insertPubCid } from './publication/note';
-import { Kubos, SGFile } from './types';
-import { gatherKubos } from './publication/fluence';
-import { upload, uploadAndMerge } from './publication/config';
-import { dagPut } from './publication/ipfs';
+import { _parseAuthor, insertPubCid } from './publication/note';
+import { Kubos, SGFile, DSGAuthorInput } from './types';
+import { uploadAndMerge, writeAndUpload } from './publication/config';
+
 
 
 const TEthunk = <A>(f: Lazy<Promise<A>>) => TE.tryCatch(f, E.toError);
@@ -31,13 +30,19 @@ export class AuthorController {
             return;
         }
 
-        const kubos = await gatherKubos();
+        // const kubos = await gatherKubos();
 
-        console.log(kubos);
+        const kubos: Kubos = {
+            internals : [],
+	        externals : [],
+            internals_url: [],
+	        externals_url: ["http://127.0.0.1:5001","https://ipfs.transport-union.dev"],
+        }
  			    
         return pipe(
             file,
             // log("Adding note..."),
+            //@ts-ignore
             TE.fromNullable(new Error("File not found")),
             TE.chain(parseAuthor(app.vault)),
             TE.chain(uploadMappings(app.workspace, kubos)),
@@ -69,7 +74,7 @@ const uploadAuth = (app: App, kubos: Kubos) =>
 	(auth: DSGAuthorInput ) : TE.TaskEither<Error,string> => 
 		pipe(
             TE.right(auth),
-            TE.chain((auth) => TEthunk(() => upload(auth, kubos))),
+            TE.chain((auth) => TEthunk(() => writeAndUpload("author", auth, kubos))),
 			TE.chain((cid) => TEthunk(() => insertPubCid(app.workspace, cid, app.fileManager))),
 			TE.chain((cid) => TE.right(cid))
 		);

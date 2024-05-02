@@ -11,3 +11,5 @@ name: tuContentStore
 modules:
   facade:
     get: modules/tuContentStore
+  cio_curl_effector:
+    get: modules/cio-curl-effector/

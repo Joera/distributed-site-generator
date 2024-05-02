@@ -6,7 +6,7 @@ import { Lazy, pipe } from "fp-ts/lib/function";
 import * as TE from "fp-ts/lib/TaskEither";
 import { SGFile, SGTask} from './types';
 import { gatherKubos, render } from './note/fluence';
-import { dagPutContentItem } from './ipfs';
+import { putContentItem } from './ipfs';
 import { parseNote, insertCid, createTask, saveRoot, includeUrl } from './note/note';
 import { Kubos } from './types';
 import { localhost } from './note/host';
@@ -31,11 +31,19 @@ export class NoteController {
             return;
         }
 
-		const kubos = await gatherKubos();
+		// const kubos = await gatherKubos();
+
+		const kubos: Kubos = {
+            internals : [],
+	        externals : [],
+            internals_url: [],
+	        externals_url: ["http://127.0.0.1:5001","https://ipfs.transport-union.dev"],
+        }
  			    
         return pipe(
             file,
             log('distributing note'),
+			//@ts-ignore
             TE.fromNullable(new Error("File not found")),
             TE.chain(prepareNote(app, kubos)),
             TE.chain(callToRender(app)),
@@ -52,7 +60,7 @@ export const prepareNote =
 		pipe(
 			TE.right(file),
 			TE.chain((file) => TEthunk(() => parseNote(app, file))),
-			TE.chain(([contentItem, archive_cid]) => TEthunk(() => dagPutContentItem(contentItem, archive_cid, kubos))),
+			TE.chain(([contentItem, archive_cid]) => TEthunk(() => putContentItem(contentItem, archive_cid))),
 			TE.chain(([contentItem, archive_cid, content_cid]) => TEthunk(() => insertCid(file, contentItem, archive_cid, content_cid, app.fileManager))),
             TE.chain(([contentItem, archive_cid]) => TEthunk(() => createTask(file, contentItem, archive_cid)))
 			

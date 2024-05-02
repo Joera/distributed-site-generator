@@ -1,4 +1,11 @@
-aqua Types declares * 
+aqua Types declares *
+
+data AMResponse:
+  success: bool
+  result_raw: string
+  result: string
+  timestamp: i64
+  host_id: string
 
 data AquaMarineResult:
   output: [][]u8
@@ -6,22 +13,17 @@ data AquaMarineResult:
   errors: []string
 
 data TuContentItem:
-    id: string
-    slug: string
-    publication: string
-    author: string
-    post_type: string
-    tags: string
-    categories: string
-    parent: string
-    creation_date: string
-    modified_date: string
-    content: string
-    content_cid: string
-
-data TuDsgMapped: 
-    item: TuContentItem
-    body: string
+  id: string
+  slug: string
+  publication: string
+  author: string
+  post_type: string
+  tags: string
+  categories: string
+  parent: string
+  creation_date: string
+  modified_date: string
+  content_cid: string
 
 data TuDsgAuthorData:
   name: string
@@ -33,6 +35,19 @@ data TuDsgCollection:
   key: string
   value: string
   query: string
+
+data TuDsgDns:
+  custodian: string
+  item_id: string
+  auth_key: string
+
+data TuDsgDomain:
+  url: string
+  dns: TuDsgDns
+
+data TuDsgMapped:
+  item: TuContentItem
+  body: string
 
 data TuDsgRipple:
   query: string
@@ -46,52 +61,38 @@ data TuDsgTemplate:
   collections: []TuDsgCollection
   ripples: []TuDsgRipple
 
-data TuDsgDns:
-  custodian: string
-  item_id: string
-  auth_key: string
-
-data TuDsgDomain:
-  url: string
-  dns: TuDsgDns
-
 data TuDsgTable:
-    id: string
-    gateway: string
-    owner: string
+  id: string
+  gateway: string
+  owner: string
 
 data TuDsgPublication:
+  assets: string
   domains: []TuDsgDomain
   governor: string
   mapping: []TuDsgTemplate
   name: string
-  repo: string
+  templates: string
   table: TuDsgTable
-  
-  
-data TuDsgRenderObject: 
-  name: string
-  template: TuDsgTemplate
-  publication_name: string
-  domain: TuDsgDomain
-  path: string
-  body_cid: string
-
-data TuDsgPublishTaskTemp:
-  slug: string
-  author: string 
-  payload: string
-  post_type: string
-  publication: string 
 
 data TuDsgPublishTask:
   slug: string
-  author: TuDsgAuthorData 
+  author: TuDsgAuthorData
   payload: string
   post_type: string
-  publication: TuDsgPublication 
+  publication: TuDsgPublication
 
-data Kubos:
-  externals: []string
-  internals: []string
+data TuDsgRenderObject:
+  name: string
+  post_type: string
+  template: TuDsgTemplate
+  publication_name: string
+  domain: TuDsgDomain
+  body_cid: string
 
+data TuDsgPublishTaskTemp:
+    author: string
+    payload: string
+    publication: string
+    post_type: string
+    slug: string

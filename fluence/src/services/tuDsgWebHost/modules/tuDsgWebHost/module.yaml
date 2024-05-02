@@ -4,15 +4,8 @@
 
 # Documentation: https://github.com/fluencelabs/cli/tree/main/docs/configs/module.md
 
-version: 0
+version: 1
 
 type: rust
 
 name: tuDsgWebHost
-
-mountedBinaries:
-  ipfs: /usr/bin/ipfs
-  curl: /usr/bin/curl
-
-volumes:
-  html: "./html/"

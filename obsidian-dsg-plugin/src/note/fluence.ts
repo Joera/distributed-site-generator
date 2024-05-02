@@ -63,7 +63,9 @@ export const _bulkRender = async(publication_cid: string, post_type: string, arc
 			})
 		});
 
-		let data = (await res.json()).reverse();
+		let data = await res.json();
+		console.log(data);
+		data.reverse();
 
 		const new_archive_cid = data[0].results.reverse()[0];
 		resolve(new_archive_cid);
@@ -75,6 +77,8 @@ export const _bulkRender = async(publication_cid: string, post_type: string, arc
 export const render = async (file: TFile, task: SGTask, archive_cid: string, vault: Vault, fileManager: FileManager) : Promise<[string, string]> => {
 
 	return new Promise( async (resolve, reject) => {
+
+		console.log(archive_cid);
 	
 		let res = await fetch("http://127.0.0.1:3099/render", {
 			method: "post",
@@ -85,9 +89,9 @@ export const render = async (file: TFile, task: SGTask, archive_cid: string, vau
 			body: JSON.stringify({ task, archive_cid})
 		});
 
-		let data = (await res.json()).reverse();
-
+		let data = await res.json();
 		console.log(data);
+		data.reverse();
 
 		if(data[0].results == undefined) {
 			throw Error ("empty data returned ")

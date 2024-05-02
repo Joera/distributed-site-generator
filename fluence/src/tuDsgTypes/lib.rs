@@ -69,8 +69,8 @@ pub struct TuDsgPublication {
     pub governor: String,
     pub mapping: Vec<TuDsgTemplate>,
     pub name: String,
-    pub table: TuDsgTable,
-    pub templates: String
+    pub templates: String,
+    pub table: TuDsgTable
 }
 
 #[marine]
@@ -110,6 +110,24 @@ pub struct TuContentItem {
     pub content_cid: String
 }
 
+impl TuContentItem {
+    pub fn to_btreemap(&self) -> BTreeMap<String, Value> {
+        let mut map = BTreeMap::new();
+        map.insert("id".to_string(), serde_json::to_value(self.id.clone()).unwrap());
+        map.insert("slug".to_string(), serde_json::to_value(self.slug.clone()).unwrap());
+        map.insert("publication".to_string(), serde_json::to_value(self.publication.clone()).unwrap());
+        map.insert("author".to_string(), serde_json::to_value(self.author.clone()).unwrap());
+        map.insert("tags".to_string(), serde_json::to_value(self.tags.clone()).unwrap());
+        map.insert("categories".to_string(), serde_json::to_value(self.categories.clone()).unwrap());
+        map.insert("parent".to_string(), serde_json::to_value(self.parent.clone()).unwrap());
+        map.insert("creation_date".to_string(), serde_json::to_value(self.creation_date.clone()).unwrap());
+        map.insert("modified_date".to_string(), serde_json::to_value(self.modified_date.clone()).unwrap());
+        map.insert("content_cid".to_string(), serde_json::to_value(self.content_cid.clone()).unwrap());
+
+        map
+    }
+}
+
 #[marine]
 #[derive(Debug, Serialize, Deserialize)]
 pub struct TuDsgMapped {
@@ -118,22 +136,13 @@ pub struct TuDsgMapped {
     pub body: String
 }
 
-// impl rmp::Encode for TuContentItem {
-//     fn encode(&self, encoder: &mut rmp::encode::Encoder) -> Result<(), rmp::encode::EncodeError> {
-//         encoder.encode_str(&self.id)?;
-//         encoder.encode_str(&self.slug)?;
-//         encoder.encode_str(&self.publication)?;
-//         encoder.encode_str(&self.author)?;
-//         encoder.encode_str(&self.post_type)?;
-//         encoder.encode_str(&self.tags)?;
-//         encoder.encode_str(&self.categories)?;
-//         encoder.encode_str(&self.parent)?;
-//         encoder.encode_str(&self.creation_date)?;
-//         encoder.encode_str(&self.modified_date)?;
-//         encoder.encode_str(&self.content)?;
-//         Ok(())
-//     }
-// }
+#[marine]
+#[derive(Debug, Serialize, Deserialize)]
+pub struct AMResponse {
+    pub success: bool,
+    pub result: Vec<String>,
+    pub error: Vec<String>
+}
 
 #[derive(Debug,Serialize, Deserialize)]
 pub struct TemplateData  {
@@ -143,3 +152,4 @@ pub struct TemplateData  {
     pub assets_url: String,
     pub render_env: String
 }
+
