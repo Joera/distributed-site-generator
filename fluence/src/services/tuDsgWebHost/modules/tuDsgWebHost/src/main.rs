@@ -1,13 +1,15 @@
 #![allow(non_snake_case)]
 use marine_rs_sdk::marine;
 use marine_rs_sdk::module_manifest;
-use cio_curl_effector_imports as curl;
-use cio_curl_effector_imports::{CurlRequest,CurlResult,HttpHeader};
-use tu_dsg_types::{ TuDsgPublication }; 
-use tu_types::results::{AquaMarineResult};   
+use curl_effector_imports as curl;
+use curl_effector_imports::{CurlRequest,HttpHeader};
+use tu_dsg_types::{ DsgPublication }; 
+use cio_response_types::{AMResponse};   
 use std::fs;
 use std::path::PathBuf;
 use serde::{Deserialize, Serialize};
+use marine_rs_sdk::get_call_parameters;
+use chrono::{Utc};
 
 module_manifest!();
 
@@ -20,11 +22,9 @@ struct WebHostTask {
 pub fn main() {}
 
 #[marine]
-pub fn update(publication: TuDsgPublication, cid: String) -> bool {
+pub fn update(publication: DsgPublication, cid: String) -> AMResponse {
 
-    let mut bool = false;
-
-    let url = String::from("http://161.35.155.82:3737/publish");
+    let url = String::from("https://webhost1.autonomous-times.com/publish");
 
     let b = WebHostTask {
         publication_name : publication.name,
@@ -48,21 +48,35 @@ pub fn update(publication: TuDsgPublication, cid: String) -> bool {
     };
 
     let response = curl::curl_post(request, source_path, target_path.clone());
+    let timestamp = Utc::now().timestamp_millis();
+    let cp = get_call_parameters();
 
     if response.success  {
 
-       // let_  = fs::read_to_string(target_path.clone()).unwrap();
-        bool = true
-    } 
- 
+        let resultString = fs::read_to_string(target_path.clone()).unwrap();
 
-    bool
+        return AMResponse {
+            success: true,
+            result: resultString,
+            result_raw: String::from(""),
+            timestamp,
+            host_id: cp.host_id
+        }
+    }  
+    
+    else {
+
+        return AMResponse {
+            success: false,
+            result_raw: String::from(""),
+            result: response.error,
+            timestamp,
+            host_id: cp.host_id
+        }  
+    }
 }
 
 fn vault_path(filename: &str) -> String {
     let cp = marine_rs_sdk::get_call_parameters();
     format!("/tmp/vault/{}-{}/{}", cp.particle.id, cp.particle.token, filename)
 }
-
-
-

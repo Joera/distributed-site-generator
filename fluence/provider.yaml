@@ -9,21 +9,34 @@ providerName: defaultProvider
 nox:
   effectors:
     curl:
+      wasmCID: bafybeiaodxccv2gkml2dfwwn3u5ah5t5vfhtsffjbzdz4mjmm3ljnyes5u
+      allowedBinaries:
+        curl: /usr/bin/curl
+    cio-curl:
       wasmCID: bafybeie52bp5eyfhzotkhsexhqhn67v5zddru224gtcv5gj7gvbxcvkhqe
       allowedBinaries:
         curl: /usr/bin/curl
     ipfs:
+      wasmCID: bafkreifhl27umllns5cmylu7uzlmva3v2hhucbvlaz54whzb4cwoodpuoi
+      allowedBinaries:
+        ipfs: /usr/bin/ipfs
+    cio-ipfs:
       wasmCID: bafkreifwz7ia6otb3czodw62hnpvvgnd2wezo4mp27x3vove4ubrtavida
       allowedBinaries:
         ipfs: /usr/bin/ipfs
+    cio-tableland:
+      wasmCID: bafybeihathubxccjb2zj2i64v5o43tera4sjk46zuaeithg2ula5i7xuq4
+      allowedBinaries:
+        curl: /usr/bin/curl
+
 
 computePeers:
   nox-0:
-    computeUnits: 32
+    computeUnits: 64
   nox-1:
-    computeUnits: 32
+    computeUnits: 64
   nox-2:
-    computeUnits: 32
+    computeUnits: 64
 
 offers:
   defaultOffer:
@@ -33,8 +46,11 @@ offers:
       - nox-1
       - nox-2
     effectors:
+      - bafybeiaodxccv2gkml2dfwwn3u5ah5t5vfhtsffjbzdz4mjmm3ljnyes5u
+      - bafkreifhl27umllns5cmylu7uzlmva3v2hhucbvlaz54whzb4cwoodpuoi
       - bafybeie52bp5eyfhzotkhsexhqhn67v5zddru224gtcv5gj7gvbxcvkhqe
       - bafkreifwz7ia6otb3czodw62hnpvvgnd2wezo4mp27x3vove4ubrtavida 
+      - bafybeihathubxccjb2zj2i64v5o43tera4sjk46zuaeithg2ula5i7xuq4
 
 capacityCommitments:
   nox-0:

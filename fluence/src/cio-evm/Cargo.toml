@@ -1,0 +1,27 @@
+[package]
+name = "cio-evm"
+version = "0.1.0"
+edition = "2018"
+
+[lib]
+name = "cio_evm"
+path = "lib.rs"
+
+[dependencies]
+marine-rs-sdk = "0.14.0"
+eyre = "0.6.12"
+serde = "1.0.198"
+serde_json = "1.0.116"
+hex = "0.4.3"
+ethabi = "18.0.0"
+ethabi-contract = "16.0.0"
+ethabi-derive = "14.1.0"
+alloy-consensus = { version = "0.1.4", features = ["serde"] }
+alloy-rlp = "0.3.7"
+alloy-primitives = "0.7.7"
+alloy-json-abi = "0.7.7"
+alloy-eips = "0.1.4"
+curl-effector-imports = { git = "https://github.com/fluencelabs/curl-effector", branch = "main" }
+ethereum-types = "0.14.0"
+ethers-core = "2.0.14"
+alloy-dyn-abi = "0.7.7"

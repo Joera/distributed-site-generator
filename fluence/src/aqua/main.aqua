@@ -4,180 +4,421 @@ import "../../.fluence/aqua-dependencies/node_modules/@fluencelabs/aqua-lib/buil
 import "../../.fluence/aqua-dependencies/node_modules/@fluencelabs/aqua-lib/subnet.aqua"
 import "../../.fluence/aqua-dependencies/node_modules/@fluencelabs/aqua-ipfs/ipfs.aqua"
 
+import "./constants.aqua"
 import "./services.aqua"
 import "./helpers.aqua"
 import "./types.aqua"
 import "./dsg_helpers.aqua"
 
-import Spell, Log from "../../.fluence/aqua-dependencies/node_modules/@fluencelabs/spell/spell_service.aqua"
+-- import Spell, Log from "../../.fluence/aqua-dependencies/node_modules/@fluencelabs/spell/spell_service.aqua"
 
-export renderOnDSG, bulkUpload, bulkRender, subnet
+export provision, test, read -- renderOnDSG, bulkUpload, bulkRender, subnet -- , evm
 
--- temp use of remote kubo to store content -- to do adopt custom docker-compose to run with remote ipfs node 
-const SUBNETKUBO = "/dns4/ipfs/tcp/5001"
-const TABLELANDGATEWAY = "https://tableland.transport-union.dev"
-const PINATAJWTKEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiI0MzNhYjNkMS02YTZjLTQzMGUtODhkZC03Yzc0Y2MyZmQzMDkiLCJlbWFpbCI6ImpvZXJhQGpvZXJhbXVsZGVycy5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwicGluX3BvbGljeSI6eyJyZWdpb25zIjpbeyJpZCI6Ik5ZQzEiLCJkZXNpcmVkUmVwbGljYXRpb25Db3VudCI6MX1dLCJ2ZXJzaW9uIjoxfSwibWZhX2VuYWJsZWQiOmZhbHNlLCJzdGF0dXMiOiJBQ1RJVkUifSwiYXV0aGVudGljYXRpb25UeXBlIjoic2NvcGVkS2V5Iiwic2NvcGVkS2V5S2V5IjoiNGZhNDRkZmU0NGIyMDcyMmZlYjciLCJzY29wZWRLZXlTZWNyZXQiOiI4MTc0YTJjOTc5OGQ2MjU4MzA0NTQ2NzgyZDAxMTUyNDJkNjlhODlhNDI2MWRkNWQ5N2M5NzRiOGZiNWMzYWVlIiwiaWF0IjoxNzEzMzQ1ODE0fQ.88EHF4U77_mU_RyJXMNYIhDaJ0m6AkXqRCw6rflmDow"
+func read() -> *AMResponse:
+    res: *AMResponse
+    ws = getWebHostWorkers()
+    on ws!.worker_id! via ws!.host_id: 
+        res <- Npublication.read(PUBLICATION_ADDRESS, "config", "[]", RPC_URL)
 
-func subnet() -> bool: 
+    <- res 
 
-    -- wrkrs = getContentWorkers()
-    -- Console.print(wrkrs)
-    <- true
+func test() -> string: 
 
-func renderOnDSG(tempTask: TuDsgPublishTaskTemp, archive_cid: string) -> string, *AquaMarineResult:
+    CID = "bafygo"
 
-    Console.print("Starting")
+    raw_txs: *string
+    signatures: *string
+    signed: *string
+    addresses: *string
+    check_address: *string
 
-    results: *AquaMarineResult
-    debug: *AquaMarineResult
-    queue: *[]TuDsgRenderObject
-    cids: *string
-    job_archive_hashes: *string
+    ws = getWebHostWorkers()
 
-    -- get encrypted publicationData from chain .... 
+    on ws!.worker_id! via ws!.host_id: 
+        addresses <- CioSigner.public_address() 
 
-    logString = (s: string):
-        Console.print(s)
-    -- logMapped = (s: TuDsgMapped):
-    --     Console.print(s)
-    logCI = (ci: TuContentItem):
-        Console.print(ci)
-    logQueue = (q: *[]TuDsgRenderObject):
-        Console.print(q)
-    logTemplateData = (td: AquaMarineResult):
-        Console.print(td)
-    -- logAMResults = (r: *AquaMarineResult):
-    --     Console.print(r)
-    -- logRipple = (r: TuDsgRipple):
-    --     Console.print(r)
+    Console.print(addresses!)
 
-    task = fromTempTask(tempTask, SUBNETKUBO)
-    Console.print(task)
+    for w <- ws par: 
+        on w.worker_id! via w.host_id: 
+            raw_txs <- Npublication.prep_write(
+                CHAIN_ID,
+                PUBLICATION_ADDRESS,
+                "updateHtmlRoot(string _html_root)",
+                Debug.stringify([CID]),
+                addresses!,
+                RPC_URL
+            )
+    join raw_txs!
 
-    cw = randomContentWorker()
-    on cw.worker_id! via cw.host_id:    
-        mapping = CioKubo.get(SUBNETKUBO, task.author.content_mappings)
-        mapped = TuDsgContent.map(task, mapping) 
-        amr = CioPinata.addAsFile(mapped.body, mapped.item.slug, PINATAJWTKEY)      
-        contentItem = TuDsgContent.includeCid(mapped.item, amr.result)
-        logCI(contentItem)
-        results <- TuContentStore.insert(contentItem, task.publication.table, TABLELANDGATEWAY)
-        main = TuDsgContent.pebble(task, contentItem)
-        queue <<- main
-        for ripple <- main!.template.ripples:
-            items = TuContentStore.queryRipple(ripple, task.publication.table, TABLELANDGATEWAY) 
-            for item <- items: 
-                queue <- TuDsgContent.ripple(task, ripple, item)
+    Console.print(raw_txs!)
+  
+    on ws!.worker_id! via ws!.host_id: 
+        check_address <- CioSigner.public_address()
+        signatures <- CioSigner.rawtx(raw_txs!, CHAIN_ID) 
+
+    Console.print(check_address)
+  
+    Console.print(signatures!)
+
+    on ws!.worker_id! via ws!.host_id: 
+        signed <- Npublication.exec_write(raw_txs!, signatures, RPC_URL)
+
+    <- signed!
+
+
+func provision() -> *string:
+
+    addresses: *string
+    ws = getWebHostWorkers()
+
+    keys = ["1128ab3ec46956e801f3316df39316f57a24c31bdaafc0ce35edc59312b90b7d",
+            "e0f4ed7ea095d59270007c6dba78e73b03495f86e7f426f867841d9c3384eaef",
+            "068993f9dfe2b9d553a609af2fee9d24ecc400832440c452ced26ff0c9d7e45d"
+           ]
+
+    i: *u8
+
+    for w <- ws: 
+        on w.worker_id! via w.host_id: 
+            addresses <- CioSigner.provision(keys[i.length])
+        i <<- 1
+    
+    <- addresses 
+
+func neutral() -> string:
+
+    -- 0x7e7fA535Ad83D2c74984C7067B0C0b335C1b3308
+
+    raw_txs: *string
+    signatures: *string
+    signed: *string
+
+    ws = getWebHostWorkers()
+    addresses: *string
+    for w <- ws: 
+        on w.worker_id! via w.host_id: 
+            addresses <- CioSigner.public_address()
+
+    Console.print(addresses!)
+    Console.print(addresses[1])
+    Console.print(addresses[2])
+
+    for w <- ws par: 
+        on w.worker_id! via w.host_id: 
+            raw_txs <- CioSafe.tx_request(
+                addresses!,
+                CHAIN_ID,
+                SAFE_FACTORY,
+                RPC_URL,
+                addresses,
+                2
+            )
+    join raw_txs!
+
+    Console.print(raw_txs!)
+
+    for w <- ws par: 
+        on w.worker_id! via w.host_id: 
+            signatures <- CioSigner.rawtx(raw_txs!,CHAIN_ID) 
+    join signatures[2]
+
+    Console.print(signatures!)
+    Console.print(signatures[1])
+    Console.print(signatures[2])
+
+    on ws!.worker_id! via ws!.host_id: 
+        signed <- CioSafe.exec_tx(raw_txs!, signatures, RPC_URL)
+
+    <- signed!
+
+-- func test() -> string:
+    
+--     r: *string
+--     array = [1,2,3,4,5]
+--     for i <- array:
+--         res:  *string
+--         res <- somefn()
+--         par res <- Peer.timeout(1000,"some spacetime")
+--         Console.print(res!)
+--         if res! != "some spacetime":
+--             r <<- "hi"
+--     <- r!
+
+-- func subnet() -> bool: 
+
+--     wrkrs = getContentWorkers()
+--     Console.print(wrkrs)
+--     <- true
+
+-- func AMRResult(rs: *AMResponse) -> string:
+--     <- rs[rs.length - 1].result
+
+-- func readablePeer(p: string) -> string:
+
+--     n: *string
+--     if p == "12D3KooWP5UnQLWX11pFSMgD78Q9rwq6o2p6hzXTqU74s6z6jBCx":
+--         n <<- "nox-0: "
+--     if p == "12D3KooWHqen5YCnwBJ8zM3zKWRNZPuR4x9fnz5gVhHMb41vAnw4":
+--         n <<- "nox-1: "
+--     if p == "12D3KooWRmxeCmLL8KJ24J4rnAQBrNe8jdJdq8vfBA5cPNm31dGR":
+--         n <<- "nox-2: "
+--     <- n!
+
+
+
+-- func cleanRenderOnDSG(tempTask: TuDsgPublishTaskTemp, archive_cid: string) -> string, *AMResponse:
+
+--     Console.print("Starting")
+
+--     amrs: *AMResponse
+--     queue: *[]TuDsgRenderObject
+--     cids: *string
+
+--     logString = (s: string):
+--         Console.print(s)
+--     logQueue = (q: *[]TuDsgRenderObject):
+--         Console.print(q)
+
+--     task = fromTempTask(tempTask, WEBHOSTKUBO)
+--     Console.print(task)
+
+--     cw = randomContentWorker()
+--     on cw.worker_id! via cw.host_id:  
+--         mapping = CioKubo.get(WEBHOSTKUBO, task.author.content_mappings)
+--         mapped = TuDsgContent.map(task, mapping)
+--         amrs <- CioPinata.addAsFile(mapped.body, mapped.item.slug, PINATAJWTKEY)  
+--         contentItem = TuDsgContent.includeCid(mapped.item, lastAMRResult(amrs))
+--         amrs <- TuContentStore.insert(contentItem, task.publication.table, false)
+--         main = TuDsgContent.pebble(task, contentItem)
+--         queue <<- main
+--         for ripple <- main!.template.ripples:
+--             amrs <- TuContentStore.queryRipple(ripple, task.publication.table) 
+--             for item <- StringToContentItems.parse(lastAMRResult(amrs)): 
+--                 queue <- TuDsgContent.ripple(task, ripple, item)
             
-    logQueue(queue)
+--     logQueue(queue)
 
-    for rw <- getRenderWorkers() par:
-        on rw.worker_id! via rw.host_id:
-            r1 = CioKubo.getRecursive(SUBNETKUBO, archive_cid, task.publication.name)
-            r2 = CioKubo.getRecursive(SUBNETKUBO, task.publication.templates, "templates")
-        --  r3 = CioKubo.getRecursive(SUBNETKUBO, task.publication.assets, Op.concat_strings(task.publication.name,"/assets"))
+--     downloads: *string
+--     for rw <- getRenderWorkers() par:
+--         on rw.worker_id! via rw.host_id:
+--             downloads <- CioKubo.getRecursive(SUBNETKUBO, archive_cid, task.publication.name) 
+--             downloads <- CioKubo.getRecursive(SUBNETKUBO, task.publication.templates, "templates")
+--     join downloads[5]
 
-            fds <- CioVault.inspect(".")
-            for f <- fds:
-                logString(f)
+--     finished: *bool
+--     for rw <- getRenderWorkers() par:
+--         on rw.worker_id! via rw.host_id: 
+--             for ros <- queue:
+--                 for ro <- ros: 
+--                     body = CioKubo.get(SUBNETKUBO, ro.body_cid)
+--                     collections: *[]TuContentItem
+--                     for c <- ro.template.collections:
+--                         if c.source == "tableland":
+--                             amrs <- TuContentStore.queryCollection(c, task.publication.table) 
+--                             collections <- StringToContentItems.parse(lastAMRResult(amrs))
+--                     templateDataResult = TuDsgRenderer.map(ro, body, collections, task.publication)
+--                     results <- TuDsgRenderer.single(ro, templateDataResult.output!)
+--             finished <<- true
+--     join finished[0]
 
-    for ros <- queue:
-        for ro <- ros par: 
-            ro_archive_hashes: *string 
-            for rw <- getRenderWorkers():
-                on rw.worker_id! via rw.host_id:
-                    body = CioKubo.get(SUBNETKUBO, ro.body_cid)
-                    collections: *[]TuContentItem
-                    for c <- ro.template.collections:
-                        if c.source == "tableland":
-                            collections <- TuContentStore.queryCollection(c, task.publication.table) 
-                    templateDataResult = TuDsgRenderer.map(ro, body, collections, task.publication)
-                    results <- TuDsgRenderer.single(ro, templateDataResult.output!)
-                    logString("2")
-                    ro_archive_hashes <- CioKubo.hash(SUBNETKUBO,task.publication.name)
-                    -- dit moet juist een AMResponse zijn 
-                    
-                    -- folders2 = CioKubo.inspectParticleVault()
-                    -- for f <- folders2:
-                    
-            join ro_archive_hashes! -- when we have two equal hashes 
-            job_archive_hashes <<- ro_archive_hashes! 
-            logString(ro_archive_hashes!) 
+--     hashes: *AMResponse
+--     for rw <- getRenderWorkers() par:
+--         on rw.worker_id! via rw.host_id:  
+--             hashes <- CioKubo.hash(SUBNETKUBO,task.publication.name)
+--     join hashes[2]
+--     logString("compared new content root hash")
 
-            leader = getRenderWorkers()!
-            on leader.worker_id! via leader.host_id:
-                pinataResult = CioPinata.addFolder(task.publication.name, PINATAJWTKEY) 
-                cids <<- pinataResult.result
-                s <- TuDsgWebHost.update(task.publication, cids!)
-                -- make tx to update publication 
+--     leader = selectLeader(hashes) 
+--     logString("selected leader")
+--     logString(leader.host_id)  
+--     on leader.worker_id! via leader.host_id:
+--         cids <- CioKubo.addRecursive(WEBHOSTKUBO,task.publication.name)
+
+--     hw = randomWebHostWorker()
+--     on hw.worker_id! via hw.host_id:  
+--         s <- TuDsgWebHost.update(task.publication, cids!)
                              
-    <- cids!, results
+--     <- cids!, amrs
 
--- func gatherKubos() -> Kubos :
+-- func renderOnDSG(tempTask: TuDsgPublishTaskTemp, archive_cid: string) -> string, *AMResponse:
 
---     internals: *string
---     externals: *string
+--     Console.print("Starting process")
 
---     for w <- getContentWorkers():
---         Console.print(w)
---         on w.host_id:
---             res: *IpfsMultiaddrResult
---             res <- Ipfs.get_local_api_multiaddr()
---             if res!.success == true:
---                 internals <<- res!.multiaddr
---             res_: *IpfsMultiaddrResult
---             res_ <- Ipfs.get_external_api_multiaddr() 
---             if res_!.success == true:
---                 externals <<- res_!.multiaddr    
+--     debug = true
+--     amrs: *AMResponse
+--     queue: *[]TuDsgRenderObject
+--     cids: *string
 
---     kubos = Kubos(internals = internals, externals= externals)
-
---     Console.print(kubos)
-
---     <- kubos
-
-func bulkUpload(tasks: []TuDsgPublishTaskTemp) -> bool:
-
-    -- logString = (s: string):
-    --     Console.print(s)
-    -- logCI = (ci: TuContentItem):
-    --     Console.print(ci)
-
-    -- results: *AquaMarineResult
-    -- cw = randomContentWorker()
-    -- for tempTask <- tasks:
-    --     task = fromTempTask(tempTask, SUBNETKUBO) 
-    --     on cw.worker_id! via cw.host_id:   
-    --         mapping = CioKubo.get(SUBNETKUBO, task.author.content_mappings)
-    --         mapped = TuDsgContent.map(task, mapping) 
-    --         cid = CioKubo.add(SUBNETKUBO, mapped.body)
-    --         contentItem = TuDsgContent.includeCid(mapped.item, cid)
-    --         -- logCI(contentItem)
-    --         results <- TuContentStore.insert(contentItem, task.publication.table, TABLELANDGATEWAY)
-    --         logString(results!.results!)
-
-    <- true
-
-func bulkRender(publication_cid: string, post_type: string, archive_cid: string) -> *AquaMarineResult:
-
-    results: *AquaMarineResult
-
-    -- publication = fetchPublication(publication_cid, SUBNETKUBO)
-
-    -- Console.print(publication)
-
-    -- w = randomDevWorker()
-    -- on w.workerId via w.hostId:
-    --     queue: *[]TuDsgRenderObject
-    --     kubo = Ipfs.get_local_api_multiaddr()
-    --     if kubo.success == true:
-    --         queue <- TuDsgContent.bulk(publication, post_type, kubo.multiaddr)
-    --         debug <- TuDsgRenderer.imports(archive_cid, publication, kubo.multiaddr)
-    --         for ros <- queue:
-    --             for ro <- ros:
-    --                 results <- TuDsgRenderer.single(ro, kubo.multiaddr)
-    --                 Peer.timeout(10,"buffering not to overload tableland")
-    --         results <- TuDsgRenderer.collect(publication.name, kubo.multiaddr)
+--     -- get encrypted publicationData from chain .... 
 
 
-    <- results
+--     logWithPeer = (p: string, msg: string):
+--         n = readablePeer(p)
+--         s <- Op.concat_strings(n,msg)
+--         Console.print(s)
+--     logNumber = (n: u32):
+--         Console.print(n)
+--     logString = (s: string):
+--         Console.print(s)
+--     logCI = (ci: TuContentItem):
+--         Console.print(ci)
+--     logQueue = (q: *[]TuDsgRenderObject):
+--         Console.print(q)
+--     logTemplateData = (td: AquaMarineResult):
+--         Console.print(td)
+--     logAMResponse = (amr: AMResponse):
+--         Console.print(amr)
+--     logLastAMR = (a: *AMResponse):
+--         Console.print(a[a.length - 1])
+
+--     task = fromTempTask(tempTask, SUBNETKUBO)
+--     Console.print(task)
+
+--     cw = randomContentWorker()
+--     on cw.worker_id! via cw.host_id:  
+--         mapping = CioKubo.get(SUBNETKUBO, task.author.content_mappings)
+--         if debug: 
+--             logWithPeer(cw.host_id, "fetched author mappings")
+--         mapped = TuDsgContent.map(task, mapping)
+--         if debug:
+--             logWithPeer(cw.host_id, "mapped content")
+--         amrs <- CioPinata.addAsFile(mapped.body, mapped.item.slug, PINATAJWTKEY)  
+--         if debug:
+--             logWithPeer(cw.host_id, "stored content body on pinata")
+--         contentItem = TuDsgContent.includeCid(mapped.item, lastAMRResult(amrs))
+--         if debug: 
+--             logCI(contentItem)
+--         amrs <- TuContentStore.insert(contentItem, task.publication.table, false)
+--         if debug:
+--             logWithPeer(cw.host_id, "inserted in db")
+--         if debug: 
+--             logLastAMR(amrs)
+--         main = TuDsgContent.pebble(task, contentItem)
+--         queue <<- main
+--         for ripple <- main!.template.ripples:
+--             if debug:
+--                 logWithPeer(cw.host_id, ": loop through ripples")
+--             amrs <- TuContentStore.queryRipple(ripple, task.publication.table) 
+--             if debug:
+--                 logLastAMR(amrs)
+--             -- parse string into collection
+--             for item <- StringToContentItems.parse(lastAMRResult(amrs)): 
+--                 queue <- TuDsgContent.ripple(task, ripple, item)
+            
+--     logQueue(queue)
+
+--     downloads: *string
+--     for rw <- getRenderWorkers() par:
+--         on rw.worker_id! via rw.host_id:
+--             downloads <- CioKubo.getRecursive(SUBNETKUBO, archive_cid, task.publication.name)
+--             if debug:
+--                 logWithPeer(rw.host_id, ": fetched archive")  
+--             downloads <- CioKubo.getRecursive(SUBNETKUBO, task.publication.templates, "templates")
+--             if debug:
+--                 logWithPeer(rw.host_id, ": fetched templates")  
+--     join downloads[5]
+
+--     finished: *bool
+--     for rw <- getRenderWorkers() par:
+--         on rw.worker_id! via rw.host_id: 
+--             for ros <- queue:
+--                 for ro <- ros: 
+--                     body = CioKubo.get(SUBNETKUBO, ro.body_cid)
+--                     if debug:
+--                         logWithPeer(rw.host_id, ": renderObject gets body from cid")  
+--                     collections: *[]TuContentItem
+--                     for c <- ro.template.collections:
+--                         if debug:
+--                             logWithPeer(rw.host_id, ": looping through collections") 
+--                         if c.source == "tableland":
+--                             amrs <- TuContentStore.queryCollection(c, task.publication.table) 
+--                             if debug:
+--                                 logWithPeer(rw.host_id, ": queried collections") 
+--                             collections <- StringToContentItems.parse(lastAMRResult(amrs))
+--                             if debug:
+--                                 logWithPeer(rw.host_id, ": parsed collection") 
+--                     templateDataResult = TuDsgRenderer.map(ro, body, collections, task.publication)
+--                     results <- TuDsgRenderer.single(ro, templateDataResult.output!)
+--                     if debug:
+--                         logWithPeer(rw.host_id, ": rendered html") 
+--             finished <<- true
+--             if debug:
+--                 logWithPeer(rw.host_id, ": finished queue") 
+--     join finished[0]
+--     -- logString("finished all queues")
+
+
+--     hashes: *AMResponse
+--     for rw <- getRenderWorkers() par:
+--         on rw.worker_id! via rw.host_id:  
+--             hashes <- CioKubo.hash(SUBNETKUBO,task.publication.name)
+--     join hashes[2]
+--     logString("compared new content root hash")
+
+--     leader = selectLeader(hashes) 
+--     logString("selected leader")
+--     logString(leader.host_id)  
+--     on leader.worker_id! via leader.host_id:
+--         if debug:
+--             logWithPeer(leader.host_id, ": uploading archive to webhost's kubo")
+--         cids <- CioKubo.addRecursive(WEBHOSTKUBO,task.publication.name)
+--         logString(cids!)
+
+--     hw = randomWebHostWorker()
+--     on hw.worker_id! via hw.host_id:  
+--         s <- TuDsgWebHost.update(task.publication, cids!)
+--         logWithPeer(leader.host_id, s.result)
+        
+--     -- make tx to update publication 
+                             
+--     <- cids!, amrs
+
+-- func bulkUpload(tasks: []TuDsgPublishTaskTemp) -> bool:
+
+--     logString = (s: string):
+--         Console.print(s)
+--     logCI = (ci: TuContentItem):
+--         Console.print(ci)
+--     logAMResponse = (amr: AMResponse):
+--         Console.print(amr)
+
+--     results: *AquaMarineResult
+--     cw = randomContentWorker()
+--     logString(cw.host_id)  
+--     for tempTask <- tasks:
+--         task = fromTempTask(tempTask, SUBNETKUBO) 
+--         on cw.worker_id! via cw.host_id:   
+--             mapping = CioKubo.get(SUBNETKUBO, task.author.content_mappings)
+--             mapped = TuDsgContent.map(task, mapping) 
+--             amr = CioPinata.addAsFile(mapped.body, mapped.item.slug, PINATAJWTKEY) 
+--             contentItem = TuDsgContent.includeCid(mapped.item, amr.result)
+--             -- logCI(contentItem)
+--             amr_2 <- TuContentStore.insert(contentItem, task.publication.table, false)
+--             logAMResponse(amr_2)
+
+--     <- true
+
+-- func bulkRender(publication_cid: string, post_type: string, archive_cid: string) -> *AquaMarineResult:
+
+--     results: *AquaMarineResult
+
+--     -- publication = fetchPublication(publication_cid, SUBNETKUBO)
+
+--     -- Console.print(publication)
+
+--     -- w = randomDevWorker()
+--     -- on w.workerId via w.hostId:
+--     --     queue: *[]TuDsgRenderObject
+--     --     kubo = Ipfs.get_local_api_multiaddr()
+--     --     if kubo.success == true:
+--     --         queue <- TuDsgContent.bulk(publication, post_type, kubo.multiaddr)
+--     --         debug <- TuDsgRenderer.imports(archive_cid, publication, kubo.multiaddr)
+--     --         for ros <- queue:
+--     --             for ro <- ros:
+--     --                 results <- TuDsgRenderer.single(ro, kubo.multiaddr)
+--     --                 Peer.timeout(10,"buffering not to overload tableland")
+--     --         results <- TuDsgRenderer.collect(publication.name, kubo.multiaddr)
+
+
+--     <- results

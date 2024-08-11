@@ -1,0 +1,115 @@
+aqua Consensus declares *
+
+import Spell from "@fluencelabs/spell/spell_service.aqua"
+import "@fluencelabs/aqua-lib/builtin.aqua"
+import "./constants.aqua"
+import "./services.aqua"
+import "./helpers.aqua"
+import "./utils.aqua"
+
+func compareBlocks(ws: []Worker) -> bool: 
+
+    Spell "listener"
+    blocks: *string
+    synced: *bool
+    for w <- ws: 
+        on w.worker_id! via w.host_id:
+            Spell "listener"
+            lb = Spell.get_string("latest_block")
+            blocks <<- lb.value
+    -- for b <- blocks:
+    --     Spell.store_log(b)
+    if blocks! == blocks[1] && blocks! == blocks[2]: 
+        Spell.store_log(ConstructLogs.concat_strings("synced on block: ", blocks!))
+        synced <<- true
+    else:
+        Spell.store_log("syncing")
+        synced <<- false
+    <- synced!
+
+func waitForBlockSync(ws: []Worker) -> bool:
+
+    Spell "listener"
+    synced: *bool
+    synced <<- false
+    array = [1,2,3,4,5,6,7,8,9]
+    for i <- array:
+        if synced[synced.length - 1] != true:
+            s = compareBlocks(ws)
+            if s:
+                synced <<- true
+            else:
+                Peer.timeout(1000,"some spacetime")
+    <- synced[synced.length - 1]
+
+func compareContentWorkers(ws: []Worker, spell: Spell, task_cid: string) -> bool: 
+
+    synced: *bool
+    available: *bool
+    for w <- ws: 
+        on w.worker_id! via w.host_id:
+            Spell "content"
+            has = Spell.exists(task_cid)
+            if has.success:
+                if has.value == true:
+                    available <<- true
+    if available.length == 3: 
+        spell.store_log(Debug.stringify(["synced with: ", task_cid]))
+        synced <<- true
+    else:
+        -- spell.store_log("syncing")
+        synced <<- false
+    <- synced!
+
+func waitForSync(ws: []Worker, spell: Spell, task_cid: string) -> bool:
+
+    synced: *bool
+    synced <<- false
+    array = [1,2,3,4,5,6,7]
+    for i <- array:
+        if synced[synced.length - 1] != true:
+            s = compareContentWorkers(ws, spell,task_cid)
+            if s:
+                synced <<- true
+            else:
+                Peer.timeout(1000,"some spacetime")
+    <- synced[synced.length - 1]
+
+func wrapHostCid(host: string, task_cid:string) -> CidWrapper:
+    <- CidWrapper(host = host, task_cid = task_cid)
+
+func select(ws: []Worker, spell: Spell, task_cid: string) -> bool: 
+
+    itsme: *bool 
+    itsme <<- true
+    me <- CioConsensus.whoami()
+    -- spell.store_log(ConstructLogs.concat_strings("my host_id: ", me))
+    distances: *i32
+    for w <- getOtherTaskWorkers(me): 
+        on w.worker_id! via w.host_id:
+            try:
+                    -- using only host_id skews distribution within worker with fixed host_ids 
+                    -- adding another agreed upon el to the mix! blocktime or taskcid
+                host_cid = CioKubo.add(WEBHOSTKUBO, 
+                    CidWrapperToString.stringify(
+                        wrapHostCid(w.host_id, task_cid)
+                    )
+                )
+                distances <- CioConsensus.getXORDistance(host_cid, task_cid)
+            otherwise: 
+                distances <<- 101
+    -- for d <- distances:
+    --     spell.store_log(ConstructLogs.concat_strings("xor between other worker & task cid: ", I32Srv.stringify(d)))
+
+    cid = CioKubo.add(WEBHOSTKUBO, 
+        CidWrapperToString.stringify(
+            wrapHostCid(me, task_cid)
+        )
+    )
+    my_distance = CioConsensus.getXORDistance(cid, task_cid) 
+    -- spell.store_log(ConstructLogs.concat_strings("xor between me & task cids: ", I32Srv.stringify(my_distance)))
+
+    for d <- distances:
+        if d > my_distance:     
+            itsme <<- false
+    <- itsme[itsme.length - 1]

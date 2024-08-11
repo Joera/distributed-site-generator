@@ -2,46 +2,35 @@ import {
 	TFile,
 } from "obsidian";
 
-export type Kubos = {
-
-	internals : string[],
-	externals : string[],
-	internals_url? : string[],
-	externals_url? : string[],
-}
 
 export class SGFile extends TFile {
 	raw: string
-	// object?: { [key:string] : string }
-	// cid?: string
 }
 
 
 export interface SGContentItem {
 
-	author: string,
-	publication:  string,
-	sgId : string,
-	post_type: string,
-	args: string,
-	tags: string[],
+	args: string,	
 	categories: string[],
-	parent: string,
-	creation_date: string,
-	modified_date: string,
-	thumbnail: string,
-	title: string,
 	content: string
-
+	creation_date: string,
+	id: string,
+	modified_date: string,
+	parent: string,
+	post_type: string,
+	slug: string,
+	tags: string[],
+	title: string,
+	thumbnail: string
 }
 
 export interface SGTask {
 
 	slug: string,
-	author: string,
+	// author: string,
 	payload: any,
 	post_type: string,
-	publication: string
+	// publication: string
 }
 
 type TuDsgDns = {
@@ -63,13 +52,46 @@ export type DSGAuthorInput = {
 	content_mappings: string
 };
 
-export type DSGPublicationInput = {
-	assets: string,
-	domains: TuDsgDomain[],
-	governor: string,
-	mapping : string,
-	name : string,
-	table: string,
-	type : string,
-	templates : string
-};
+// export type DSGPublicationInput = {
+// 	assets: string,
+// 	contract: string,
+// 	domains: TuDsgDomain[],
+// 	governor: string,
+// 	mapping : string,
+// 	name : string,
+// 	table: string,
+// 	type : string,
+// 	templates : string
+// };
+
+type DSGCollection = {
+    source: string,
+    key: string
+    query: string
+}
+
+type DSGTemplate = {
+    reference: string
+    file: string
+    path: string
+    collections: DSGCollection[]
+}
+
+export type DSGTable = {
+    id: string
+    gateway: string
+}
+
+export type  DSGPublication = {
+    
+    assets: string
+	contract: string
+	controller: string
+    domains: any[]
+    mapping: DSGTemplate[]
+    name: string
+	rpc: string
+	storage: string
+    templates: string
+    table: DSGTable
+}

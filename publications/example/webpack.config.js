@@ -14,20 +14,20 @@ const config = {
     chunkFilename: 'scripts.js',
     filename: 'scripts.js',
   },
-  devServer: {
-    open:false,
-    port: 8765,
-    hot: false,
-    client: {
-      overlay: true,
-      progress: true,
-      reconnect: true,
-    },
-  },
+  // devServer: {
+  //   open:false,
+  //   port: 8765,
+  //   hot: false,
+  //   client: {
+  //     overlay: true,
+  //     progress: true,
+  //     reconnect: true,
+  //   },
+  // },
   devtool:'source-map',
   plugins: [
       new MiniCssExtractPlugin({
-        filename: "assets/css/styles.css"
+        filename: "assets/css/main.css"
       }),
       new CopyWebpackPlugin({
         patterns: [

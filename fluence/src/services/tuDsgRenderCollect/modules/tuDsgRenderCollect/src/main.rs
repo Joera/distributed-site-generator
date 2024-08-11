@@ -3,7 +3,7 @@ use marine_rs_sdk::marine;
 use marine_rs_sdk::module_manifest;
 use marine_rs_sdk::MountedBinaryResult;
 use tu_dsg_types::{TuDsgRenderObject, TuDsgDns, TuDsgDomain, TuDsgPublication, TuContentItem    };
-use tu_types::results::{AquaMarineResult};   
+use cio_response_types::{AquaMarineResult};   
 
 module_manifest!();
 

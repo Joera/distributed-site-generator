@@ -11,5 +11,5 @@ name: tuDsgWebHost
 modules:
   facade:
     get: modules/tuDsgWebHost
-  cio_curl_effector:
-    get: modules/cio-curl-effector/
+  curl_effector:
+    get: modules/curl-effector

@@ -1,0 +1,114 @@
+aqua Renderer
+
+import Spell from "@fluencelabs/spell/spell_service.aqua"
+import "@fluencelabs/aqua-lib/builtin.aqua"
+import "../../aqua/constants.aqua"
+import "../../aqua/services.aqua"
+import "../../aqua/helpers.aqua"
+import "../../aqua/utils.aqua"
+import "../../aqua/consensus.aqua"
+
+-- Note: spell main function must be exported
+export spell
+
+func lastAMRResult(rs: *AMResponse) -> string:
+     <- rs[rs.length - 1].result
+
+func compareRenderWorkers(ws: []Worker, spell: Spell, task_cid: string) -> bool: 
+
+    synced: *bool
+    available: *bool
+    for w <- ws: 
+        on w.worker_id! via w.host_id:
+            Spell "renderer"
+            has = Spell.exists(task_cid)
+            if has.success:
+                if has.value == true:
+                    available <<- true
+    if available.length == 3: 
+        spell.store_log(Debug.stringify(["synced with: ", task_cid]))
+        synced <<- true
+    else:
+        spell.store_log("syncing")
+        synced <<- false
+    <- synced!
+
+func waitForSync_(ws: []Worker, spell: Spell, task_cid: string) -> bool:
+
+    synced: *bool
+    synced <<- false
+    array = [1,2,3,4,5,6,7]
+    for i <- array:
+        if synced[synced.length - 1] != true:
+            s = compareRenderWorkers(ws, spell, task_cid)
+            if s:
+                synced <<- true
+            else:
+                Peer.timeout(1000,"some spacetime")
+    <- synced[synced.length - 1]
+
+func spell():
+    Spell "renderer"
+    amrs: *AMResponse
+    results: *AquaMarineResult
+
+    rs <- getRenderWorkers() 
+    mailbox_result <- Spell.pop_mailbox()
+    if mailbox_result.success && !mailbox_result.absent:
+        message = mailbox_result.message!
+        task_cid = message.message
+        Spell.set_u32(task_cid, 0)
+        Spell.store_log(Debug.stringify(["received task:",message.message, "from:", message.init_peer_id ]))
+        b = waitForSync_(rs,Spell,task_cid)
+        if b: 
+            itsme = select(rs, Spell, task_cid)
+            if itsme:
+                Spell.store_log("i was selected")
+                task_string = CioKubo.get(WEBHOSTKUBO, task_cid)
+                -- Spell.store_log(task_string)
+                task = TaskFromString.parse(task_string)
+                -- Spell.store_log(task.publication.name)
+
+                downloads: *string
+                method = "html_root"
+                r = Npublication.read(task.publication.contract, "html_root() external view returns (string cid)", "[]", task.publication.rpc)
+                downloads <- CioKubo.getRecursive(WEBHOSTKUBO, r.result, task.publication.name) 
+                downloads <- CioKubo.getRecursive(WEBHOSTKUBO, task.publication.templates, "templates")
+
+                for ro <- task.items:   
+                    body = CioKubo.get(WEBHOSTKUBO, ro.body_cid)
+                    collections: *[]DsgContentItem
+                    for c <- ro.template.collections:
+                        if c.source == "tableland":
+                            amrs <- ContentStore.queryCollection(c, task.publication.table) 
+                            Spell.store_log(Debug.stringify(amrs))  
+                            collections <- DsgContentItemsFromJson.parse(lastAMRResult(amrs))
+                    templateDataResult = DsgRenderer.map(ro, body, collections, task.publication)
+                    results <- DsgRenderer.single(ro, templateDataResult.output!)
+
+                hash <- CioKubo.addRecursive(WEBHOSTKUBO,task.publication.name)
+
+                aumentedTask = DsgTask(
+                        slug = task.slug, 
+                        author = task.author, 
+                        payload = task.payload, 
+                        post_type = task.post_type, 
+                        publication = task.publication, 
+                        items = task.items,
+                        hash = hash
+                )
+                augmented_task_string = TaskToString.stringify(aumentedTask) 
+                augmented_task_cid = CioKubo.add(WEBHOSTKUBO, augmented_task_string)
+
+                -- filecoin ??? or multiple ipfs nodes?? 
+
+                whws = getWebHostWorkers()
+                for w <- whws: 
+                    on w.worker_id! via w.host_id: 
+                        Spell "webHost"
+                        Spell.push_mailbox(augmented_task_cid)
+                Spell.store_log("send out tasks to webhost workers")
+
+
+            else: 
+                Spell.store_log("doing nothing this time")

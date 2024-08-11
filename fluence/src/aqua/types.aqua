@@ -12,87 +12,114 @@ data AquaMarineResult:
   results: []string
   errors: []string
 
-data TuContentItem:
-  id: string
-  slug: string
-  publication: string
-  author: string
-  post_type: string
-  tags: string
-  categories: string
+data DsgRawContent:
+  post_type: string 
+  tags: []string
+  categories: []string
   parent: string
   creation_date: string
   modified_date: string
-  content_cid: string
+  thumbnail: string
+  title: string
+  slug: string
+  content: string
 
-data TuDsgAuthorData:
+data DsgContentItem:
+  author: string
+  categories: string
+  content_cid: string
+  creation_date: string
+  id: string
+  modified_date: string
+  parent: string
+  publication: string
+  post_type: string
+  slug: string
+  tags: string
+  title: string
+  
+
+data DsgAuthorData:
   name: string
   repository: string
   content_mappings: string
 
-data TuDsgCollection:
+data DsgCollection:
   source: string
   key: string
   value: string
   query: string
 
-data TuDsgDns:
+data DsgDns:
   custodian: string
   item_id: string
   auth_key: string
 
-data TuDsgDomain:
+data DsgDomain:
   url: string
-  dns: TuDsgDns
+  dns: DsgDns
 
-data TuDsgMapped:
-  item: TuContentItem
+data DsgMapped:
+  item: DsgContentItem
   body: string
 
-data TuDsgRipple:
+data DsgRipple:
   query: string
   value: string
   post_type: string
 
-data TuDsgTemplate:
+data DsgTemplate:
   reference: string
   file: string
   path: string
-  collections: []TuDsgCollection
-  ripples: []TuDsgRipple
+  collections: []DsgCollection
+  ripples: []DsgRipple
 
-data TuDsgTable:
+data DsgTable:
   id: string
   gateway: string
-  owner: string
 
-data TuDsgPublication:
+data DsgPublication:
   assets: string
-  domains: []TuDsgDomain
-  governor: string
-  mapping: []TuDsgTemplate
+  contract: string
+  controller: string
+  domains: []DsgDomain
+  mapping: []DsgTemplate
   name: string
+  rpc: string
+  table: DsgTable
   templates: string
-  table: TuDsgTable
+  storage: string
+  
 
-data TuDsgPublishTask:
-  slug: string
-  author: TuDsgAuthorData
-  payload: string
-  post_type: string
-  publication: TuDsgPublication
-
-data TuDsgRenderObject:
+data DsgRenderObject:
   name: string
   post_type: string
-  template: TuDsgTemplate
+  template: DsgTemplate
   publication_name: string
-  domain: TuDsgDomain
+  domain: DsgDomain
   body_cid: string
 
-data TuDsgPublishTaskTemp:
-    author: string
-    payload: string
-    publication: string
-    post_type: string
-    slug: string
+data DsgTask:
+  slug: string
+  author: DsgAuthorData
+  payload: string
+  post_type: string
+  publication: DsgPublication
+  items: []DsgRenderObject
+  hash: string
+
+data EventLog: 
+  address: string
+  block_number: string
+  params: []string
+  transaction_hash: string
+
+data AMEventLogResult:
+  success: bool
+  results: []EventLog 
+  error: string
+
+data CidWrapper: 
+  host: string
+  task_cid: string

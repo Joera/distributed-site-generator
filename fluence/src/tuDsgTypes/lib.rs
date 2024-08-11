@@ -5,7 +5,7 @@ use marine_rs_sdk::marine;
 
 #[marine] 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct TuDsgAuthorData {
+pub struct DsgAuthorData {
     pub name: String,
     pub repository: String,
     pub content_mappings: String
@@ -13,7 +13,7 @@ pub struct TuDsgAuthorData {
 
 #[marine]
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct TuDsgCollection {
+pub struct DsgCollection {
     pub source: String,
     pub key: String,
     pub value: String,
@@ -22,7 +22,7 @@ pub struct TuDsgCollection {
 
 #[marine]
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct TuDsgRipple {
+pub struct DsgRipple {
     pub query: String,
     pub value: String,
     pub post_type: String
@@ -30,17 +30,17 @@ pub struct TuDsgRipple {
 
 #[marine]
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct TuDsgTemplate {
+pub struct DsgTemplate {
     pub reference: String,
     pub file: String,
     pub path: String,
-    pub collections: Vec<TuDsgCollection>,
-    pub ripples: Vec<TuDsgRipple>
+    pub collections: Vec<DsgCollection>,
+    pub ripples: Vec<DsgRipple>
 }
 
 #[marine]
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct TuDsgDns {
+pub struct DsgDns {
     pub custodian: String,
     pub item_id: String,
     pub auth_key: String
@@ -48,72 +48,78 @@ pub struct TuDsgDns {
 
 #[marine]
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct TuDsgDomain {
+pub struct DsgDomain {
     pub url: String,
-    pub dns: TuDsgDns
+    pub dns: DsgDns
 }
 
 #[marine]
 #[derive(Debug, Serialize, Deserialize)]
-pub struct TuDsgTable {
+pub struct DsgTable {
     pub id : String,
-    pub gateway: String,
-    pub owner: String
+    pub gateway: String
 }
 
 #[marine]
 #[derive(Debug, Serialize, Deserialize)]
-pub struct TuDsgPublication {
+pub struct DsgPublication {
     pub assets: String,
-    pub domains: Vec<TuDsgDomain>,
-    pub governor: String,
-    pub mapping: Vec<TuDsgTemplate>,
+    pub contract: String,
+    pub controller: String,
+    pub domains: Vec<DsgDomain>,
+    pub mapping: Vec<DsgTemplate>,
     pub name: String,
+    pub storage: String,
+    pub table: DsgTable,
     pub templates: String,
-    pub table: TuDsgTable
+    pub rpc: String
 }
 
 #[marine]
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct TuDsgRenderObject {
+pub struct DsgRenderObject {
     pub name: String,
     pub post_type: String,
-    pub template: TuDsgTemplate,
+    pub template: DsgTemplate,
     pub publication_name: String,
-    pub domain: TuDsgDomain,
+    pub domain: DsgDomain,
     pub body_cid: String
 }
 
 #[marine]
 #[derive(Debug, Serialize, Deserialize)]
-pub struct TuDsgPublishTask {
-    pub slug: String,
-    pub author: TuDsgAuthorData,
+pub struct DsgTask {
+    pub author: DsgAuthorData,
+    pub hash: String,
+    pub items: Vec<DsgRenderObject>,
     pub payload: String,
-    pub post_type: String, // Vec<u8>
-    pub publication: TuDsgPublication // cid? 
+    pub post_type: String, 
+    pub publication: DsgPublication,
+    pub slug: String,
 }
 
 #[marine]
 #[derive(Debug, Serialize, Deserialize)]
-pub struct TuContentItem {
-    pub id: String,
-    pub slug: String,
-    pub publication: String,
+pub struct DsgContentItem {
     pub author: String,
-    pub post_type: String,
-    pub tags: String,
     pub categories: String,
-    pub parent: String,
+    pub content_cid: String,
     pub creation_date: String,
+    pub id: String,
     pub modified_date: String,
-    pub content_cid: String
+    pub parent: String,
+    pub post_type: String,
+    pub publication: String,
+    pub slug: String,
+    pub tags: String,
+    pub title: String
 }
 
-impl TuContentItem {
+impl DsgContentItem {
     pub fn to_btreemap(&self) -> BTreeMap<String, Value> {
         let mut map = BTreeMap::new();
-        map.insert("id".to_string(), serde_json::to_value(self.id.clone()).unwrap());
+        // map.insert("id".to_string(), serde_json::to_value(self.id.clone()).unwrap());
+        map.insert("title".to_string(), serde_json::to_value(self.title.clone()).unwrap());
         map.insert("slug".to_string(), serde_json::to_value(self.slug.clone()).unwrap());
         map.insert("publication".to_string(), serde_json::to_value(self.publication.clone()).unwrap());
         map.insert("author".to_string(), serde_json::to_value(self.author.clone()).unwrap());
@@ -130,19 +136,12 @@ impl TuContentItem {
 
 #[marine]
 #[derive(Debug, Serialize, Deserialize)]
-pub struct TuDsgMapped {
+pub struct DsgMapped {
 
-    pub item: TuContentItem,
+    pub item: DsgContentItem,
     pub body: String
 }
 
-#[marine]
-#[derive(Debug, Serialize, Deserialize)]
-pub struct AMResponse {
-    pub success: bool,
-    pub result: Vec<String>,
-    pub error: Vec<String>
-}
 
 #[derive(Debug,Serialize, Deserialize)]
 pub struct TemplateData  {

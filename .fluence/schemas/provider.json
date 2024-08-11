@@ -1,0 +1,1566 @@
+{
+  "$id": "https://fluence.dev/schemas/provider.yaml",
+  "title": "provider.yaml",
+  "description": "Defines config used for provider set up",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "providerName": {
+      "description": "Provider name. Must not be empty",
+      "type": "string",
+      "minLength": 1
+    },
+    "offers": {
+      "description": "A map with offer names as keys and offers as values",
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "description": "Defines a provider offer",
+        "additionalProperties": false,
+        "properties": {
+          "minPricePerWorkerEpoch": {
+            "type": "string",
+            "description": "Minimum price per worker epoch in USDC"
+          },
+          "computePeers": {
+            "description": "Number of Compute Units for this Compute Peer",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "uniqueItems": true
+          },
+          "effectors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "minProtocolVersion": {
+            "type": "integer",
+            "description": "Min protocol version. Must be less then or equal to maxProtocolVersion. Default: 1",
+            "nullable": true,
+            "default": 1,
+            "minimum": 1
+          },
+          "maxProtocolVersion": {
+            "type": "integer",
+            "description": "Max protocol version. Must be more then or equal to minProtocolVersion. Default: 1",
+            "nullable": true,
+            "default": 1,
+            "minimum": 1
+          }
+        },
+        "required": [
+          "minPricePerWorkerEpoch",
+          "computePeers"
+        ]
+      },
+      "properties": {
+        "Offer": {
+          "type": "object",
+          "description": "Defines a provider offer",
+          "additionalProperties": false,
+          "properties": {
+            "minPricePerWorkerEpoch": {
+              "type": "string",
+              "description": "Minimum price per worker epoch in USDC"
+            },
+            "computePeers": {
+              "description": "Number of Compute Units for this Compute Peer",
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "uniqueItems": true
+            },
+            "effectors": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "nullable": true
+            },
+            "minProtocolVersion": {
+              "type": "integer",
+              "description": "Min protocol version. Must be less then or equal to maxProtocolVersion. Default: 1",
+              "nullable": true,
+              "default": 1,
+              "minimum": 1
+            },
+            "maxProtocolVersion": {
+              "type": "integer",
+              "description": "Max protocol version. Must be more then or equal to minProtocolVersion. Default: 1",
+              "nullable": true,
+              "default": 1,
+              "minimum": 1
+            }
+          },
+          "required": [
+            "minPricePerWorkerEpoch",
+            "computePeers"
+          ]
+        }
+      },
+      "required": []
+    },
+    "computePeers": {
+      "description": "A map with compute peer names as keys and compute peers as values",
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "description": "Defines a compute peer",
+        "additionalProperties": false,
+        "properties": {
+          "computeUnits": {
+            "type": "integer",
+            "description": "How many compute units should nox have. Default: 32 (each compute unit requires 2GB of RAM)"
+          },
+          "nox": {
+            "type": "object",
+            "description": "Configuration to pass to the nox compute peer. Config.toml files are generated from this config",
+            "properties": {
+              "tcpPort": {
+                "nullable": true,
+                "type": "integer",
+                "description": "Both host and container TCP port to use. Default: for each nox a unique port is assigned starting from 7771"
+              },
+              "websocketPort": {
+                "nullable": true,
+                "type": "integer",
+                "description": "Both host and container WebSocket port to use. Default: for each nox a unique port is assigned starting from 9991"
+              },
+              "httpPort": {
+                "nullable": true,
+                "type": "integer",
+                "description": "Both host and container HTTP port to use. Default: for each nox a unique port is assigned starting from 18080"
+              },
+              "aquavmPoolSize": {
+                "nullable": true,
+                "type": "integer",
+                "description": "Number of aquavm instances to run. Default: 2"
+              },
+              "systemServices": {
+                "nullable": true,
+                "type": "object",
+                "description": "System services to run by default. aquaIpfs and decider are enabled by default",
+                "additionalProperties": false,
+                "properties": {
+                  "enable": {
+                    "nullable": true,
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "List of system services to enable"
+                  },
+                  "aquaIpfs": {
+                    "type": "object",
+                    "description": "Aqua IPFS service configuration",
+                    "additionalProperties": false,
+                    "nullable": true,
+                    "properties": {
+                      "externalApiMultiaddr": {
+                        "nullable": true,
+                        "type": "string",
+                        "description": "Multiaddress of external IPFS API"
+                      },
+                      "localApiMultiaddr": {
+                        "nullable": true,
+                        "type": "string",
+                        "description": "Multiaddress of local IPFS API"
+                      },
+                      "ipfsBinaryPath": {
+                        "nullable": true,
+                        "type": "string",
+                        "description": "Path to the IPFS binary. Default: /usr/bin/ipfs"
+                      }
+                    },
+                    "required": []
+                  },
+                  "decider": {
+                    "type": "object",
+                    "description": "Decider service configuration",
+                    "additionalProperties": false,
+                    "nullable": true,
+                    "properties": {
+                      "deciderPeriodSec": {
+                        "nullable": true,
+                        "type": "integer",
+                        "description": "Decider period in seconds"
+                      },
+                      "workerIpfsMultiaddr": {
+                        "nullable": true,
+                        "type": "string",
+                        "description": "Multiaddress of worker IPFS node"
+                      },
+                      "networkApiEndpoint": {
+                        "nullable": true,
+                        "type": "string",
+                        "description": "Network API endpoint"
+                      },
+                      "networkId": {
+                        "nullable": true,
+                        "type": "integer",
+                        "description": "Network ID"
+                      },
+                      "startBlock": {
+                        "nullable": true,
+                        "type": "string",
+                        "description": "Start block"
+                      },
+                      "matcherAddress": {
+                        "nullable": true,
+                        "type": "string",
+                        "description": "Matcher address"
+                      },
+                      "walletKey": {
+                        "nullable": true,
+                        "type": "string",
+                        "description": "Wallet key"
+                      }
+                    },
+                    "required": []
+                  }
+                },
+                "required": []
+              },
+              "effectors": {
+                "nullable": true,
+                "type": "object",
+                "description": "Effectors to allow on the nox",
+                "additionalProperties": {
+                  "type": "object",
+                  "description": "Effector configuration",
+                  "additionalProperties": false,
+                  "properties": {
+                    "wasmCID": {
+                      "type": "string",
+                      "description": "Wasm CID of the effector"
+                    },
+                    "allowedBinaries": {
+                      "type": "object",
+                      "description": "Allowed binaries",
+                      "additionalProperties": {
+                        "type": "string"
+                      },
+                      "properties": {
+                        "curl": {
+                          "type": "string"
+                        }
+                      },
+                      "required": []
+                    }
+                  },
+                  "required": [
+                    "wasmCID",
+                    "allowedBinaries"
+                  ]
+                },
+                "properties": {
+                  "effectorName": {
+                    "type": "object",
+                    "description": "Effector configuration",
+                    "additionalProperties": false,
+                    "properties": {
+                      "wasmCID": {
+                        "type": "string",
+                        "description": "Wasm CID of the effector"
+                      },
+                      "allowedBinaries": {
+                        "type": "object",
+                        "description": "Allowed binaries",
+                        "additionalProperties": {
+                          "type": "string"
+                        },
+                        "properties": {
+                          "curl": {
+                            "type": "string"
+                          }
+                        },
+                        "required": []
+                      }
+                    },
+                    "required": [
+                      "wasmCID",
+                      "allowedBinaries"
+                    ]
+                  }
+                },
+                "required": []
+              },
+              "chain": {
+                "nullable": true,
+                "type": "object",
+                "description": "Chain config",
+                "additionalProperties": false,
+                "properties": {
+                  "dealSyncStartBlock": {
+                    "nullable": true,
+                    "type": "string",
+                    "description": "Start block"
+                  },
+                  "wsEndpoint": {
+                    "nullable": true,
+                    "type": "string",
+                    "description": "WebSocket endpoint of the chain"
+                  },
+                  "httpEndpoint": {
+                    "nullable": true,
+                    "type": "string",
+                    "description": "HTTP endpoint of the chain"
+                  },
+                  "coreContract": {
+                    "nullable": true,
+                    "type": "string",
+                    "description": "Core contract address"
+                  },
+                  "ccContract": {
+                    "nullable": true,
+                    "type": "string",
+                    "description": "Capacity commitment contract address"
+                  },
+                  "marketContract": {
+                    "nullable": true,
+                    "type": "string",
+                    "description": "Market contract address"
+                  },
+                  "networkId": {
+                    "nullable": true,
+                    "type": "integer",
+                    "description": "Network ID"
+                  },
+                  "walletPrivateKey": {
+                    "nullable": true,
+                    "type": "string",
+                    "description": "Nox wallet private key. Is generated by default"
+                  },
+                  "defaultBaseFee": {
+                    "nullable": true,
+                    "type": "number",
+                    "description": "Default base fee"
+                  },
+                  "defaultPriorityFee": {
+                    "nullable": true,
+                    "type": "number",
+                    "description": "Default priority fee"
+                  }
+                },
+                "required": []
+              },
+              "ccp": {
+                "nullable": true,
+                "type": "object",
+                "description": "For advanced users. CCP config",
+                "additionalProperties": false,
+                "properties": {
+                  "ccpEndpoint": {
+                    "nullable": true,
+                    "type": "string",
+                    "description": "CCP endpoint. Default comes from top-level ccp config: http://{ccp.rpcEndpoint.host}:{ccp.rpcEndpoint.port}"
+                  },
+                  "proofPollPeriod": {
+                    "nullable": true,
+                    "type": "string",
+                    "description": "Proof poll period. Default: 60 seconds",
+                    "default": "60 seconds"
+                  }
+                },
+                "required": []
+              },
+              "ipfs": {
+                "nullable": true,
+                "type": "object",
+                "description": "IPFS config",
+                "additionalProperties": false,
+                "properties": {
+                  "externalApiMultiaddr": {
+                    "nullable": true,
+                    "type": "string",
+                    "description": "Multiaddress of external IPFS API"
+                  },
+                  "localApiMultiaddr": {
+                    "nullable": true,
+                    "type": "string",
+                    "description": "Multiaddress of local IPFS API"
+                  },
+                  "ipfsBinaryPath": {
+                    "nullable": true,
+                    "type": "string",
+                    "description": "Path to the IPFS binary. Default: /usr/bin/ipfs"
+                  }
+                },
+                "required": []
+              },
+              "cpusRange": {
+                "nullable": true,
+                "type": "string",
+                "description": "Range of CPU cores to use. Default: 1-32"
+              },
+              "systemCpuCount": {
+                "nullable": true,
+                "type": "integer",
+                "minimum": 1,
+                "description": "Number of CPU cores to allocate for the Nox itself. Default: 1"
+              },
+              "listenIp": {
+                "nullable": true,
+                "type": "string",
+                "description": "IP to listen on"
+              },
+              "externalMultiaddresses": {
+                "nullable": true,
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "List of external multiaddresses"
+              },
+              "metrics": {
+                "nullable": true,
+                "type": "object",
+                "description": "Metrics configuration",
+                "additionalProperties": false,
+                "properties": {
+                  "enabled": {
+                    "nullable": true,
+                    "type": "boolean",
+                    "description": "Metrics enabled. Default: true",
+                    "default": true
+                  },
+                  "timerResolution": {
+                    "nullable": true,
+                    "type": "string",
+                    "description": "Timer resolution. Default: 1 minute",
+                    "default": "1 minute"
+                  },
+                  "tokioMetricsEnabled": {
+                    "nullable": true,
+                    "type": "boolean",
+                    "description": "Tokio metrics enabled. Default: true",
+                    "default": true
+                  },
+                  "tokioDetailedMetricsEnabled": {
+                    "nullable": true,
+                    "type": "boolean",
+                    "description": "Tokio detailed metrics enabled"
+                  }
+                },
+                "required": []
+              },
+              "bootstrapNodes": {
+                "nullable": true,
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "List of bootstrap nodes. Default: all addresses for the selected env"
+              },
+              "rawConfig": {
+                "nullable": true,
+                "type": "string",
+                "description": "Raw TOML config string to parse and merge with the rest of the config. Has the highest priority"
+              }
+            },
+            "required": [],
+            "nullable": true,
+            "additionalProperties": false
+          },
+          "ccp": {
+            "type": "object",
+            "description": "Configuration to pass to the Capacity Commitment Prover",
+            "properties": {
+              "rpcEndpoint": {
+                "type": "object",
+                "description": "RPC endpoint configuration",
+                "additionalProperties": false,
+                "nullable": true,
+                "properties": {
+                  "host": {
+                    "nullable": true,
+                    "type": "string",
+                    "description": "RPC host. Default: 0.0.0.0",
+                    "default": "0.0.0.0"
+                  },
+                  "port": {
+                    "nullable": true,
+                    "type": "integer",
+                    "description": "RPC port. Default: 9389",
+                    "default": 9389
+                  },
+                  "utilityThreadIds": {
+                    "nullable": true,
+                    "type": "array",
+                    "items": {
+                      "type": "integer"
+                    },
+                    "description": "Utility thread IDs"
+                  }
+                },
+                "required": []
+              },
+              "prometheusEndpoint": {
+                "type": "object",
+                "description": "Prometheus endpoint configuration",
+                "additionalProperties": false,
+                "nullable": true,
+                "properties": {
+                  "host": {
+                    "nullable": true,
+                    "type": "string",
+                    "description": "Prometheus host. Default: 0.0.0.0",
+                    "default": "0.0.0.0"
+                  },
+                  "port": {
+                    "nullable": true,
+                    "type": "integer",
+                    "description": "Prometheus port. Default: 9384",
+                    "default": 9384
+                  }
+                },
+                "required": []
+              },
+              "logs": {
+                "type": "object",
+                "description": "Logs configuration",
+                "additionalProperties": false,
+                "nullable": true,
+                "properties": {
+                  "reportHashrate": {
+                    "nullable": true,
+                    "type": "boolean",
+                    "description": "Report hashrate. Default: false",
+                    "default": false
+                  },
+                  "logLevel": {
+                    "nullable": true,
+                    "type": "string",
+                    "description": "Log level. Default: info",
+                    "default": "info"
+                  }
+                },
+                "required": []
+              },
+              "state": {
+                "type": "object",
+                "description": "State configuration",
+                "additionalProperties": false,
+                "nullable": true,
+                "properties": {
+                  "path": {
+                    "nullable": true,
+                    "type": "string",
+                    "description": "Path to the state file. Default: ./state",
+                    "default": "./state"
+                  }
+                }
+              },
+              "rawConfig": {
+                "nullable": true,
+                "type": "string",
+                "description": "Raw TOML config string to parse and merge with the rest of the config. Has the highest priority"
+              }
+            },
+            "required": [],
+            "nullable": true,
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "computeUnits"
+        ]
+      },
+      "properties": {
+        "ComputePeer": {
+          "type": "object",
+          "description": "Defines a compute peer",
+          "additionalProperties": false,
+          "properties": {
+            "computeUnits": {
+              "type": "integer",
+              "description": "How many compute units should nox have. Default: 32 (each compute unit requires 2GB of RAM)"
+            },
+            "nox": {
+              "type": "object",
+              "description": "Configuration to pass to the nox compute peer. Config.toml files are generated from this config",
+              "properties": {
+                "tcpPort": {
+                  "nullable": true,
+                  "type": "integer",
+                  "description": "Both host and container TCP port to use. Default: for each nox a unique port is assigned starting from 7771"
+                },
+                "websocketPort": {
+                  "nullable": true,
+                  "type": "integer",
+                  "description": "Both host and container WebSocket port to use. Default: for each nox a unique port is assigned starting from 9991"
+                },
+                "httpPort": {
+                  "nullable": true,
+                  "type": "integer",
+                  "description": "Both host and container HTTP port to use. Default: for each nox a unique port is assigned starting from 18080"
+                },
+                "aquavmPoolSize": {
+                  "nullable": true,
+                  "type": "integer",
+                  "description": "Number of aquavm instances to run. Default: 2"
+                },
+                "systemServices": {
+                  "nullable": true,
+                  "type": "object",
+                  "description": "System services to run by default. aquaIpfs and decider are enabled by default",
+                  "additionalProperties": false,
+                  "properties": {
+                    "enable": {
+                      "nullable": true,
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "List of system services to enable"
+                    },
+                    "aquaIpfs": {
+                      "type": "object",
+                      "description": "Aqua IPFS service configuration",
+                      "additionalProperties": false,
+                      "nullable": true,
+                      "properties": {
+                        "externalApiMultiaddr": {
+                          "nullable": true,
+                          "type": "string",
+                          "description": "Multiaddress of external IPFS API"
+                        },
+                        "localApiMultiaddr": {
+                          "nullable": true,
+                          "type": "string",
+                          "description": "Multiaddress of local IPFS API"
+                        },
+                        "ipfsBinaryPath": {
+                          "nullable": true,
+                          "type": "string",
+                          "description": "Path to the IPFS binary. Default: /usr/bin/ipfs"
+                        }
+                      },
+                      "required": []
+                    },
+                    "decider": {
+                      "type": "object",
+                      "description": "Decider service configuration",
+                      "additionalProperties": false,
+                      "nullable": true,
+                      "properties": {
+                        "deciderPeriodSec": {
+                          "nullable": true,
+                          "type": "integer",
+                          "description": "Decider period in seconds"
+                        },
+                        "workerIpfsMultiaddr": {
+                          "nullable": true,
+                          "type": "string",
+                          "description": "Multiaddress of worker IPFS node"
+                        },
+                        "networkApiEndpoint": {
+                          "nullable": true,
+                          "type": "string",
+                          "description": "Network API endpoint"
+                        },
+                        "networkId": {
+                          "nullable": true,
+                          "type": "integer",
+                          "description": "Network ID"
+                        },
+                        "startBlock": {
+                          "nullable": true,
+                          "type": "string",
+                          "description": "Start block"
+                        },
+                        "matcherAddress": {
+                          "nullable": true,
+                          "type": "string",
+                          "description": "Matcher address"
+                        },
+                        "walletKey": {
+                          "nullable": true,
+                          "type": "string",
+                          "description": "Wallet key"
+                        }
+                      },
+                      "required": []
+                    }
+                  },
+                  "required": []
+                },
+                "effectors": {
+                  "nullable": true,
+                  "type": "object",
+                  "description": "Effectors to allow on the nox",
+                  "additionalProperties": {
+                    "type": "object",
+                    "description": "Effector configuration",
+                    "additionalProperties": false,
+                    "properties": {
+                      "wasmCID": {
+                        "type": "string",
+                        "description": "Wasm CID of the effector"
+                      },
+                      "allowedBinaries": {
+                        "type": "object",
+                        "description": "Allowed binaries",
+                        "additionalProperties": {
+                          "type": "string"
+                        },
+                        "properties": {
+                          "curl": {
+                            "type": "string"
+                          }
+                        },
+                        "required": []
+                      }
+                    },
+                    "required": [
+                      "wasmCID",
+                      "allowedBinaries"
+                    ]
+                  },
+                  "properties": {
+                    "effectorName": {
+                      "type": "object",
+                      "description": "Effector configuration",
+                      "additionalProperties": false,
+                      "properties": {
+                        "wasmCID": {
+                          "type": "string",
+                          "description": "Wasm CID of the effector"
+                        },
+                        "allowedBinaries": {
+                          "type": "object",
+                          "description": "Allowed binaries",
+                          "additionalProperties": {
+                            "type": "string"
+                          },
+                          "properties": {
+                            "curl": {
+                              "type": "string"
+                            }
+                          },
+                          "required": []
+                        }
+                      },
+                      "required": [
+                        "wasmCID",
+                        "allowedBinaries"
+                      ]
+                    }
+                  },
+                  "required": []
+                },
+                "chain": {
+                  "nullable": true,
+                  "type": "object",
+                  "description": "Chain config",
+                  "additionalProperties": false,
+                  "properties": {
+                    "dealSyncStartBlock": {
+                      "nullable": true,
+                      "type": "string",
+                      "description": "Start block"
+                    },
+                    "wsEndpoint": {
+                      "nullable": true,
+                      "type": "string",
+                      "description": "WebSocket endpoint of the chain"
+                    },
+                    "httpEndpoint": {
+                      "nullable": true,
+                      "type": "string",
+                      "description": "HTTP endpoint of the chain"
+                    },
+                    "coreContract": {
+                      "nullable": true,
+                      "type": "string",
+                      "description": "Core contract address"
+                    },
+                    "ccContract": {
+                      "nullable": true,
+                      "type": "string",
+                      "description": "Capacity commitment contract address"
+                    },
+                    "marketContract": {
+                      "nullable": true,
+                      "type": "string",
+                      "description": "Market contract address"
+                    },
+                    "networkId": {
+                      "nullable": true,
+                      "type": "integer",
+                      "description": "Network ID"
+                    },
+                    "walletPrivateKey": {
+                      "nullable": true,
+                      "type": "string",
+                      "description": "Nox wallet private key. Is generated by default"
+                    },
+                    "defaultBaseFee": {
+                      "nullable": true,
+                      "type": "number",
+                      "description": "Default base fee"
+                    },
+                    "defaultPriorityFee": {
+                      "nullable": true,
+                      "type": "number",
+                      "description": "Default priority fee"
+                    }
+                  },
+                  "required": []
+                },
+                "ccp": {
+                  "nullable": true,
+                  "type": "object",
+                  "description": "For advanced users. CCP config",
+                  "additionalProperties": false,
+                  "properties": {
+                    "ccpEndpoint": {
+                      "nullable": true,
+                      "type": "string",
+                      "description": "CCP endpoint. Default comes from top-level ccp config: http://{ccp.rpcEndpoint.host}:{ccp.rpcEndpoint.port}"
+                    },
+                    "proofPollPeriod": {
+                      "nullable": true,
+                      "type": "string",
+                      "description": "Proof poll period. Default: 60 seconds",
+                      "default": "60 seconds"
+                    }
+                  },
+                  "required": []
+                },
+                "ipfs": {
+                  "nullable": true,
+                  "type": "object",
+                  "description": "IPFS config",
+                  "additionalProperties": false,
+                  "properties": {
+                    "externalApiMultiaddr": {
+                      "nullable": true,
+                      "type": "string",
+                      "description": "Multiaddress of external IPFS API"
+                    },
+                    "localApiMultiaddr": {
+                      "nullable": true,
+                      "type": "string",
+                      "description": "Multiaddress of local IPFS API"
+                    },
+                    "ipfsBinaryPath": {
+                      "nullable": true,
+                      "type": "string",
+                      "description": "Path to the IPFS binary. Default: /usr/bin/ipfs"
+                    }
+                  },
+                  "required": []
+                },
+                "cpusRange": {
+                  "nullable": true,
+                  "type": "string",
+                  "description": "Range of CPU cores to use. Default: 1-32"
+                },
+                "systemCpuCount": {
+                  "nullable": true,
+                  "type": "integer",
+                  "minimum": 1,
+                  "description": "Number of CPU cores to allocate for the Nox itself. Default: 1"
+                },
+                "listenIp": {
+                  "nullable": true,
+                  "type": "string",
+                  "description": "IP to listen on"
+                },
+                "externalMultiaddresses": {
+                  "nullable": true,
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "List of external multiaddresses"
+                },
+                "metrics": {
+                  "nullable": true,
+                  "type": "object",
+                  "description": "Metrics configuration",
+                  "additionalProperties": false,
+                  "properties": {
+                    "enabled": {
+                      "nullable": true,
+                      "type": "boolean",
+                      "description": "Metrics enabled. Default: true",
+                      "default": true
+                    },
+                    "timerResolution": {
+                      "nullable": true,
+                      "type": "string",
+                      "description": "Timer resolution. Default: 1 minute",
+                      "default": "1 minute"
+                    },
+                    "tokioMetricsEnabled": {
+                      "nullable": true,
+                      "type": "boolean",
+                      "description": "Tokio metrics enabled. Default: true",
+                      "default": true
+                    },
+                    "tokioDetailedMetricsEnabled": {
+                      "nullable": true,
+                      "type": "boolean",
+                      "description": "Tokio detailed metrics enabled"
+                    }
+                  },
+                  "required": []
+                },
+                "bootstrapNodes": {
+                  "nullable": true,
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "List of bootstrap nodes. Default: all addresses for the selected env"
+                },
+                "rawConfig": {
+                  "nullable": true,
+                  "type": "string",
+                  "description": "Raw TOML config string to parse and merge with the rest of the config. Has the highest priority"
+                }
+              },
+              "required": [],
+              "nullable": true,
+              "additionalProperties": false
+            },
+            "ccp": {
+              "type": "object",
+              "description": "Configuration to pass to the Capacity Commitment Prover",
+              "properties": {
+                "rpcEndpoint": {
+                  "type": "object",
+                  "description": "RPC endpoint configuration",
+                  "additionalProperties": false,
+                  "nullable": true,
+                  "properties": {
+                    "host": {
+                      "nullable": true,
+                      "type": "string",
+                      "description": "RPC host. Default: 0.0.0.0",
+                      "default": "0.0.0.0"
+                    },
+                    "port": {
+                      "nullable": true,
+                      "type": "integer",
+                      "description": "RPC port. Default: 9389",
+                      "default": 9389
+                    },
+                    "utilityThreadIds": {
+                      "nullable": true,
+                      "type": "array",
+                      "items": {
+                        "type": "integer"
+                      },
+                      "description": "Utility thread IDs"
+                    }
+                  },
+                  "required": []
+                },
+                "prometheusEndpoint": {
+                  "type": "object",
+                  "description": "Prometheus endpoint configuration",
+                  "additionalProperties": false,
+                  "nullable": true,
+                  "properties": {
+                    "host": {
+                      "nullable": true,
+                      "type": "string",
+                      "description": "Prometheus host. Default: 0.0.0.0",
+                      "default": "0.0.0.0"
+                    },
+                    "port": {
+                      "nullable": true,
+                      "type": "integer",
+                      "description": "Prometheus port. Default: 9384",
+                      "default": 9384
+                    }
+                  },
+                  "required": []
+                },
+                "logs": {
+                  "type": "object",
+                  "description": "Logs configuration",
+                  "additionalProperties": false,
+                  "nullable": true,
+                  "properties": {
+                    "reportHashrate": {
+                      "nullable": true,
+                      "type": "boolean",
+                      "description": "Report hashrate. Default: false",
+                      "default": false
+                    },
+                    "logLevel": {
+                      "nullable": true,
+                      "type": "string",
+                      "description": "Log level. Default: info",
+                      "default": "info"
+                    }
+                  },
+                  "required": []
+                },
+                "state": {
+                  "type": "object",
+                  "description": "State configuration",
+                  "additionalProperties": false,
+                  "nullable": true,
+                  "properties": {
+                    "path": {
+                      "nullable": true,
+                      "type": "string",
+                      "description": "Path to the state file. Default: ./state",
+                      "default": "./state"
+                    }
+                  }
+                },
+                "rawConfig": {
+                  "nullable": true,
+                  "type": "string",
+                  "description": "Raw TOML config string to parse and merge with the rest of the config. Has the highest priority"
+                }
+              },
+              "required": [],
+              "nullable": true,
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "computeUnits"
+          ]
+        }
+      },
+      "required": []
+    },
+    "nox": {
+      "type": "object",
+      "description": "Configuration to pass to the nox compute peer. Config.toml files are generated from this config",
+      "properties": {
+        "tcpPort": {
+          "nullable": true,
+          "type": "integer",
+          "description": "Both host and container TCP port to use. Default: for each nox a unique port is assigned starting from 7771"
+        },
+        "websocketPort": {
+          "nullable": true,
+          "type": "integer",
+          "description": "Both host and container WebSocket port to use. Default: for each nox a unique port is assigned starting from 9991"
+        },
+        "httpPort": {
+          "nullable": true,
+          "type": "integer",
+          "description": "Both host and container HTTP port to use. Default: for each nox a unique port is assigned starting from 18080"
+        },
+        "aquavmPoolSize": {
+          "nullable": true,
+          "type": "integer",
+          "description": "Number of aquavm instances to run. Default: 2"
+        },
+        "systemServices": {
+          "nullable": true,
+          "type": "object",
+          "description": "System services to run by default. aquaIpfs and decider are enabled by default",
+          "additionalProperties": false,
+          "properties": {
+            "enable": {
+              "nullable": true,
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "List of system services to enable"
+            },
+            "aquaIpfs": {
+              "type": "object",
+              "description": "Aqua IPFS service configuration",
+              "additionalProperties": false,
+              "nullable": true,
+              "properties": {
+                "externalApiMultiaddr": {
+                  "nullable": true,
+                  "type": "string",
+                  "description": "Multiaddress of external IPFS API"
+                },
+                "localApiMultiaddr": {
+                  "nullable": true,
+                  "type": "string",
+                  "description": "Multiaddress of local IPFS API"
+                },
+                "ipfsBinaryPath": {
+                  "nullable": true,
+                  "type": "string",
+                  "description": "Path to the IPFS binary. Default: /usr/bin/ipfs"
+                }
+              },
+              "required": []
+            },
+            "decider": {
+              "type": "object",
+              "description": "Decider service configuration",
+              "additionalProperties": false,
+              "nullable": true,
+              "properties": {
+                "deciderPeriodSec": {
+                  "nullable": true,
+                  "type": "integer",
+                  "description": "Decider period in seconds"
+                },
+                "workerIpfsMultiaddr": {
+                  "nullable": true,
+                  "type": "string",
+                  "description": "Multiaddress of worker IPFS node"
+                },
+                "networkApiEndpoint": {
+                  "nullable": true,
+                  "type": "string",
+                  "description": "Network API endpoint"
+                },
+                "networkId": {
+                  "nullable": true,
+                  "type": "integer",
+                  "description": "Network ID"
+                },
+                "startBlock": {
+                  "nullable": true,
+                  "type": "string",
+                  "description": "Start block"
+                },
+                "matcherAddress": {
+                  "nullable": true,
+                  "type": "string",
+                  "description": "Matcher address"
+                },
+                "walletKey": {
+                  "nullable": true,
+                  "type": "string",
+                  "description": "Wallet key"
+                }
+              },
+              "required": []
+            }
+          },
+          "required": []
+        },
+        "effectors": {
+          "nullable": true,
+          "type": "object",
+          "description": "Effectors to allow on the nox",
+          "additionalProperties": {
+            "type": "object",
+            "description": "Effector configuration",
+            "additionalProperties": false,
+            "properties": {
+              "wasmCID": {
+                "type": "string",
+                "description": "Wasm CID of the effector"
+              },
+              "allowedBinaries": {
+                "type": "object",
+                "description": "Allowed binaries",
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "properties": {
+                  "curl": {
+                    "type": "string"
+                  }
+                },
+                "required": []
+              }
+            },
+            "required": [
+              "wasmCID",
+              "allowedBinaries"
+            ]
+          },
+          "properties": {
+            "effectorName": {
+              "type": "object",
+              "description": "Effector configuration",
+              "additionalProperties": false,
+              "properties": {
+                "wasmCID": {
+                  "type": "string",
+                  "description": "Wasm CID of the effector"
+                },
+                "allowedBinaries": {
+                  "type": "object",
+                  "description": "Allowed binaries",
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "properties": {
+                    "curl": {
+                      "type": "string"
+                    }
+                  },
+                  "required": []
+                }
+              },
+              "required": [
+                "wasmCID",
+                "allowedBinaries"
+              ]
+            }
+          },
+          "required": []
+        },
+        "chain": {
+          "nullable": true,
+          "type": "object",
+          "description": "Chain config",
+          "additionalProperties": false,
+          "properties": {
+            "dealSyncStartBlock": {
+              "nullable": true,
+              "type": "string",
+              "description": "Start block"
+            },
+            "wsEndpoint": {
+              "nullable": true,
+              "type": "string",
+              "description": "WebSocket endpoint of the chain"
+            },
+            "httpEndpoint": {
+              "nullable": true,
+              "type": "string",
+              "description": "HTTP endpoint of the chain"
+            },
+            "coreContract": {
+              "nullable": true,
+              "type": "string",
+              "description": "Core contract address"
+            },
+            "ccContract": {
+              "nullable": true,
+              "type": "string",
+              "description": "Capacity commitment contract address"
+            },
+            "marketContract": {
+              "nullable": true,
+              "type": "string",
+              "description": "Market contract address"
+            },
+            "networkId": {
+              "nullable": true,
+              "type": "integer",
+              "description": "Network ID"
+            },
+            "walletPrivateKey": {
+              "nullable": true,
+              "type": "string",
+              "description": "Nox wallet private key. Is generated by default"
+            },
+            "defaultBaseFee": {
+              "nullable": true,
+              "type": "number",
+              "description": "Default base fee"
+            },
+            "defaultPriorityFee": {
+              "nullable": true,
+              "type": "number",
+              "description": "Default priority fee"
+            }
+          },
+          "required": []
+        },
+        "ccp": {
+          "nullable": true,
+          "type": "object",
+          "description": "For advanced users. CCP config",
+          "additionalProperties": false,
+          "properties": {
+            "ccpEndpoint": {
+              "nullable": true,
+              "type": "string",
+              "description": "CCP endpoint. Default comes from top-level ccp config: http://{ccp.rpcEndpoint.host}:{ccp.rpcEndpoint.port}"
+            },
+            "proofPollPeriod": {
+              "nullable": true,
+              "type": "string",
+              "description": "Proof poll period. Default: 60 seconds",
+              "default": "60 seconds"
+            }
+          },
+          "required": []
+        },
+        "ipfs": {
+          "nullable": true,
+          "type": "object",
+          "description": "IPFS config",
+          "additionalProperties": false,
+          "properties": {
+            "externalApiMultiaddr": {
+              "nullable": true,
+              "type": "string",
+              "description": "Multiaddress of external IPFS API"
+            },
+            "localApiMultiaddr": {
+              "nullable": true,
+              "type": "string",
+              "description": "Multiaddress of local IPFS API"
+            },
+            "ipfsBinaryPath": {
+              "nullable": true,
+              "type": "string",
+              "description": "Path to the IPFS binary. Default: /usr/bin/ipfs"
+            }
+          },
+          "required": []
+        },
+        "cpusRange": {
+          "nullable": true,
+          "type": "string",
+          "description": "Range of CPU cores to use. Default: 1-32"
+        },
+        "systemCpuCount": {
+          "nullable": true,
+          "type": "integer",
+          "minimum": 1,
+          "description": "Number of CPU cores to allocate for the Nox itself. Default: 1"
+        },
+        "listenIp": {
+          "nullable": true,
+          "type": "string",
+          "description": "IP to listen on"
+        },
+        "externalMultiaddresses": {
+          "nullable": true,
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of external multiaddresses"
+        },
+        "metrics": {
+          "nullable": true,
+          "type": "object",
+          "description": "Metrics configuration",
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "nullable": true,
+              "type": "boolean",
+              "description": "Metrics enabled. Default: true",
+              "default": true
+            },
+            "timerResolution": {
+              "nullable": true,
+              "type": "string",
+              "description": "Timer resolution. Default: 1 minute",
+              "default": "1 minute"
+            },
+            "tokioMetricsEnabled": {
+              "nullable": true,
+              "type": "boolean",
+              "description": "Tokio metrics enabled. Default: true",
+              "default": true
+            },
+            "tokioDetailedMetricsEnabled": {
+              "nullable": true,
+              "type": "boolean",
+              "description": "Tokio detailed metrics enabled"
+            }
+          },
+          "required": []
+        },
+        "bootstrapNodes": {
+          "nullable": true,
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of bootstrap nodes. Default: all addresses for the selected env"
+        },
+        "rawConfig": {
+          "nullable": true,
+          "type": "string",
+          "description": "Raw TOML config string to parse and merge with the rest of the config. Has the highest priority"
+        }
+      },
+      "required": [],
+      "nullable": true,
+      "additionalProperties": false
+    },
+    "ccp": {
+      "type": "object",
+      "description": "Configuration to pass to the Capacity Commitment Prover",
+      "properties": {
+        "rpcEndpoint": {
+          "type": "object",
+          "description": "RPC endpoint configuration",
+          "additionalProperties": false,
+          "nullable": true,
+          "properties": {
+            "host": {
+              "nullable": true,
+              "type": "string",
+              "description": "RPC host. Default: 0.0.0.0",
+              "default": "0.0.0.0"
+            },
+            "port": {
+              "nullable": true,
+              "type": "integer",
+              "description": "RPC port. Default: 9389",
+              "default": 9389
+            },
+            "utilityThreadIds": {
+              "nullable": true,
+              "type": "array",
+              "items": {
+                "type": "integer"
+              },
+              "description": "Utility thread IDs"
+            }
+          },
+          "required": []
+        },
+        "prometheusEndpoint": {
+          "type": "object",
+          "description": "Prometheus endpoint configuration",
+          "additionalProperties": false,
+          "nullable": true,
+          "properties": {
+            "host": {
+              "nullable": true,
+              "type": "string",
+              "description": "Prometheus host. Default: 0.0.0.0",
+              "default": "0.0.0.0"
+            },
+            "port": {
+              "nullable": true,
+              "type": "integer",
+              "description": "Prometheus port. Default: 9384",
+              "default": 9384
+            }
+          },
+          "required": []
+        },
+        "logs": {
+          "type": "object",
+          "description": "Logs configuration",
+          "additionalProperties": false,
+          "nullable": true,
+          "properties": {
+            "reportHashrate": {
+              "nullable": true,
+              "type": "boolean",
+              "description": "Report hashrate. Default: false",
+              "default": false
+            },
+            "logLevel": {
+              "nullable": true,
+              "type": "string",
+              "description": "Log level. Default: info",
+              "default": "info"
+            }
+          },
+          "required": []
+        },
+        "state": {
+          "type": "object",
+          "description": "State configuration",
+          "additionalProperties": false,
+          "nullable": true,
+          "properties": {
+            "path": {
+              "nullable": true,
+              "type": "string",
+              "description": "Path to the state file. Default: ./state",
+              "default": "./state"
+            }
+          }
+        },
+        "rawConfig": {
+          "nullable": true,
+          "type": "string",
+          "description": "Raw TOML config string to parse and merge with the rest of the config. Has the highest priority"
+        }
+      },
+      "required": [],
+      "nullable": true,
+      "additionalProperties": false
+    },
+    "capacityCommitments": {
+      "description": "A map with nox names as keys and capacity commitments as values",
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "description": "Defines a capacity commitment",
+        "required": [
+          "duration",
+          "rewardDelegationRate"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "duration": {
+            "type": "string",
+            "default": "100 days",
+            "description": "Duration of the commitment in human-readable format. Example: 1 months 1 days"
+          },
+          "delegator": {
+            "type": "string",
+            "description": "Delegator address",
+            "nullable": true
+          },
+          "rewardDelegationRate": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100,
+            "description": "Reward delegation rate in percent",
+            "default": 7
+          }
+        }
+      },
+      "properties": {
+        "noxName": {
+          "type": "object",
+          "description": "Defines a capacity commitment",
+          "required": [
+            "duration",
+            "rewardDelegationRate"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "duration": {
+              "type": "string",
+              "default": "100 days",
+              "description": "Duration of the commitment in human-readable format. Example: 1 months 1 days"
+            },
+            "delegator": {
+              "type": "string",
+              "description": "Delegator address",
+              "nullable": true
+            },
+            "rewardDelegationRate": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "Reward delegation rate in percent",
+              "default": 7
+            }
+          }
+        }
+      },
+      "required": []
+    },
+    "version": {
+      "type": "integer",
+      "const": 1,
+      "description": "Config version"
+    }
+  },
+  "required": [
+    "version",
+    "computePeers",
+    "offers",
+    "providerName",
+    "capacityCommitments"
+  ]
+}

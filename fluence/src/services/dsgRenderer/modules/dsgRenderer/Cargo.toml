@@ -1,0 +1,29 @@
+[package]
+name = "dsgRenderer"
+version = "0.1.0"
+edition = "2018"
+
+[[bin]]
+name = "dsgRenderer"
+path = "src/main.rs"
+
+[dependencies]
+chrono = "0.4.31"
+cio-response-types = { git = "https://github.com/composibleIO/cio-response-types", branch = "main" }
+log = "0.4.14"
+marine-rs-sdk = { version = "0.14.0", features = ["logger"] }
+handlebars = "4.5.0"
+markdown = "0.3.0"
+regex = "1.5"
+rmp-serde = "1.1.2"
+serde = "1.0.198"
+serde_json = "1.0.116"
+thiserror = "1.0"
+tu_dsg_types = { path = "../../../../tuDsgTypes" }
+
+
+
+
+
+[dev-dependencies]
+marine-rs-sdk-test = "0.16.1"

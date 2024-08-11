@@ -1,0 +1,14 @@
+[
+  {
+    "multiaddr": "/ip4/127.0.0.1/tcp/9991/ws/p2p/12D3KooWRHa6aEHujeJNQT93UttCcfn6kHRRZ4vnSTYhQo4kt2hy",
+    "peerId": "12D3KooWRHa6aEHujeJNQT93UttCcfn6kHRRZ4vnSTYhQo4kt2hy"
+  },
+  {
+    "multiaddr": "/ip4/127.0.0.1/tcp/9992/ws/p2p/12D3KooWHpzF8YYhCre9Et4aNentGi7t119MWvRMrzkvs8PYfWNS",
+    "peerId": "12D3KooWHpzF8YYhCre9Et4aNentGi7t119MWvRMrzkvs8PYfWNS"
+  },
+  {
+    "multiaddr": "/ip4/127.0.0.1/tcp/9993/ws/p2p/12D3KooWSYyW6J32CktfTeZxQ6kpBoUGW5zXRNrBY9K4xgQCh7nh",
+    "peerId": "12D3KooWSYyW6J32CktfTeZxQ6kpBoUGW5zXRNrBY9K4xgQCh7nh"
+  }
+]

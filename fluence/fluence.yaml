@@ -9,32 +9,45 @@ version: 8
 marineVersion: 0.19.7
 
 deployments:
+  taskWorkerV1:
+    targetWorkers: 3
+    pricePerWorkerEpoch: "0.0001"
+    initialBalance: "1"
+    services: [ cioConsensus, cioKubo, nPublication ]
+    spells: [ listener ]
   contentWorkerV1:
     targetWorkers: 3
     pricePerWorkerEpoch: "0.0001"
     initialBalance: "1"
-    services: [ cioKubo, tuContentStore, tuDsgContent, cioPinata ] #, 
-    spells: []
-  renderWorkerV0:
+    services: [ cioConsensus, cioKubo, dsgContent, tuContentStore ]
+    spells: [ content ]
+  renderWorkerV1:
     targetWorkers: 3
     pricePerWorkerEpoch: "0.0001"
     initialBalance: "1"
     services:
       [
+        cioConsensus,
+        nPublication,
         tuContentStore,
-        tuDsgRenderer,
-        cioKubo,
-        cioPinata,
-        cioVault,
-        tuDsgWebHost
+        dsgRenderer,
+        cioKubo
       ]
-    spells: []
-  # hostWorkerV0:
-  #   targetWorkers: 3
-  #   pricePerWorkerEpoch: "0.0001"
-  #   initialBalance: "1"
-  #   services: [ tuDsgWebHost ]
-  #   spells: []
+    spells: [ renderer ]
+  webHostWorkerV1:
+    targetWorkers: 3
+    pricePerWorkerEpoch: "0.0001"
+    initialBalance: "1"
+    services:
+      [
+        cioConsensus,
+        cioSigner,
+        nPublication,
+        tuDsgWebHost,
+        cioKubo,
+        cioSafe
+      ]
+    spells: [ webHost ]
 
 aquaDependencies:
   "@fluencelabs/aqua-lib": 0.9.1
@@ -48,19 +61,42 @@ compileAqua:
     target: ts
 
 services:
-  tuDsgContent:
-    get: src/services/tuDsgContent
+  cioVault:
+    get: src/services/cio-vault
+  dsgContent:
+    get: src/services/dsgContent
   tuContentStore:
     get: src/services/tuContentStore
-  tuDsgRenderer:
-    get: src/services/tuDsgRenderer
-  tuDsgTemplateData:
-    get: src/services/tuDsgTemplateData
+  dsgRenderer:
+    get: src/services/dsgRenderer
   tuDsgWebHost:
     get: src/services/tuDsgWebHost
   cioKubo:
-    get: src/services/cioKubo
+    get: src/services/cio-kubo
   cioPinata:
-    get: src/services/cioPinata
-  cioVault:
-    get: src/services/cioVault
+    get: src/services/cio-pinata
+  nPublication:
+    get: src/services/nPublication
+  cioConsensus:
+    get: src/services/cioConsensus
+  contentStore:
+    get: src/services/contentStore
+  cioSigner:
+    get: src/services/cioSigner
+  cioSafe:
+    get: src/services/cioSafe
+
+spells:
+  listener:
+    get: src/spells/listener
+  content:
+    get: src/spells/content
+  renderer:
+    get: src/spells/renderer
+  webHost:
+    get: src/spells/webHost
+
+customFluenceEnv:
+  contractsEnv: kras
+  relays:
+    - /ip4/143.176.14.172/tcp/9991/ws/p2p/12D3KooWP5UnQLWX11pFSMgD78Q9rwq6o2p6hzXTqU74s6z6jBCx

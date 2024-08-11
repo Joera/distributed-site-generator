@@ -1,4 +1,7 @@
 use serde::{Deserialize, Serialize};
+use marine_rs_sdk::marine;
+use tu_dsg_types::DsgContentItem;
+
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct TLCreds {
@@ -6,15 +9,18 @@ pub struct TLCreds {
     domain: String
 }
 
+#[marine]
 #[derive(Debug, Serialize, Deserialize)]
-pub struct TLReq {
+pub struct TLRequest {
     pub table: String,
     pub sql_query: String,
-    pub content: crate::TuContentItem
+    pub content: String,
+    pub optimistic: bool
 }
 
+#[marine]
 #[derive(Debug, Serialize, Deserialize)]
-pub struct TuQuery {
+pub struct TLQuery {
     pub query: String
 }
 

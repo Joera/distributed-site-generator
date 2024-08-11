@@ -1,0 +1,171 @@
+aqua Listener
+
+-- Note: spell main function must be exported
+export spell
+
+import Spell from "@fluencelabs/spell/spell_service.aqua"
+import "@fluencelabs/aqua-lib/builtin.aqua"
+import "../../aqua/constants.aqua"
+import "../../aqua/services.aqua"
+import "../../aqua/helpers.aqua"
+import "../../aqua/utils.aqua"
+import "../../aqua/consensus.aqua"
+
+-- import "../../aqua/task.aqua"
+
+func lastAMRResult(rs: *AMResponse) -> string:
+     <- rs[rs.length - 1].result
+
+func assembleTask(author: string, publication: string, content: string) -> DsgTask:
+
+    Spell "listener"
+    args: *string
+    -- replace with ens lookup
+    author_cid = "bafkreiejzqdpq2pvuxebnwnvp2foffpkscib5cpfnbcnbncqllxohxcalq"
+    -- Spell.store_log("0")
+    r = Npublication.read(publication, "config() external view returns (string cid)", "[]", RPC_URL)
+    -- Spell.store_log(r.result)
+    s = CioKubo.get(WEBHOSTKUBO, r.result)
+    -- Spell.store_log(s)
+    a = CioKubo.get(WEBHOSTKUBO, author_cid)
+    -- Spell.store_log(a)
+    c = CioKubo.get(WEBHOSTKUBO, content)
+    -- Spell.store_log(c)
+    raw = DsgRawContentFromJson.parse(c)
+    -- Spell.store_log(raw.slug)
+
+    i: *DsgRenderObject
+
+    <- DsgTask(
+        slug = raw.slug, 
+        author = DsgAuthorFromJson.parse(a), 
+        payload = c, 
+        post_type = raw.post_type, 
+        publication = DsgPublicationFromJson.parse(s),
+        items = i,
+        hash = ""
+    )
+
+func newFilter(): 
+
+    Spell "listener"
+    topic = "0xf329210f734fac59eadfb0605804ea99023421b57265cb133bac797ab65e4598"
+    latest_block <- Spell.get_string("latest_block") 
+
+    filter <- Npublication.create_filter(
+        NPRINTER, 
+        topic, 
+        latest_block.value,
+        RPC_URL
+        )
+
+    if filter.success: 
+        Spell.store_log(ConstructLogs.concat_strings("new filter: ", filter.result))
+        Spell.set_string("filter", filter.result)
+    else: 
+        Spell.store_log(filter.result)
+
+
+func poll() -> *EventLog: 
+
+    eventLogs: *EventLog
+    Spell "listener"
+
+    filter <- Spell.get_string("filter") 
+    
+    r <- Npublication.poll_filter(
+        filter.value,
+        RPC_URL
+        )
+
+    if r.success == false:
+        Spell.store_log(r.error)
+        -- mogelijk is filter verlopen. 
+        newFilter()
+    else:
+        for log <- r.results:  
+            eventLogs <<- log
+        -- Spell.store_log("polled")
+
+    <- eventLogs
+
+func initFilter():
+
+    Spell "listener"
+    block <- Spell.get_string("latest_block")
+    if block.absent:
+        Spell.set_string("latest_block", "0x37881d5")
+
+    filter <- Spell.get_string("filter")
+    if filter.absent:
+        newFilter()
+
+
+
+func getConsensusOnTask() -> string: 
+
+    Spell "listener"
+    task_cids: *string
+    ws = getTaskWorkers()
+    for w <- ws: 
+        on w.worker_id! via w.host_id:
+            Spell "listener"
+            task = Spell.get_string("currentTask")
+            if task.value != "":
+                task_cids <<- task.value
+    Spell.store_log("done fetching tasks")
+    -- for c <- task_cids: 
+    --     Spell.store_log(c)
+    counts = countUniques(task_cids)
+    for c <- counts: 
+        Spell.store_log(U32Srv.stringify(c))
+    h = highest(counts)
+    i = indexOf(counts,h)
+    -- Spell.store_log(I32Srv.stringify(i))
+    uniques = dedup(task_cids)
+    for u <- uniques: 
+        Spell.store_log(u)
+    <- uniques[i]
+
+func spell():
+
+    Spell "listener"
+
+    ws = getTaskWorkers()
+    initFilter()
+    eventLogs <- poll()
+    for log <- eventLogs:
+        Spell.store_log(ConstructLogs.concat_strings("event received from tx: ", log.transaction_hash))
+        Spell.set_string("latest_block", log.block_number)
+        synced = waitForBlockSync(ws)   
+        if synced: 
+            tasks: *DsgTask
+            try:
+                tasks <- assembleTask(log.params!,log.params[1],log.params[2])   
+            otherwise:
+                Spell.store_log("failed to assemble task")
+            if tasks.length > 0:
+                task = tasks!
+                task_string = TaskToString.stringify(task)  
+                task_cid = CioKubo.add(WEBHOSTKUBO, task_string)
+                Spell.store_log(ConstructLogs.concat_strings("assembled task: ", task_cid))
+                -- Spell.store_log(Debug.stringify(task))
+                Spell.set_string("currentTask", task_cid)
+                -- Spell.store_log("continue ... ")
+                Spell.store_log("skipping task consensus")
+                -- c = getConsensusOnTask()
+                -- Spell.store_log(ConstructLogs.concat_strings("consensus on task cid: ", c))
+                -- if c == task_cid: 
+                -- Spell.store_log("i have agreed upon task")
+                itsme = select(ws, Spell, task_cid)
+                if itsme:
+                    Spell.store_log("i was selected")
+                    cws = getContentWorkers()
+                    for cw <- cws: 
+                        on cw.worker_id! via cw.host_id: 
+                            Spell "content"
+                            Spell.push_mailbox(task_cid)
+                    Spell.store_log("send out tasks to content workers")
+
+                else: 
+                    Spell.store_log("doing nothing this time")

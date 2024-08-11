@@ -1,0 +1,31 @@
+[package]
+name = "safe-facade"
+version = "0.1.0"
+edition = "2018"
+
+[[bin]]
+name = "safe-facade"
+path = "src/main.rs"
+
+[dependencies]
+eyre = "0.6.12"
+marine-rs-sdk = "0.14.0"
+cio-response-types = { git = "https://github.com/composibleIO/cio-response-types", branch = "main" }
+curl-effector-imports = { git = "https://github.com/fluencelabs/curl-effector", branch = "main" }
+serde = { version = "1.0.198", features = ["derive"] }
+serde_json = "1.0.116"
+chrono = "0.4"
+hex = "0.4.3"
+ethabi = "18.0.0"
+ethabi-contract = "16.0.0"
+ethabi-derive = "14.1.0"
+ethers-types-rs = "0.1.0"
+alloy-consensus = { version = "0.1.4", features = ["serde"] }
+alloy-rlp = "0.3.7"
+alloy-primitives = "0.7.7"
+alloy-eips = "0.1.4"
+ethers-core = "2.0.14"
+
+
+[dev-dependencies]
+marine-rs-sdk-test = "0.16.1"

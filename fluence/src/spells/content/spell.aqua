@@ -1,0 +1,79 @@
+aqua Content
+
+-- Note: spell main function must be exported
+export spell
+
+import Spell from "@fluencelabs/spell/spell_service.aqua"
+import "@fluencelabs/aqua-lib/builtin.aqua"
+import "../../aqua/constants.aqua"
+import "../../aqua/services.aqua"
+import "../../aqua/helpers.aqua"
+import "../../aqua/utils.aqua"
+import "../../aqua/consensus.aqua"
+
+-- import "../../aqua/task.aqua"
+
+func lastAMRResult(rs: *AMResponse) -> string:
+     <- rs[rs.length - 1].result
+
+func spell():
+    
+    Spell "content"
+    queue: *string
+    amrs: *AMResponse
+    ws <- getContentWorkers() 
+    mailbox_result <- Spell.pop_mailbox()
+    if mailbox_result.success && !mailbox_result.absent:
+        message = mailbox_result.message!
+        task_cid = message.message
+        Spell.set_u32(task_cid,0)
+        Spell.store_log(Debug.stringify(["received task:",message.message, "from:", message.init_peer_id ]))
+        b = waitForSync(ws,Spell,task_cid)
+        if b: 
+            itsme = select(ws, Spell, task_cid)
+            if itsme:
+                Spell.store_log("i was selected")
+                task_string = CioKubo.get(WEBHOSTKUBO, task_cid)
+                task = TaskFromString.parse(task_string)
+                mapping = CioKubo.get(WEBHOSTKUBO, task.author.content_mappings)
+                mapped = DsgContent.map(task, mapping) 
+                -- Spell.store_log(mapped.body)
+                content_cid <- CioKubo.add(WEBHOSTKUBO, mapped.body) 
+                -- Spell.store_log(content_cid)
+                contentItem = DsgContent.includeCid(mapped.item, content_cid)
+                -- Spell.store_log(Debug.stringify(contentItem))
+                Spell.store_log(Debug.stringify(["assembled content item for:", contentItem.slug]))
+                amrs <- ContentStore.insert(contentItem, task.publication.table, false) 
+                Spell.store_log(Debug.stringify(amrs!))
+                if amrs!.success: 
+                    ros: *DsgRenderObject
+                    ros <- DsgContent.pebble(task, contentItem)  
+                    for ripple <- ros!.template.ripples:  
+                        amrs <- ContentStore.queryRipple(ripple, task.publication.table) 
+                        for item <- DsgContentItemsFromJson.parse(lastAMRResult(amrs)): 
+                            ros <- DsgContent.ripple(task, ripple, item)
+
+                    -- could you replicate such a structure in ipld ??? 
+
+                    aumentedTask = DsgTask(
+                        slug = task.slug, 
+                        author = task.author, 
+                        payload = task.payload, 
+                        post_type = task.post_type, 
+                        publication = task.publication, 
+                        items = ros,
+                        hash = ""
+                    )
+                    augmented_task_string = TaskToString.stringify(aumentedTask) 
+                    augmented_task_cid = CioKubo.add(WEBHOSTKUBO, augmented_task_string) 
+
+                    rws = getRenderWorkers()
+                    for rw <- rws: 
+                        on rw.worker_id! via rw.host_id: 
+                            Spell "renderer"
+                            Spell.push_mailbox(augmented_task_cid)
+                    Spell.store_log("send out tasks to render workers")
+       
+            else: 
+                Spell.store_log("doing nothing this time")
+  

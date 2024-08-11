@@ -1,0 +1,55 @@
+aqua DsgHelpers declares * 
+
+import "../../.fluence/aqua-dependencies/node_modules/@fluencelabs/aqua-lib/builtin"
+import "../../.fluence/aqua-dependencies/node_modules/@fluencelabs/aqua-ipfs/ipfs"
+
+import "./services.aqua"
+import "./helpers.aqua"
+import "./types.aqua"
+
+
+-- func fetchPublication(cid: string, kubo: string) -> DsgPublication:
+
+--     s: *string 
+--     w = randomContentWorker()
+--     on w.worker_id! via w.host_id:
+--       s <- CioKubo.get(kubo, cid)
+--     <- Parse.publication(s!)
+
+-- func fetchAuthor(cid: string, kubo: string) -> DsgAuthorData:
+
+--     s: *string  
+--     w = randomContentWorker()
+--     on w.worker_id! via w.host_id:
+--       s <- CioKubo.get(kubo, cid)
+       
+--     <- Parse.author(s!)
+
+-- func fromTempTask(tempTask: DsgPublishTaskTemp, kubo: string) -> DsgPublishTask:
+
+--     Console.print(tempTask.author)
+--     authorData = fetchAuthor(tempTask.author, kubo)
+--     Console.print("fetched author")
+--     publicationData = fetchPublication(tempTask.publication, kubo)
+    
+--     <- TuDsgPublishTask(
+--         slug = tempTask.slug, 
+--         author = authorData, 
+--         payload = tempTask.payload, 
+--         post_type = tempTask.post_type, 
+--         publication = publicationData
+--     )
+
+func findRipples(ts: []DsgTemplate, key: string) -> []DsgRipple:
+
+    ripples: *DsgRipple
+    template: *DsgTemplate
+    for t <- ts:
+      if t.reference == key:
+        template <<- t
+    for r <- template!.ripples:
+        -- if r.value == key:
+          ripples <<- r
+
+    <- ripples
+

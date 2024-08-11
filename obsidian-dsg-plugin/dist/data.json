@@ -1,0 +1,10 @@
+{
+  "chain_id": 421614,
+  "db_gateway": "https://tableland.autonomous-times.com",
+  "db_rpc": "https://arb-sepolia.g.alchemy.com/v2/DAfzjixY82ICdLCssh_dTQpoN0I2mthW",
+  "storage": "https://ipfs.autonomous-times.com",
+  "dev_folder": "/home/joera/Documents/dsg/publications",
+  "n_printer": "0x686b455ffe7acd5173C4AE3137d7E87cd0120380",
+  "safe_factory": "0x3b83F6b392D18267f35ab570e3F6914B6d646255",
+  "pub_factory": "0x3AB14D654E556b1D50f8664F7F2FFbaA383e4042"
+}

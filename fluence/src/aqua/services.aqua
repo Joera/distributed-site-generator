@@ -1,0 +1,124 @@
+aqua ManualServices declares *
+
+import "./types"
+
+-- service Stringify("stringify"):
+--   u32ToStr(arg: u32) -> string
+--   dsgContentToStr(c: DsgContentItem) -> string
+--   task(t: DsgTask) -> string
+
+service ConstructLogs("op"):
+  concat_strings(a: string, b: string) -> string
+
+service Args("op"):
+  concat_strings(a: string, b: string, c: string) -> string
+
+service U64Srv("debug"): 
+    stringify(i: u64) -> string
+
+service U32Srv("debug"): 
+    stringify(i: u32) -> string
+
+service I32Srv("debug"): 
+    stringify(i: i32) -> string
+
+  
+
+service DsgPublicationFromJson("json"):
+  parse(s: string) -> DsgPublication
+
+service DsgAuthorFromJson("json"):
+  parse(s: string) -> DsgAuthorData
+
+service DsgRawContentFromJson("json"):
+  parse(s: string) -> DsgRawContent
+
+service DsgContentItemsFromJson("json"):
+  parse(s: string) -> []DsgContentItem
+
+service TaskFromString("json"):
+  parse(s: string) -> DsgTask
+
+service StringToArray("json"):
+  parse(s: string) -> []string
+
+
+service DsgContentToJson("debug"):
+  stringify(c: DsgRawContent) -> string 
+
+service DsgContentItemToJson("debug"):
+  stringify(c: DsgContentItem) -> string 
+
+service TaskToString("debug"):
+  stringify(c: DsgTask) -> string 
+
+service CidWrapperToString("debug"): 
+  stringify(c: CidWrapper) -> string 
+
+service DsgRenderObjectToString("debug"): 
+  stringify(c: DsgRenderObject) -> string 
+
+service ArrayToString("debug"): 
+  stringify(a: []string) -> string 
+
+service DsgContent("dsgContent"):
+  includeCid(content: DsgContentItem, cid: string) -> DsgContentItem
+  map(task: DsgTask, mappings: string) -> DsgMapped
+  pebble(task: DsgTask, contentItem: DsgContentItem) -> DsgRenderObject
+  ripple(task: DsgTask, ripple: DsgRipple, contentItem: DsgContentItem) -> DsgRenderObject
+
+service ContentStore("tuContentStore"):
+  test() -> string
+  batch_insert(content: DsgContentItem, table: DsgTable) -> AMResponse
+  insert(content: DsgContentItem, table: DsgTable, optimistic: bool) -> AMResponse
+  queryCollection(collection: DsgCollection, table: DsgTable) -> AMResponse
+  queryCollectionCids(collection: DsgCollection, table: DsgTable) -> AMResponse
+  queryRipple(ripple: DsgRipple, table: DsgTable) -> AMResponse
+
+service DsgRenderer("dsgRenderer"):
+  map(ro: DsgRenderObject, body_: string, content: [][]DsgContentItem, publication: DsgPublication) -> AquaMarineResult
+  single(ro: DsgRenderObject, td: []u8) -> AquaMarineResult
+
+service CioKubo("cioKubo"):
+  add(ipfs_api: string, content: string) -> string
+  addRecursive(ipfs_api: string, path_: string) -> string
+  get(ipfs_api: string, cid: string) -> string
+  getRecursive(ipfs_api: string, cid: string, path_: string) -> string
+  hash(ipfs_api: string, path_: string) -> AMResponse
+  -- dag_put(ipfs_api: string, content: string) -> string
+  -- dag_get(ipfs_api: string, cid: string) -> string
+
+
+service CioPinata("cioPinata"):
+  addAsFile(content: string, name: string, pinataJWTKey: string) -> AMResponse
+  addFolder(folder: string, pinataJWTKey: string) -> AMResponse
+
+service CioVault("cioVault"):
+  dir(path: string) -> bool
+  inspect(path: string) -> []string
+  write(data: string, path: string) -> bool
+
+service DsgWebHost("tuDsgWebHost"):
+  update(publication: DsgPublication, cid: string) -> AMResponse
+
+service Npublication("nPublication"):
+  create_filter(contract_address: string, topic: string, latest_block: string, rpc_url: string) -> AMResponse
+  exec_write(tx_request_string: string, signatures: []string, rpc: string) -> string
+  poll_filter(filter: string, rpc_url: string) -> AMEventLogResult
+  prep_write(chain_id: u64, contract_address: string, function: string, args: string, sender: string, rpc: string) -> string
+  read(contract_address: string, function: string, args: string, rpc: string) -> AMResponse
+
+service CioConsensus("cioConsensus"):
+  getHammingDistance(worker_id: string, task: string) -> u32
+  getXORDistance(cid1: string, cid2: string) -> i32
+  whoami() -> string
+
+service CioSigner("cioSigner"):
+  provision(key: string) -> string
+  public_address() -> string
+  rawtx(tx_request_string: string, chain_id: u64) -> string
+
+
+service CioSafe("cioSafe"):
+  exec_tx(tx_request_string: string, signatures: []string, rpc: string) -> string
+  tx_request(sender: string, chain_id: u64, factory_address: string, rpc: string, owners: []string, treshold: u8) -> string

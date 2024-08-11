@@ -7,6 +7,28 @@ use "../../.fluence/aqua/deals.aqua"
 import "./services.aqua"
 import "./types.aqua"
 
+func getTaskWorkers() -> []Worker:
+
+    deals <- Deals.get()
+    dealId = deals.taskWorkerV1!.dealIdOriginal
+    on HOST_PEER_ID:
+        subnet <- Subnet.resolve(dealId)
+        if subnet.success == false:
+            Console.print(["Failed to resolve subnet: ", subnet.error])
+    <- subnet.workers
+
+func getOtherTaskWorkers(me: string) -> []Worker:
+
+    other: *Worker
+    ws = getTaskWorkers()
+    for w <- ws:
+        if w.host_id != me: 
+            other <<- w
+    <- other
+
+func randomTaskWorker() -> Worker:
+    <- getTaskWorkers()!
+
 func getContentWorkers() -> []Worker:
 
     deals <- Deals.get()
@@ -23,7 +45,7 @@ func randomContentWorker() -> Worker:
 func getRenderWorkers() -> []Worker:
 
     deals <- Deals.get()
-    dealId = deals.renderWorkerV0!.dealIdOriginal
+    dealId = deals.renderWorkerV1!.dealIdOriginal
     on HOST_PEER_ID:
         subnet <- Subnet.resolve(dealId)
     if subnet.success == false:
@@ -32,8 +54,29 @@ func getRenderWorkers() -> []Worker:
     <- subnet.workers
 
 func randomRenderWorker() -> Worker:
-
     <- getRenderWorkers()!
+
+func getWebHostWorkers() -> []Worker:
+
+    deals <- Deals.get()
+    dealId = deals.webHostWorkerV1!.dealIdOriginal
+    on HOST_PEER_ID:
+        subnet <- Subnet.resolve(dealId)
+    if subnet.success == false:
+        Console.print(["Failed to resolve subnet: ", subnet.error])
+    
+    <- subnet.workers
+
+-- func getSignerWorkers() -> []Worker:
+
+--     deals <- Deals.get()
+--     dealId = deals.signerWorkerV1!.dealIdOriginal
+--     on HOST_PEER_ID:
+--         subnet <- Subnet.resolve(dealId)
+--     if subnet.success == false:
+--         Console.print(["Failed to resolve subnet: ", subnet.error])
+    
+--     <- subnet.workers
 
 func stringtoAMResult(s: string) -> AquaMarineResult:
 
@@ -48,3 +91,23 @@ func stringtoAMResult(s: string) -> AquaMarineResult:
         errors = errors
     )
     
+func selectLeader(responses: *AMResponse) -> Worker: 
+
+    winner: *AMResponse 
+    cids: *string
+    workers: *Worker
+
+    for r <- responses:
+        for c <- cids:
+            if c == r.result:
+                winner <<- r
+        cids <<- r.result
+
+    ws = getRenderWorkers()
+    for w <- ws: 
+        if w.host_id == winner!.host_id:
+            workers <<- w
+
+    <- workers!
+
+

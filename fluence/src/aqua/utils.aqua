@@ -1,0 +1,53 @@
+aqua Utils declares *
+
+func contains(array: []string, item: string) -> bool:
+
+    b: *bool
+    b <<- false
+    for a <- array: 
+        if item == a:
+            b <<- true
+    <- b[b.length - 1]
+
+func dedup(array: []string) -> []string:
+
+    new: *string
+    for a <- array: 
+        if contains(new, a) == false:
+            new <<- a
+    <- new
+
+func indexOf(array: []u32, item: u32) -> i32:
+
+    i: *i32
+    i <<- 0
+    count: *i32
+    count <<- 0
+    for a <- array:
+        if a == item: 
+            i <<- count[count.length -1]
+            count <<- count[count.length -1] + 1
+    <- i!
+
+func highest(array: []u32) -> u32: 
+    value: *u32
+    for a <- array:
+        isHighest: *bool
+        isHighest <<- true
+        for aa <- array:
+            if aa > a:
+                isHighest <<- false
+        if isHighest[isHighest.length -1]:
+            value <<- a
+    <- value!
+
+func countUniques(array: []string) -> []u32:
+    counts: *u32
+    for u <- dedup(array): 
+        count: *u32
+        count <<- 0
+        for a <- array:
+            if a == u:
+                count <<- count[count.length -1] + 1
+        counts <<- count[count.length -1]
+    <- counts

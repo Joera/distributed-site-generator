@@ -1,0 +1,95 @@
+aqua WebHost
+
+import Spell from "@fluencelabs/spell/spell_service.aqua"
+import "@fluencelabs/aqua-lib/builtin.aqua"
+import "../../aqua/constants.aqua"
+import "../../aqua/services.aqua"
+import "../../aqua/helpers.aqua"
+import "../../aqua/utils.aqua"
+import "../../aqua/consensus.aqua"
+
+-- Note: spell main function must be exported
+export spell
+
+import Spell from "@fluencelabs/spell/spell_service.aqua"
+
+func compareWorkers(ws: []Worker, spell: Spell, task_cid: string) -> bool: 
+
+    synced: *bool
+    available: *bool
+    for w <- ws: 
+        on w.worker_id! via w.host_id:
+            Spell "webHost"
+            has = Spell.exists(task_cid)
+            if has.success:
+                if has.value == true:
+                    available <<- true
+    if available.length == 3: 
+        spell.store_log(Debug.stringify(["synced with: ", task_cid]))
+        synced <<- true
+    else:
+        spell.store_log("syncing")
+        synced <<- false
+    <- synced!
+
+func waitForSync_(ws: []Worker, spell: Spell, task_cid: string) -> bool:
+
+    synced: *bool
+    synced <<- false
+    array = [1,2,3,4,5,6,7]
+    for i <- array:
+        if synced[synced.length - 1] != true:
+            s = compareWorkers(ws, spell, task_cid)
+            if s:
+                synced <<- true
+            else:
+                Peer.timeout(1000,"some spacetime")
+    <- synced[synced.length - 1]
+
+func spell():
+    Spell "webHost"
+    txs: *string
+    ws <- getWebHostWorkers()
+    mailbox_result <- Spell.pop_mailbox()
+    if mailbox_result.success && !mailbox_result.absent:
+        message = mailbox_result.message!
+        -- include in task 
+        task_cid = message.message
+        Spell.set_u32(task_cid, 0)
+        Spell.store_log(Debug.stringify(["received hash:",message.message, "from:", message.init_peer_id ]))
+        
+        b = waitForSync_(ws,Spell,task_cid)
+        if b: 
+            itsme = select(ws, Spell, task_cid)
+            if itsme:
+                Spell.store_log("i was selected")
+                task_string = CioKubo.get(WEBHOSTKUBO, task_cid)
+                task = TaskFromString.parse(task_string)
+                Spell.store_log(Debug.stringify(["updating webhost with", task.hash]))
+
+                s <- DsgWebHost.update(task.publication, task.hash)
+
+                my_address = CioSigner.public_address()
+
+                raw_tx = Npublication.prep_write(
+                    CHAIN_ID,
+                    task.publication.contract, 
+                    "updateHtmlRoot(string _html_root)", 
+                    Debug.stringify([task.hash]), 
+                    my_address,
+                    task.publication.rpc
+                )
+
+                -- Spell.store_log(Debug.stringify(["raw tx", raw_tx]))
+
+                signatures: *string
+                signatures <- CioSigner.rawtx(raw_tx, CHAIN_ID) 
+
+                -- Spell.store_log(Debug.stringify(["signature", signatures!]))
+
+                tx = Npublication.exec_write(raw_tx, signatures, task.publication.rpc)
+                Spell.store_log(Debug.stringify(["tx: ",tx]))
+                Spell.store_log("FINISHED!")
+
+        else: 
+                Spell.store_log("doing nothing this time")

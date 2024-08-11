@@ -8,9 +8,9 @@ name = "tuDsgRenderCollect"
 path = "src/main.rs"
 
 [dependencies]
+cio-response-types = { git = "https://github.com/composibleIO/cio-response-types", branch = "main" }
 marine-rs-sdk = "0.10.3"
 tu_dsg_types = { path = "../../../../tuDsgTypes" }
-tu_types = { path = "../../../../tuTypes" }
 serde_json = "1.0.116"
 chrono = "0.4.31"
 serde = "1.0.198"

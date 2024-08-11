@@ -1,0 +1,206 @@
+{
+  "$id": "https://fluence.dev/schemas/provider-artifacts",
+  "title": "provider-artifacts.yaml",
+  "description": "Defines artifacts created by the provider",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "integer",
+      "const": 1,
+      "description": "Config version"
+    },
+    "offers": {
+      "type": "object",
+      "description": "Created offers",
+      "additionalProperties": false,
+      "properties": {
+        "dar": {
+          "type": "object",
+          "description": "Created offers",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "Created offer info",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Offer id"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "properties": {
+            "noxName": {
+              "type": "object",
+              "additionalProperties": false,
+              "description": "Created offer info",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Offer id"
+                }
+              },
+              "required": [
+                "id"
+              ]
+            }
+          },
+          "required": [],
+          "nullable": true
+        },
+        "custom": {
+          "type": "object",
+          "description": "Created offers",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "Created offer info",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Offer id"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "properties": {
+            "noxName": {
+              "type": "object",
+              "additionalProperties": false,
+              "description": "Created offer info",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Offer id"
+                }
+              },
+              "required": [
+                "id"
+              ]
+            }
+          },
+          "required": [],
+          "nullable": true
+        },
+        "kras": {
+          "type": "object",
+          "description": "Created offers",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "Created offer info",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Offer id"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "properties": {
+            "noxName": {
+              "type": "object",
+              "additionalProperties": false,
+              "description": "Created offer info",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Offer id"
+                }
+              },
+              "required": [
+                "id"
+              ]
+            }
+          },
+          "required": [],
+          "nullable": true
+        },
+        "local": {
+          "type": "object",
+          "description": "Created offers",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "Created offer info",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Offer id"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "properties": {
+            "noxName": {
+              "type": "object",
+              "additionalProperties": false,
+              "description": "Created offer info",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Offer id"
+                }
+              },
+              "required": [
+                "id"
+              ]
+            }
+          },
+          "required": [],
+          "nullable": true
+        },
+        "stage": {
+          "type": "object",
+          "description": "Created offers",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "Created offer info",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Offer id"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "properties": {
+            "noxName": {
+              "type": "object",
+              "additionalProperties": false,
+              "description": "Created offer info",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Offer id"
+                }
+              },
+              "required": [
+                "id"
+              ]
+            }
+          },
+          "required": [],
+          "nullable": true
+        }
+      },
+      "required": []
+    }
+  },
+  "required": [
+    "version",
+    "offers"
+  ]
+}
